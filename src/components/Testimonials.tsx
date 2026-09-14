@@ -87,7 +87,7 @@ const Testimonials = () => {
                   alt={testimonial.name} 
                   className="w-12 h-12 rounded-full object-cover border border-border"
                   onError={(e) => {
-                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${testimonial.name}&background=ff661a&color=fff`;
+                    e.currentTarget.src = `${import.meta.env.VITE_UI_AVATARS_API_URL}?name=${testimonial.name}&background=ff661a&color=fff`;
                   }}
                 />
                 <div>

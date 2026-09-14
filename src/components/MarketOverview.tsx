@@ -27,7 +27,7 @@ const MarketOverview = () => {
     widgetContainerRef.current.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
     
     const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+    script.src = import.meta.env.VITE_TRADINGVIEW_WIDGET_MARKET_OVERVIEW;
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = `

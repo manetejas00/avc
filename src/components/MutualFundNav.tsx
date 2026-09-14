@@ -46,7 +46,7 @@ const MutualFundNav = () => {
     setError('');
     setSelectedNav(null);
     try {
-      const res = await fetch(`https://api.mfapi.in/mf/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`${import.meta.env.VITE_MFAPI_BASE_URL}/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       setResults(data.slice(0, 10)); // Limit to 10 results
     } catch (err) {
@@ -60,7 +60,7 @@ const MutualFundNav = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`https://api.mfapi.in/mf/${schemeCode}/latest`);
+      const res = await fetch(`${import.meta.env.VITE_MFAPI_BASE_URL}/${schemeCode}/latest`);
       const data = await res.json();
       setSelectedNav(data);
     } catch (err) {
