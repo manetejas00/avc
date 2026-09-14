@@ -29,7 +29,7 @@ const Navbar = () => {
         <div ref={innerRef} className="bg-[#1a1a1a]/70 backdrop-blur-md rounded-full border border-border px-6 py-4 flex items-center justify-between transition-colors">
           
           <div className="flex items-center gap-2 group cursor-pointer">
-            <span className="text-xl font-bold tracking-tight text-primary">AVC Dhanam</span>
+            <img src="/logo.jpg" alt="AVC Dhanam Logo" className="h-10 w-auto rounded-lg" />
           </div>
 
           <div className="hidden md:flex items-center gap-8">

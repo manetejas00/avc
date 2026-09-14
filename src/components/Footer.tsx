@@ -6,7 +6,8 @@ const Footer = () => {
       <div className="container-custom">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col items-center md:items-start gap-2">
-            <span className="text-xl font-bold tracking-tight text-text">AVC Dhanam Solutions Pvt. Ltd.</span>
+            <img src="/logo.jpg" alt="AVC Dhanam Logo" className="h-10 w-auto rounded-lg mb-2" />
+            <span className="text-sm font-bold tracking-tight text-text">AVC Dhanam Solutions Pvt. Ltd.</span>
             <span className="text-sm text-text-muted">Virar West, Mumbai</span>
           </div>
           
