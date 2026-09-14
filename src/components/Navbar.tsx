@@ -29,20 +29,8 @@ const Navbar = () => {
       <div className="container-custom">
         <div ref={innerRef} className="bg-[#1a1a1a]/70 backdrop-blur-md rounded-full border border-border px-6 py-4 flex items-center justify-between transition-colors">
           
-          <div className="flex items-center gap-3 cursor-pointer">
-            <div className="relative flex items-center justify-center h-10 w-10 bg-gradient-to-tr from-yellow-600 to-yellow-400 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.3)]">
-              <svg className="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200 leading-none">
-                AVCDHANAM
-              </span>
-              <span className="text-[10px] uppercase tracking-widest text-text-muted mt-0.5 font-medium">
-                Solutions Pvt Ltd
-              </span>
-            </div>
+          <div className="flex items-center cursor-pointer">
+            <img src="/logo_gold_transparent.svg" alt="AVCDHANAM Logo" className="h-10 md:h-12 w-auto drop-shadow-md" />
           </div>
 
           <div className="hidden md:flex items-center gap-8">
