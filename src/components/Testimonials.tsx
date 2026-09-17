@@ -7,10 +7,10 @@ import { Star } from 'lucide-react';
 gsap.registerPlugin(Draggable);
 
 const testimonials = [
-  { name: 'Alex Johnson', role: 'Product Manager', content: "Bemine AI has completely transformed how our team collaborates. The intuitive interface and powerful features save us hours every week.", image: '/assets/686f231d23a1ec789d4370af_Portrait%20of%20Young%20Man.jpeg' },
-  { name: 'Sarah Lee', role: 'Design Lead', content: "I've tried many tools, but Bemine stands out. The AI assistant is incredibly smart and integrates perfectly into our workflow.", image: '/assets/686f231d23a1ec789d4370bd_Portrait%20of%20Asian%20Man%20(1).jpeg' },
-  { name: 'Michael Chen', role: 'CTO', content: "The scalability and security of Bemine gave us the confidence to roll it out company-wide. It's been a game-changer for our productivity.", image: '/assets/686f231d23a1ec789d4370bc_Confident%20Young%20Man.jpeg' },
-  { name: 'Emily Davis', role: 'Marketing Director', content: "Tracking progress and coordinating campaigns has never been easier. The visual clarity Bemine provides is unmatched.", image: '/assets/686f231d23a1ec789d4370a3_Contemplative%20Portrait.jpeg' },
+  { name: 'Rajesh Sharma', role: 'Managing Director, TechVentures Mumbai', content: "AVC Dhanam's SIP and portfolio management guidance helped us structure our wealth tax-efficiently. The transparency and real-time market data give us full control.", image: '/assets/testimonials/client-rajesh.webp' },
+  { name: 'Ananya Patel', role: 'VP Product & Investor, Bengaluru', content: "Investing in mutual funds and PMS through AVC has been seamless. Their market analytics and advisor support are top tier.", image: '/assets/testimonials/client-ananya.webp' },
+  { name: 'Vikram Mehta', role: 'Co-Founder, Capital Growth', content: "The level of expertise and SEBI compliance rigor AVC provides gives us total confidence for our corporate liquidity investments.", image: '/assets/testimonials/client-vikram.webp' },
+  { name: 'Priya Nair', role: 'Senior Financial Strategist, Mumbai', content: "AVC Dhanam simplifies equity research and mutual fund selection. Their personalized consultation helped us hit our long-term wealth goals.", image: '/assets/testimonials/client-priya.webp' },
 ];
 
 const Testimonials = () => {

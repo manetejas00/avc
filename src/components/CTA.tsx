@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import ContactFormModal from './ContactFormModal';
 
 const CTA = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -67,7 +69,11 @@ const CTA = () => {
           </p>
           
           <div className="flex flex-wrap justify-center gap-4">
-            <button ref={buttonRef} className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-medium transition-colors text-lg relative z-10">
+            <button 
+              ref={buttonRef} 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-medium transition-colors text-lg relative z-10"
+            >
               Book a Free Consultation
             </button>
             <button className="bg-surface-ii hover:bg-background border border-border text-text px-8 py-4 rounded-full font-medium transition-colors text-lg relative z-10">
@@ -80,6 +86,7 @@ const CTA = () => {
           
         </div>
       </div>
+      <ContactFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
 };

@@ -3,9 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: theme('colors.background');
     color: theme('colors.text.DEFAULT');
+  }
+  ::selection {
+    background-color: theme('colors.primary');
+    color: white;
   }
 }
 

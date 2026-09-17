@@ -46,6 +46,21 @@ const FAQ = () => {
   return (
     <section ref={containerRef} className="py-24 bg-background">
       <div className="container-custom max-w-4xl mx-auto">
+        {/* AEO Schema Injection */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
+          })}
+        </script>
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-[52px] font-semibold mb-4 text-text">Frequently Asked Questions</h2>
           <p className="text-text-muted text-lg">

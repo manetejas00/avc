@@ -7,15 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#ff661a",
-        background: "black",
-        surface: "#121212",
-        "surface-ii": "#161616",
+        primary: "#10b981", // Emerald green (BSE UP color) for trust and growth
+        "primary-hover": "#059669",
+        background: "#020617", // Slate 950 (deep premium dark blue)
+        surface: "#0f172a", // Slate 900
+        "surface-ii": "#1e293b", // Slate 800
         text: {
-          DEFAULT: "#ffffff",
-          muted: "#b9b9b9"
+          DEFAULT: "#f8fafc",
+          muted: "#94a3b8"
         },
-        border: "#181818",
+        border: "#1e293b",
         neutral: {
           100: "#f1f1f1",
           200: "#ebebef",
@@ -23,7 +24,8 @@ export default {
           600: "#3e404c",
           700: "#24262d",
         },
-        green: "#3ebb7f",
+        green: "#10b981",
+        gold: "#eab308",
       },
       fontFamily: {
         sans: ['Onest', 'sans-serif'],

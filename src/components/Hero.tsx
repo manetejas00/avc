@@ -1,11 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { Play } from 'lucide-react';
 import { splitLines } from '../animations/textUtils';
 import TradingViewTicker from './TradingViewTicker';
+import ContactFormModal from './ContactFormModal';
 
 const Hero = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const headline = ['Supercharge Your', 'Productivity and Workflow', 'with AI'];
   
@@ -73,7 +75,7 @@ const Hero = () => {
             <button className="hero-btn bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
               Start Your SIP Today
             </button>
-            <button className="hero-btn group flex items-center gap-2 border border-border hover:bg-surface-ii px-8 py-3.5 rounded-full font-medium transition-colors relative overflow-hidden text-text">
+            <button onClick={() => setIsModalOpen(true)} className="hero-btn group flex items-center gap-2 border border-border hover:bg-surface-ii px-8 py-3.5 rounded-full font-medium transition-colors relative overflow-hidden text-text">
               <span className="relative z-10 flex items-center gap-2">
                 Book a Free Consultation
               </span>
@@ -90,10 +92,29 @@ const Hero = () => {
           
         </div>
         
-        <div className="hero-dashboard relative mx-auto w-full max-w-[1100px] mt-8 rounded-[32px] border border-border bg-surface p-4 shadow-2xl">
+        <div className="hero-dashboard relative mx-auto w-full max-w-[1100px] mt-8 rounded-[32px] border border-[#D4AF37]/30 bg-[#0B0F10] p-4 sm:p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,55,0.15)] overflow-hidden">
+          <div className="relative rounded-2xl overflow-hidden mb-4 border border-[#D4AF37]/20 group">
+            <img
+              src="/assets/hero/hero-indian-finance.webp"
+              alt="Indian Stock Market & Mumbai Financial Data Visualization"
+              width={1100}
+              height={550}
+              className="w-full h-48 sm:h-72 object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
+              loading="eager"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F10] via-transparent to-transparent opacity-80" />
+            <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-4 flex items-center justify-between">
+              <div className="flex items-center gap-2 bg-[#0D1214]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#D4AF37]/30">
+                <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
+                <span className="text-xs font-semibold tracking-wider text-[#F5C542] uppercase">Live Market Intelligence</span>
+              </div>
+              <span className="hidden sm:block text-xs text-gray-300 font-medium">BSE & NIFTY Realtime Data Engine</span>
+            </div>
+          </div>
           <TradingViewTicker />
         </div>
       </div>
+      <ContactFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
 };
