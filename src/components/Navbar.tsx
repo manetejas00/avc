@@ -198,14 +198,14 @@ const Navbar: React.FC = () => {
         <div ref={islandRef} className="transition-all duration-300">
           <div
             ref={innerRef}
-            className="bg-[#0D1214]/90 backdrop-blur-xl rounded-full border border-[#D4AF37]/30 shadow-[0_12px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(212,175,55,0.15)] px-4 sm:px-6 py-3 flex items-center justify-between transition-colors"
+            className="bg-[#0B0F10]/95 backdrop-blur-2xl rounded-full border border-[#D4AF37]/50 shadow-[0_14px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(212,175,55,0.2)] px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between transition-colors min-h-[52px] sm:min-h-[60px]"
           >
             {/* Logo */}
-            <a href="#" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-[#D4AF37] rounded-lg px-1 py-0.5">
+            <a href="#" className="flex items-center gap-2 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-[#D4AF37] rounded-lg px-1 py-0.5 shrink-0">
               <img
                 src="/logo_gold_transparent.svg"
                 alt="AVCDHANAM Logo"
-                className="h-9 sm:h-11 w-auto drop-shadow-[0_2px_10px_rgba(212,175,55,0.3)] transition-transform duration-300 group-hover:scale-105"
+                className="h-8 sm:h-11 w-auto drop-shadow-[0_2px_10px_rgba(212,175,55,0.4)] transition-transform duration-300 group-hover:scale-105"
               />
             </a>
 
@@ -231,40 +231,40 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Right Action CTA & Mobile Toggle */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
               <a
                 href="#contact"
-                className="hidden sm:inline-flex bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#B8860B] hover:brightness-110 text-[#071A1D] font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-lg shadow-[#D4AF37]/20 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                className="hidden sm:inline-flex bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#B8860B] hover:brightness-110 text-[#071A1D] font-bold text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-lg shadow-[#D4AF37]/25 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
               >
                 Contact Us
               </a>
 
-              {/* Touch-friendly Hamburger / X Button */}
+              {/* Touch-friendly Hamburger / X Button - High visibility on Mobile */}
               <button
                 ref={toggleBtnRef}
                 onClick={handleToggle}
                 aria-expanded={isOpen}
                 aria-controls="island-menu-panel"
                 aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-                className="flex items-center justify-center w-11 h-11 rounded-full bg-[#161E21] border border-[#D4AF37]/30 hover:border-[#D4AF37] text-white hover:bg-[#1F2B2F] transition-all focus:outline-none focus:ring-2 focus:ring-[#D4AF37] active:scale-95"
+                className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#182226] border-2 border-[#D4AF37] text-[#F5C542] hover:bg-[#223035] shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all focus:outline-none focus:ring-2 focus:ring-[#D4AF37] active:scale-95 shrink-0"
               >
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <line
                     ref={line1Ref}
                     x1="4" y1="7" x2="20" y2="7"
-                    stroke="#D4AF37" strokeWidth="2.2" strokeLinecap="round"
+                    stroke="#F5C542" strokeWidth="2.5" strokeLinecap="round"
                     style={{ transformOrigin: '12px 7px' }}
                   />
                   <line
                     ref={line2Ref}
                     x1="4" y1="12" x2="20" y2="12"
-                    stroke="#D4AF37" strokeWidth="2.2" strokeLinecap="round"
+                    stroke="#F5C542" strokeWidth="2.5" strokeLinecap="round"
                     style={{ transformOrigin: '12px 12px' }}
                   />
                   <line
                     ref={line3Ref}
                     x1="4" y1="17" x2="20" y2="17"
-                    stroke="#D4AF37" strokeWidth="2.2" strokeLinecap="round"
+                    stroke="#F5C542" strokeWidth="2.5" strokeLinecap="round"
                     style={{ transformOrigin: '12px 17px' }}
                   />
                 </svg>
