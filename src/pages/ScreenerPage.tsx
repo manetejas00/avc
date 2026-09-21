@@ -21,8 +21,10 @@ const fallbackCompanies: Company[] = [
 export default function ScreenerPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const companyTicker = searchParams.get('company');
-  const selectedExchange = searchParams.get('exchange') === 'NSE' ? 'NSE' : 'BSE';
+  const companyReference = searchParams.get('company');
+  const [selectedExchange, companyTicker] = companyReference?.match(/^(NSE|BSE):(.+)$/i)
+    ? [companyReference.slice(0, 3).toUpperCase() as 'NSE' | 'BSE', companyReference.slice(4)]
+    : ['BSE' as const, companyReference];
   const widgetRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -78,7 +80,7 @@ export default function ScreenerPage() {
     const term = query.trim();
     if (!term) return;
     const match = companies.find((company) => company.ticker.toLowerCase() === term.toLowerCase() || company.name.toLowerCase() === term.toLowerCase());
-    if (match) navigate(`/screener?company=${encodeURIComponent(match.ticker)}&exchange=${match.exchange}`);
+    if (match) navigate(`/screener?company=${encodeURIComponent(`${match.exchange}:${match.ticker}`)}`);
     else setShowSuggestions(true);
   };
 
@@ -87,7 +89,7 @@ export default function ScreenerPage() {
   const selectCompany = (company: Company) => {
     setQuery(company.name);
     setShowSuggestions(false);
-    navigate(`/screener?company=${encodeURIComponent(company.ticker)}&exchange=${company.exchange}`);
+    navigate(`/screener?company=${encodeURIComponent(`${company.exchange}:${company.ticker}`)}`);
   };
 
   useEffect(() => {
