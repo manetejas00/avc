@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { Search, TrendingUp, TrendingDown, Filter, X, ChevronDown, ChevronUp, Info, Star } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { getJson } from '../services/apiClient';
 
 gsap.registerPlugin();
 
@@ -68,13 +69,10 @@ const ScreenerPage = () => {
   
   const fetchDashboardIndices = async () => {
     try {
-      const res = await fetch('/api/market/dashboard');
-      if (res.ok) {
-        const data = await res.json();
-        setIndices(data.filter((i: any) => ['^NSEI', '^BSESN'].includes(i.symbol)));
-      }
-    } catch (err) {
-      console.error(err);
+      const data = await getJson<any[]>('/api/market/dashboard');
+      setIndices(data.filter((i: any) => ['^NSEI', '^BSESN'].includes(i.symbol)));
+    } catch {
+      setIndices([]);
     }
   };
 
@@ -82,15 +80,10 @@ const ScreenerPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/market/screener/stocks');
-      const contentType = res.headers.get('content-type');
-      if (!res.ok || !contentType || contentType.indexOf('application/json') === -1) {
-        throw new Error('Market data is temporarily unavailable. (Check if backend server is restarted)');
-      }
-      const data = await res.json();
+      const data = await getJson<Quote[]>('/api/market/screener/stocks');
       setStocks(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to load market data.');
+      setError('Market data is temporarily unavailable. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -104,11 +97,10 @@ const ScreenerPage = () => {
     }
     setSearching(true);
     try {
-      const res = await fetch(`/api/market/search?q=${encodeURIComponent(val)}`);
-      const data = await res.json();
+      const data = await getJson<any[]>(`/api/market/search?q=${encodeURIComponent(val)}`);
       setSearchResults(data.slice(0, 5));
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setSearchResults([]);
     } finally {
       setSearching(false);
     }
@@ -119,13 +111,12 @@ const ScreenerPage = () => {
     setSearchResults([]);
     setLoading(true);
     try {
-      const res = await fetch(`/api/market/quotes?symbols=${encodeURIComponent(symbol)}`);
-      const data = await res.json();
+      const data = await getJson<Quote[]>(`/api/market/quotes?symbols=${encodeURIComponent(symbol)}`);
       if (data && data.length > 0) {
         setSelectedStock(data[0]);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setError('Stock details are temporarily unavailable.');
     } finally {
       setLoading(false);
     }
@@ -189,10 +180,10 @@ const ScreenerPage = () => {
     gsap.from('.hero-elem', {
       y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', delay: 0.2
     });
-    gsap.from('.index-card', {
+    if (indices.length) gsap.from('.index-card', {
       y: 20, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: 0.6
     });
-  }, { scope: mainRef });
+  }, { scope: mainRef, dependencies: [indices.length] });
 
   return (
     <div className="min-h-screen bg-background font-sans text-text pt-24" ref={mainRef}>

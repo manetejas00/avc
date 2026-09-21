@@ -2,14 +2,12 @@ import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { Play } from 'lucide-react';
-import { splitLines } from '../animations/textUtils';
 import TradingViewTicker from './TradingViewTicker';
 import ContactFormModal from './ContactFormModal';
 
 const Hero = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const headline = ['Supercharge Your', 'Productivity and Workflow', 'with AI'];
   
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -19,13 +17,11 @@ const Hero = () => {
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
       
       gsap.set('.hero-badge', { y: 20, opacity: 0 });
-      gsap.set('.line-inner', { yPercent: 100, rotation: 5, transformOrigin: '0% 0%' });
       gsap.set('.hero-desc', { y: 20, opacity: 0 });
       gsap.set('.hero-btn', { y: 20, opacity: 0 });
       gsap.set('.hero-dashboard', { y: 100, opacity: 0, scale: 0.95 });
       
       tl.to('.hero-badge', { y: 0, opacity: 1, duration: 0.8, delay: 0.2 })
-        .to('.line-inner', { yPercent: 0, rotation: 0, duration: 1, stagger: 0.15 }, '-=0.6')
         .to('.hero-desc', { y: 0, opacity: 1, duration: 0.8 }, '-=0.6')
         .to('.hero-btn', { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 }, '-=0.6')
         .to('.hero-dashboard', { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: 'expo.out' }, '-=0.4');
@@ -44,7 +40,7 @@ const Hero = () => {
     
     mm.add("(max-width: 767px)", () => {
       // Mobile - simplified
-      gsap.from('.hero-badge, .line-inner, .hero-desc, .hero-btn, .hero-dashboard', {
+      gsap.from('.hero-badge, .hero-desc, .hero-btn, .hero-dashboard', {
         y: 20, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out'
       });
     });

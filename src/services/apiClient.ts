@@ -13,6 +13,9 @@ export async function getJson<T>(url: string, options: { signal?: AbortSignal; t
   try {
     const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
     if (!response.ok) throw new ApiClientError('Unable to load this information right now.', response.status);
+    if (!response.headers.get('content-type')?.includes('application/json')) {
+      throw new ApiClientError('This information is unavailable because the data service is not configured.', response.status);
+    }
     return await response.json() as T;
   } catch (error) {
     if (error instanceof ApiClientError || error instanceof DOMException) throw error;

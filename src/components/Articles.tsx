@@ -64,7 +64,7 @@ const Articles = () => {
   }, []);
 
   useGSAP(() => {
-    if (loading) return; // Wait for items to be present in DOM
+    if (loading || !articles.length) return;
 
     gsap.from('.article-header > *', {
       y: 15, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
@@ -75,7 +75,7 @@ const Articles = () => {
       y: 20, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'back.out(1.1)',
       scrollTrigger: { trigger: '.article-grid', start: 'top 80%' }
     });
-  }, { scope: containerRef, dependencies: [loading] });
+  }, { scope: containerRef, dependencies: [loading, articles.length] });
 
   return (
     <section id="news" ref={containerRef} className="py-24 bg-surface border-t border-white/5/50">

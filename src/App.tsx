@@ -8,7 +8,6 @@ import Benefits from './components/Benefits';
 import Features from './components/Features';
 import Calculators from './components/Calculators';
 import MarketOverview from './components/MarketOverview';
-import CryptoMarketSnapshot from './components/CryptoMarketSnapshot';
 import FAQ from './components/FAQ';
 import Articles from './components/Articles';
 import CTA from './components/CTA';
@@ -30,7 +29,6 @@ const HomePage = () => (
     <Features />
     <Calculators />
     <MarketOverview />
-    <CryptoMarketSnapshot />
     <FAQ />
     <Articles />
     <CTA />

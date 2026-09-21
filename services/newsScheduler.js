@@ -6,6 +6,7 @@ import { invalidateNewsCache } from './newsApi.js';
 
 // Noozra is listed in public-apis/public-apis as a keyless HTTPS news API.
 const DEFAULT_FEEDS = ['https://noozra.com/api/articles?category=business'];
+const MARKETAUX_ENDPOINT = 'https://api.marketaux.com/v1/news/all';
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const normaliseUrl = (value) => {
   try {
@@ -48,21 +49,38 @@ const enrichArticle = async (article) => {
 };
 
 const configuredFeeds = () => {
+  const marketAuxKey = process.env.MARKETAUX_API_KEY?.trim();
+  if (marketAuxKey) {
+    const params = new URLSearchParams({
+      api_token: marketAuxKey,
+      language: 'en',
+      limit: '30',
+      entity_types: 'equity,index,etf,currency,cryptocurrency',
+      must_have_entities: 'true'
+    });
+    return [{ url: `${MARKETAUX_ENDPOINT}?${params.toString()}`, category: 'Markets', provider: 'marketaux' }];
+  }
   const namedFeeds = [
     ['NEWS_API_BUSINESS_IN', 'Markets'], ['NEWS_API_BUSINESS_US', 'Markets']
   ].map(([key, category]) => ({ url: process.env[key]?.trim(), category })).filter(feed => feed.url);
   const generalFeeds = (process.env.NEWS_API_URLS || '').split(',').map(url => url.trim()).filter(Boolean).map(url => ({ url, category: '' }));
   const feeds = [...namedFeeds, ...generalFeeds];
-  return feeds.length ? [...new Map(feeds.map(feed => [feed.url, feed])).values()] : DEFAULT_FEEDS.map(url => ({ url, category: 'Finance' }));
+  return feeds.length ? [...new Map(feeds.map(feed => [feed.url, feed])).values()] : DEFAULT_FEEDS.map(url => ({ url, category: 'Finance', provider: 'noozra' }));
 };
 const extractArticles = (payload) => Array.isArray(payload) ? payload : (payload?.articles || payload?.results || payload?.data?.articles || payload?.data || []);
 
 export const syncNews = async (db) => {
   const metrics = { fetched: 0, inserted: 0, duplicates: 0, failed: 0 };
   try {
-    const feeds = configuredFeeds();
-    const results = await Promise.allSettled(feeds.map(feed => axios.get(feed.url, { timeout: 15000 })));
-    const articles = results.flatMap((result, index) => result.status === 'fulfilled' ? extractArticles(result.value.data).map(article => ({ ...article, feedCategory: feeds[index].category, title: article.title || article.headline || '', description: article.description || article.summary || article.excerpt || '' })) : []);
+    let feeds = configuredFeeds();
+    let results = await Promise.allSettled(feeds.map(feed => axios.get(feed.url, { timeout: 15000 })));
+    const receivedArticles = results.some(result => result.status === 'fulfilled' && extractArticles(result.value.data).length > 0);
+    if (feeds[0]?.provider === 'marketaux' && !receivedArticles) {
+      feeds = DEFAULT_FEEDS.map(url => ({ url, category: 'Finance', provider: 'noozra' }));
+      results = await Promise.allSettled(feeds.map(feed => axios.get(feed.url, { timeout: 15000 })));
+      db.prepare('INSERT INTO api_sync_logs (provider, status, message) VALUES (?, ?, ?)').run('marketaux', 'fallback', 'No valid market news returned; switched to Noozra.');
+    }
+    const articles = results.flatMap((result, index) => result.status === 'fulfilled' ? extractArticles(result.value.data).map(article => ({ ...article, feedCategory: feeds[index].category, title: article.title || article.headline || '', description: article.description || article.summary || article.excerpt || '', provider: feeds[index].provider || 'configured_feed' })) : []);
     metrics.fetched = articles.length;
     metrics.failed += results.filter(result => result.status === 'rejected').length;
     const insert = db.prepare(`INSERT OR IGNORE INTO news (original_title, title, summary, category, tags, source, source_url, image_url, published_at, url_hash, title_hash, image_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
@@ -81,7 +99,7 @@ export const syncNews = async (db) => {
         metrics.inserted += result.changes;
     }
     if (metrics.inserted) invalidateNewsCache(db);
-    db.prepare('INSERT INTO api_sync_logs (provider, status, message) VALUES (?, ?, ?)').run('news_scheduler', 'success', JSON.stringify(metrics));
+    db.prepare('INSERT INTO api_sync_logs (provider, status, message) VALUES (?, ?, ?)').run(feeds[0]?.provider || 'news_scheduler', 'success', JSON.stringify(metrics));
   } catch (error) {
     db.prepare('INSERT INTO api_sync_logs (provider, status, message) VALUES (?, ?, ?)').run('news_scheduler', 'error', error.message);
     console.error('News sync failed:', error);
@@ -92,6 +110,8 @@ export const syncNews = async (db) => {
 
 export const startNewsScheduler = (db) => {
   syncNews(db);
-  cron.schedule('0 * * * *', () => syncNews(db));
-  console.log('News scheduler started (hourly).');
+  // MarketAux free accounts allow 100 requests per day. The default is 12/day.
+  const schedule = process.env.MARKET_NEWS_SYNC_CRON || '0 */2 * * *';
+  cron.schedule(schedule, () => syncNews(db));
+  console.log(`News scheduler started (${schedule}).`);
 };

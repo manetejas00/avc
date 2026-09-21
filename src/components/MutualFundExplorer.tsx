@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, TrendingUp, Info } from 'lucide-react';
 import Input from './ui/Input';
 import Card from './ui/Card';
+import { getJson } from '../services/apiClient';
 
 interface MFScheme {
   schemeCode: number;
@@ -28,6 +29,7 @@ const MutualFundExplorer = () => {
   const [loading, setLoading] = useState(false);
   const [selectedFund, setSelectedFund] = useState<MFDetail | null>(null);
   const [loadingFund, setLoadingFund] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -44,12 +46,13 @@ const MutualFundExplorer = () => {
 
     searchTimeout.current = setTimeout(async () => {
       setLoading(true);
+      setError(null);
       try {
-        const res = await fetch(`/api/market/mutual-funds/search?q=${encodeURIComponent(val)}`);
-        const data = await res.json();
+        const data = await getJson<MFScheme[]>(`/api/market/mutual-funds/search?q=${encodeURIComponent(val)}`);
         setResults(data);
-      } catch (err) {
-        console.error(err);
+      } catch {
+        setResults([]);
+        setError('Mutual fund search is temporarily unavailable.');
       } finally {
         setLoading(false);
       }
@@ -59,12 +62,12 @@ const MutualFundExplorer = () => {
   const fetchFundDetail = async (code: number) => {
     setLoadingFund(true);
     setSelectedFund(null);
+    setError(null);
     try {
-      const res = await fetch(`/api/market/mutual-funds/${code}`);
-      const data = await res.json();
+      const data = await getJson<MFDetail>(`/api/market/mutual-funds/${code}`);
       setSelectedFund(data);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setError('Fund details are temporarily unavailable.');
     } finally {
       setLoadingFund(false);
     }
@@ -96,6 +99,8 @@ const MutualFundExplorer = () => {
               </div>
             )}
           </div>
+
+          {error && <p className="mb-6 text-center text-sm text-text-muted" role="status">{error}</p>}
 
           {results.length > 0 && !selectedFund && (
             <div className="card-premium mb-8 overflow-hidden">
