@@ -71,7 +71,7 @@ const MutualFundExplorer = () => {
   };
 
   return (
-    <section className="py-section-mobile md:py-section bg-background">
+    <section id="mutual-funds" className="py-section-mobile md:py-section bg-background">
       <div className="container-custom">
         <div className="mb-12 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">Mutual Fund Explorer</h2>

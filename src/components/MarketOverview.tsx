@@ -190,7 +190,7 @@ const MarketOverview = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden">
+    <section id="markets" ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden">
       <div className="container-custom">
         <div className="market-title text-center mb-16">
           <h2 className="text-4xl md:text-[52px] font-semibold mb-4 text-text">Live Market Overview</h2>

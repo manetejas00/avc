@@ -31,14 +31,14 @@
     overflow-x: hidden;
   }
   a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
-  button, a, input, select, textarea { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background; }
+  button, a, input, select, textarea { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]; }
   ::selection {
     background-color: var(--gold-primary);
     color: #050505;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply text-text tracking-tight font-semibold;
+    @apply text-white tracking-tight font-semibold;
   }
   
   h1 { @apply text-[clamp(2.5rem,5vw,4rem)] leading-[1.1]; }
@@ -59,40 +59,40 @@
 
 @layer utilities {
   .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-primary via-gold-secondary to-gold-muted;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F4D675] to-[#B8962E];
   }
   .bg-gradient-gold {
-    @apply bg-gradient-to-r from-gold-primary via-gold-secondary to-gold-muted;
+    @apply bg-gradient-to-r from-[#D4AF37] via-[#F4D675] to-[#B8962E];
   }
   .border-glow-gold {
-    @apply border border-gold-primary/30 shadow-[0_0_15px_rgba(212,175,55,0.15)];
+    @apply border border-[#D4AF37]/30 shadow-[0_0_15px_rgba(212,175,55,0.15)];
   }
   .border-glow-green {
-    @apply border border-green-primary/30 shadow-[0_0_15px_rgba(16,185,129,0.15)];
+    @apply border border-[#10b981]/30 shadow-[0_0_15px_rgba(16,185,129,0.15)];
   }
   .card-premium {
-    @apply rounded-card border border-white/5 bg-surface shadow-[0_18px_45px_rgba(0,0,0,0.28)];
+    @apply rounded-xl border border-white/5 bg-[#151515] shadow-[0_18px_45px_rgba(0,0,0,0.28)];
   }
   .card-premium-hover {
-    @apply hover:-translate-y-1 hover:bg-surface-elevated hover:shadow-[0_22px_50px_rgba(0,0,0,0.42)] transition-all duration-300;
+    @apply hover:-translate-y-1 hover:bg-[#1a1a1a] hover:shadow-[0_22px_50px_rgba(0,0,0,0.42)] transition-all duration-300;
   }
   .card-premium-hover:hover {
     border-color: rgba(212, 175, 55, 0.4);
   }
   
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-gold-primary hover:bg-gold-secondary text-background px-6 py-3 rounded-full font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#F4D675] text-[#050505] px-6 py-3 rounded-full font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
   }
   
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 border border-white/10 hover:border-gold-primary/50 hover:bg-surface-elevated px-6 py-3 rounded-full font-medium transition-all duration-200 text-text;
+    @apply inline-flex items-center justify-center gap-2 border border-white/10 hover:border-[#D4AF37] hover:bg-[#1a1a1a] px-6 py-3 rounded-full font-medium transition-all duration-200 text-white;
   }
   
   .btn-icon {
-    @apply flex items-center justify-center w-11 h-11 rounded-full bg-surface border border-white/10 text-gold-primary hover:border-gold-primary/50 hover:bg-surface-elevated shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-gold-primary;
+    @apply flex items-center justify-center w-11 h-11 rounded-full bg-[#151515] border border-white/10 text-[#D4AF37] hover:border-[#D4AF37] hover:bg-[#1a1a1a] shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#D4AF37];
   }
-  .field-premium { @apply w-full rounded-xl border border-white/10 bg-background px-4 py-3 text-text placeholder:text-text-muted transition-colors focus:border-gold-primary; }
-  .eyebrow { @apply inline-flex items-center gap-2 rounded-full border border-gold-primary/20 bg-gold-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-gold-secondary; }
+  .field-premium { @apply w-full rounded-xl border border-white/10 bg-[#050505] px-4 py-3 text-white placeholder:text-[#888888] transition-colors focus:border-[#D4AF37]; }
+  .eyebrow { @apply inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#F4D675]; }
 }
 
 .container-custom {

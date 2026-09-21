@@ -89,7 +89,7 @@ const Calculators = () => {
   };
 
   return (
-    <section ref={containerRef} className="py-24 bg-background border-t border-white/5">
+    <section id="calculators" ref={containerRef} className="py-24 bg-background border-t border-white/5">
       <div className="container-custom">
         <div className="calc-header text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/5 bg-surface-elevated mb-6">

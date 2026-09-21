@@ -44,7 +44,7 @@ const FAQ = () => {
   };
 
   return (
-    <section ref={containerRef} className="py-24 bg-background">
+    <section id="faq" ref={containerRef} className="py-24 bg-background">
       <div className="container-custom max-w-4xl mx-auto">
         {/* AEO Schema Injection */}
         <script type="application/ld+json">

@@ -49,7 +49,7 @@ const CTA = () => {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-24 bg-background relative overflow-hidden">
+    <section id="contact" ref={containerRef} className="py-24 bg-background relative overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[300px] bg-gold-primary/20 blur-[100px] rounded-full pointer-events-none" />
       
       <div className="container-custom relative z-10">
