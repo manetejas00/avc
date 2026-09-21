@@ -4,7 +4,8 @@ import crypto from 'crypto';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { invalidateNewsCache } from './newsApi.js';
 
-const DEFAULT_FEEDS = ['https://saurav.tech/NewsAPI/top-headlines/category/business/in.json'];
+// Noozra is listed in public-apis/public-apis as a keyless HTTPS news API.
+const DEFAULT_FEEDS = ['https://noozra.com/api/articles?category=business'];
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const normaliseUrl = (value) => {
   try {
@@ -52,7 +53,7 @@ const configuredFeeds = () => {
   ].map(([key, category]) => ({ url: process.env[key]?.trim(), category })).filter(feed => feed.url);
   const generalFeeds = (process.env.NEWS_API_URLS || '').split(',').map(url => url.trim()).filter(Boolean).map(url => ({ url, category: '' }));
   const feeds = [...namedFeeds, ...generalFeeds];
-  return feeds.length ? [...new Map(feeds.map(feed => [feed.url, feed])).values()] : DEFAULT_FEEDS.map(url => ({ url, category: 'Markets' }));
+  return feeds.length ? [...new Map(feeds.map(feed => [feed.url, feed])).values()] : DEFAULT_FEEDS.map(url => ({ url, category: 'Finance' }));
 };
 const extractArticles = (payload) => Array.isArray(payload) ? payload : (payload?.articles || payload?.results || payload?.data?.articles || payload?.data || []);
 
@@ -61,7 +62,7 @@ export const syncNews = async (db) => {
   try {
     const feeds = configuredFeeds();
     const results = await Promise.allSettled(feeds.map(feed => axios.get(feed.url, { timeout: 15000 })));
-    const articles = results.flatMap((result, index) => result.status === 'fulfilled' ? extractArticles(result.value.data).map(article => ({ ...article, feedCategory: feeds[index].category, description: article.description || article.summary || '' })) : []);
+    const articles = results.flatMap((result, index) => result.status === 'fulfilled' ? extractArticles(result.value.data).map(article => ({ ...article, feedCategory: feeds[index].category, title: article.title || article.headline || '', description: article.description || article.summary || article.excerpt || '' })) : []);
     metrics.fetched = articles.length;
     metrics.failed += results.filter(result => result.status === 'rejected').length;
     const insert = db.prepare(`INSERT OR IGNORE INTO news (original_title, title, summary, category, tags, source, source_url, image_url, published_at, url_hash, title_hash, image_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);

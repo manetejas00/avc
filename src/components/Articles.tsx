@@ -14,12 +14,6 @@ interface Article {
   takeaways?: string[];
 }
 
-const fallbackArticles: Article[] = [
-  { category: 'Guides', title: 'Understanding SIPs', subtitle: 'How small, regular investments create big wealth over time.', link: '#', image: '/assets/news/guides/sip-guide.png', date: 'Investment basics', details: 'A Systematic Investment Plan (SIP) invests a fixed amount at regular intervals instead of attempting to predict the best day to invest. It can make investing more manageable by turning a long-term goal into a consistent monthly habit.\n\nBecause markets move up and down, regular investing may purchase more units when prices are lower and fewer when prices are higher. This does not remove market risk or guarantee returns, but it can reduce the pressure of trying to time every investment decision.\n\nThe amount, fund selection, investment horizon, and risk level should be based on your personal goals and reviewed periodically.', takeaways: ['Build a regular investing habit that fits your cash flow.', 'Choose funds and time horizons that match your goals.', 'Review your plan periodically instead of reacting to short-term moves.'] },
-  { category: 'Guides', title: 'The Power of Compounding', subtitle: 'Why starting early matters in mutual funds.', link: '#', image: '/assets/news/guides/compounding-guide.png', date: 'Long-term investing', details: 'Compounding is the process through which investment returns may themselves begin to generate further returns over time. The length of time invested can therefore be as important as the amount invested.\n\nStarting earlier gives a portfolio more time to experience potential growth and recover from normal market fluctuations. Consistent contributions can be helpful because they keep the plan moving even when conditions are uncertain.\n\nCompounding is not guaranteed and every investment carries risk. Diversification, a suitable asset mix, and a long-term perspective remain essential.', takeaways: ['Time in the market can matter more than trying to predict it.', 'Regular contributions help keep long-term plans consistent.', 'Diversification and risk suitability still matter.'] },
-  { category: 'Guides', title: 'Navigating Volatility', subtitle: 'A guide to reviewing your investment plan during uncertain markets.', link: '#', image: '/assets/news/guides/volatility-guide.png', date: 'Market perspective', details: 'Market volatility is a normal feature of investing. Prices may move sharply because of economic releases, corporate results, interest-rate expectations, or global events, even when a long-term investment plan has not changed.\n\nBefore acting on a short-term movement, revisit the reasons you invested: your goal, timeframe, liquidity needs, and tolerance for risk. A portfolio that was suitable when markets were calm should still be reviewed against those same factors when markets are unsettled.\n\nIf your circumstances or goals have changed, consider discussing the next step with a qualified adviser rather than making a rushed decision.', takeaways: ['Short-term price moves are not always a reason to change a plan.', 'Check your goals, time horizon, and liquidity needs first.', 'Seek professional guidance before making major changes.'] }
-];
-
 const Articles = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -35,7 +29,11 @@ const Articles = () => {
         
         const data = await res.json();
         
-        if (!data.articles?.length) throw new Error('No items in news feed');
+        if (!data.articles?.length) {
+          setArticles([]);
+          setLoading(false);
+          return;
+        }
         
         // Clean up descriptions if needed
         const parsedArticles = data.articles.map((item: any) => {
@@ -57,7 +55,7 @@ const Articles = () => {
         setArticles(parsedArticles);
         setLoading(false);
       } catch (err) {
-        setArticles(fallbackArticles);
+        setArticles([]);
         setLoading(false);
       }
     };
@@ -107,7 +105,7 @@ const Articles = () => {
                  </div>
                </div>
              ))
-          ) : (
+          ) : articles.length ? (
             (showAll ? articles : articles.slice(0, 3)).map((article, idx) => (
               <button key={idx} type="button" onClick={() => setSelectedArticle(article)} className="article-card group block w-full rounded-card overflow-hidden bg-background border border-white/5 hover:border-gold-primary/50 transition-colors text-left">
                 <div className={`w-full aspect-[4/3] ${!article.image ? 'bg-surface-elevated' : ''} relative overflow-hidden flex items-center justify-center`}>
@@ -141,6 +139,8 @@ const Articles = () => {
                 </div>
               </button>
             ))
+          ) : (
+            <div className="col-span-full rounded-card border border-white/10 bg-background p-10 text-center"><p className="text-lg font-semibold text-text">No financial news is available right now.</p><p className="mt-2 text-sm text-text-muted">Please check back shortly for the latest business and market headlines.</p></div>
           )}
         </div>
       </div>
