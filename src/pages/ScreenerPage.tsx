@@ -75,7 +75,7 @@ export default function ScreenerPage() {
         <div className="mx-auto mb-10 max-w-3xl text-center">
           <p className="eyebrow mb-4">Live market intelligence</p>
           <h1 className="text-4xl font-bold md:text-6xl">Market <span className="text-gold-primary">Screener</span></h1>
-          <p className="mt-5 text-text-muted md:text-lg">Explore live Indian market data, sort stocks, and apply filters directly in the screener.</p>
+          <p className="mt-5 text-text-muted md:text-lg">Explore NSE and BSE listed Indian stocks, sort results, and apply filters directly in the screener.</p>
         </div>
         <form onSubmit={searchStock} className="relative mx-auto mb-8 flex max-w-2xl gap-3 rounded-2xl border border-white/10 bg-surface p-2 shadow-lg">
           <label htmlFor="stock-search" className="sr-only">Search stocks</label>
@@ -98,10 +98,14 @@ export default function ScreenerPage() {
             </div>
           )}
         </form>
-        <section className="overflow-hidden rounded-card border border-white/10 bg-surface p-2 shadow-xl md:p-4" aria-label="Live Indian stock screener">
+        <div className="mx-auto mb-3 flex max-w-5xl items-center justify-between gap-3 text-xs text-text-muted">
+          <span>Indian stock universe</span>
+          <span className="rounded-full border border-gold-primary/40 bg-gold-primary/10 px-3 py-1 font-semibold text-gold-primary">NSE &amp; BSE listed stocks only</span>
+        </div>
+        <section className="overflow-hidden rounded-card border border-white/10 bg-surface p-2 shadow-xl md:p-4" aria-label="Live NSE and BSE stock screener">
           <div ref={widgetRef} className="tradingview-widget-container min-h-[720px]" />
         </section>
-        <p className="mx-auto mt-5 max-w-4xl text-center text-xs leading-5 text-text-muted">Live data is supplied by TradingView and may be delayed. It is for informational purposes only and is not investment advice.</p>
+        <p className="mx-auto mt-5 max-w-4xl text-center text-xs leading-5 text-text-muted">The screener is set to the India market (NSE and BSE listings). Live data is supplied by TradingView and may be delayed. It is for informational purposes only and is not investment advice.</p>
       </main>
       <Footer />
     </div>
