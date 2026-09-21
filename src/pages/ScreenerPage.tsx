@@ -1,10 +1,13 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { CompanyDetailsContent } from './CompanyDetailsPage';
 
 export default function ScreenerPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const companyTicker = searchParams.get('company');
   const widgetRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
 
@@ -12,7 +15,7 @@ export default function ScreenerPage() {
     event.preventDefault();
     const term = query.trim();
     if (!term) return;
-    navigate(`/company/${encodeURIComponent(term.toUpperCase())}`);
+    navigate(`/screener?company=${encodeURIComponent(term.toUpperCase())}`);
   };
 
   useEffect(() => {
@@ -39,6 +42,8 @@ export default function ScreenerPage() {
 
     return () => { container.replaceChildren(); };
   }, []);
+
+  if (companyTicker) return <CompanyDetailsContent ticker={companyTicker} />;
 
   return (
     <div className="min-h-screen bg-background pt-24 font-sans text-text">

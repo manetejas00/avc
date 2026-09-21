@@ -33,8 +33,7 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
   return <div ref={containerRef} className="tradingview-widget-container" />;
 }
 
-export default function CompanyDetailsPage() {
-  const { ticker = '' } = useParams();
+export function CompanyDetailsContent({ ticker = '' }: { ticker?: string }) {
   const cleanTicker = ticker.replace(/[^a-z0-9._-]/gi, '').toUpperCase();
   const symbol = `NSE:${cleanTicker || 'RELIANCE'}`;
 
@@ -64,4 +63,9 @@ export default function CompanyDetailsPage() {
       <Footer />
     </div>
   );
+}
+
+export default function CompanyDetailsPage() {
+  const { ticker = '' } = useParams();
+  return <CompanyDetailsContent ticker={ticker} />;
 }
