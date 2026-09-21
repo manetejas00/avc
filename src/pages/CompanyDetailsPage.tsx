@@ -33,9 +33,10 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
   return <div ref={containerRef} className="tradingview-widget-container" />;
 }
 
-export function CompanyDetailsContent({ ticker = '' }: { ticker?: string }) {
+export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticker?: string; exchange?: 'NSE' | 'BSE' }) {
   const cleanTicker = ticker.replace(/[^a-z0-9._-]/gi, '').toUpperCase();
-  const symbol = `BSE:${cleanTicker || 'RELIANCE'}`;
+  const safeExchange = exchange === 'NSE' ? 'NSE' : 'BSE';
+  const symbol = `${safeExchange}:${cleanTicker || 'RELIANCE'}`;
 
   return (
     <div className="min-h-screen bg-background pt-24 font-sans text-text">

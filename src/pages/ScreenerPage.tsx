@@ -4,7 +4,9 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { CompanyDetailsContent } from './CompanyDetailsPage';
 
-const companies = [
+type Company = { ticker: string; name: string; exchange: 'NSE' | 'BSE' };
+
+const fallbackCompanies: Company[] = [
   ['RELIANCE', 'Reliance Industries Limited'], ['TCS', 'Tata Consultancy Services Limited'], ['TATASTEEL', 'Tata Steel Limited'],
   ['TATAMOTORS', 'Tata Motors Limited'], ['TATAPOWER', 'Tata Power Company Limited'], ['TATACONSUM', 'Tata Consumer Products Limited'],
   ['TATACAP', 'Tata Capital Limited'], ['TATATECH', 'Tata Technologies Limited'], ['TITAN', 'Titan Company Limited'],
@@ -14,31 +16,76 @@ const companies = [
   ['ITC', 'ITC Limited'], ['HINDUNILVR', 'Hindustan Unilever Limited'], ['MARUTI', 'Maruti Suzuki India Limited'],
   ['SUNPHARMA', 'Sun Pharmaceutical Industries Limited'], ['BAJFINANCE', 'Bajaj Finance Limited'], ['ADANIENT', 'Adani Enterprises Limited'],
   ['ADANIPORTS', 'Adani Ports & Special Economic Zone Limited'], ['AXISBANK', 'Axis Bank Limited'], ['KOTAKBANK', 'Kotak Mahindra Bank Limited']
-] as const;
+].map(([ticker, name]) => ({ ticker, name, exchange: 'NSE' as const }));
 
 export default function ScreenerPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const companyTicker = searchParams.get('company');
+  const selectedExchange = searchParams.get('exchange') === 'NSE' ? 'NSE' : 'BSE';
   const widgetRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [companies, setCompanies] = useState<Company[]>(fallbackCompanies);
+  const [directoryLoading, setDirectoryLoading] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadCompanyDirectory = async () => {
+      try {
+        const response = await fetch('https://scanner.tradingview.com/india/scan', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify({
+            filter: [
+              { left: 'type', operation: 'equal', right: 'stock' },
+              { left: 'exchange', operation: 'in_range', right: ['NSE', 'BSE'] }
+            ],
+            options: { lang: 'en' },
+            symbols: { query: { types: [] }, tickers: [] },
+            columns: ['name', 'description', 'exchange'],
+            sort: { sortBy: 'name', sortOrder: 'asc' },
+            range: [0, 6000]
+          })
+        });
+        if (!response.ok) throw new Error('Company directory unavailable');
+        const result = await response.json() as { data?: Array<{ s?: string; d?: unknown[] }> };
+        const listedCompanies = (result.data ?? []).map((row) => {
+          const [ticker, name, exchange] = row.d ?? [];
+          const resolvedExchange = exchange === 'NSE' || exchange === 'BSE' ? exchange : row.s?.split(':')[0];
+          return typeof ticker === 'string' && typeof name === 'string' && (resolvedExchange === 'NSE' || resolvedExchange === 'BSE')
+            ? { ticker, name, exchange: resolvedExchange }
+            : null;
+        }).filter((company): company is Company => company !== null);
+        if (listedCompanies.length) setCompanies(listedCompanies);
+      } catch (error) {
+        if (!controller.signal.aborted) console.warn('Could not load the full NSE/BSE directory.', error);
+      } finally {
+        if (!controller.signal.aborted) setDirectoryLoading(false);
+      }
+    };
+
+    loadCompanyDirectory();
+    return () => controller.abort();
+  }, []);
 
   const searchStock = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const term = query.trim();
     if (!term) return;
-    const match = companies.find(([ticker, name]) => ticker.toLowerCase() === term.toLowerCase() || name.toLowerCase() === term.toLowerCase());
-    if (match) navigate(`/screener?company=${encodeURIComponent(match[0])}`);
+    const match = companies.find((company) => company.ticker.toLowerCase() === term.toLowerCase() || company.name.toLowerCase() === term.toLowerCase());
+    if (match) navigate(`/screener?company=${encodeURIComponent(match.ticker)}&exchange=${match.exchange}`);
     else setShowSuggestions(true);
   };
 
-  const suggestions = query.trim().length < 1 ? [] : companies.filter(([ticker, name]) => `${ticker} ${name}`.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 8);
+  const suggestions = query.trim().length < 1 ? [] : companies.filter((company) => `${company.ticker} ${company.name}`.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 12);
 
-  const selectCompany = (ticker: string, name: string) => {
-    setQuery(name);
+  const selectCompany = (company: Company) => {
+    setQuery(company.name);
     setShowSuggestions(false);
-    navigate(`/screener?company=${encodeURIComponent(ticker)}`);
+    navigate(`/screener?company=${encodeURIComponent(company.ticker)}&exchange=${company.exchange}`);
   };
 
   useEffect(() => {
@@ -66,7 +113,7 @@ export default function ScreenerPage() {
     return () => { container.replaceChildren(); };
   }, []);
 
-  if (companyTicker) return <CompanyDetailsContent ticker={companyTicker} />;
+  if (companyTicker) return <CompanyDetailsContent ticker={companyTicker} exchange={selectedExchange} />;
 
   return (
     <div className="min-h-screen bg-background pt-24 font-sans text-text">
@@ -90,11 +137,11 @@ export default function ScreenerPage() {
           <button type="submit" className="btn-primary shrink-0 !px-5 !py-3" disabled={!query.trim()}>Search</button>
           {showSuggestions && query.trim() && (
             <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#151515] text-left shadow-2xl">
-              {suggestions.length > 0 ? suggestions.map(([ticker, name]) => (
-                <button key={ticker} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => selectCompany(ticker, name)} className="flex w-full items-center justify-between gap-4 border-b border-white/5 px-4 py-3 transition hover:bg-white/5 last:border-0">
-                  <span className="min-w-0 truncate text-sm font-medium text-text">{name}</span><span className="shrink-0 text-xs font-semibold text-gold-primary">{ticker}</span>
+              {suggestions.length > 0 ? suggestions.map((company) => (
+                <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => selectCompany(company)} className="flex w-full items-center justify-between gap-4 border-b border-white/5 px-4 py-3 transition hover:bg-white/5 last:border-0">
+                  <span className="min-w-0 truncate text-sm font-medium text-text">{company.name}</span><span className="shrink-0 text-xs font-semibold text-gold-primary">{company.ticker} · {company.exchange}</span>
                 </button>
-              )) : <p className="px-4 py-3 text-sm text-text-muted">No matching company found. Try a ticker such as TCS or RELIANCE.</p>}
+              )) : <p className="px-4 py-3 text-sm text-text-muted">{directoryLoading ? 'Loading the NSE and BSE company directory…' : 'No NSE or BSE company found. Try a ticker such as TCS or RELIANCE.'}</p>}
             </div>
           )}
         </form>
