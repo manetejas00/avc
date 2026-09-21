@@ -1,9 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export default function ScreenerPage() {
   const widgetRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState('');
+
+  const searchStock = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const term = query.trim();
+    if (!term) return;
+    window.open(`https://in.tradingview.com/search/?query=${encodeURIComponent(term)}`, '_blank', 'noopener,noreferrer');
+  };
 
   useEffect(() => {
     const container = widgetRef.current;
@@ -39,6 +47,17 @@ export default function ScreenerPage() {
           <h1 className="text-4xl font-bold md:text-6xl">Market <span className="text-gold-primary">Screener</span></h1>
           <p className="mt-5 text-text-muted md:text-lg">Explore live Indian market data, sort stocks, and apply filters directly in the screener.</p>
         </div>
+        <form onSubmit={searchStock} className="mx-auto mb-8 flex max-w-2xl gap-3 rounded-2xl border border-white/10 bg-surface p-2 shadow-lg">
+          <label htmlFor="stock-search" className="sr-only">Search stocks</label>
+          <input
+            id="stock-search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search a company or ticker, e.g. Reliance or TCS"
+            className="min-w-0 flex-1 rounded-xl bg-transparent px-4 py-3 text-text outline-none placeholder:text-text-muted focus:ring-1 focus:ring-gold-primary"
+          />
+          <button type="submit" className="btn-primary shrink-0 !px-5 !py-3" disabled={!query.trim()}>Search</button>
+        </form>
         <section className="overflow-hidden rounded-card border border-white/10 bg-surface p-2 shadow-xl md:p-4" aria-label="Live Indian stock screener">
           <div ref={widgetRef} className="tradingview-widget-container min-h-[720px]" />
         </section>
