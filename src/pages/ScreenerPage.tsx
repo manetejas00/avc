@@ -47,7 +47,9 @@ export default function ScreenerPage() {
             symbols: { query: { types: [] }, tickers: [] },
             columns: ['name', 'description', 'exchange'],
             sort: { sortBy: 'name', sortOrder: 'asc' },
-            range: [0, 6000]
+            // India currently has more than 6,000 NSE/BSE records. Fetch the
+            // complete directory so companies later in alphabetical order are searchable too.
+            range: [0, 10000]
           })
         });
         if (!response.ok) throw new Error('Company directory unavailable');
