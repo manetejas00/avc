@@ -1,8 +1,13 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteRule ^index\.html$ - [L]
+  # Hostinger's Git deployment publishes the repository root. Serve the Vite
+  # production build and map its root-relative asset requests into dist/.
+  RewriteRule ^$ dist/index.html [L]
+  RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
+  RewriteRule ^(logo_[^/]+\.svg|logo\.jpg|robots\.txt|sitemap\.xml|preview\.html)$ dist/$1 [L]
+  RewriteRule ^index\.html$ dist/index.html [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule . dist/index.html [L]
 </IfModule>
