@@ -1,8 +1,10 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export default function ScreenerPage() {
+  const navigate = useNavigate();
   const widgetRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
 
@@ -10,7 +12,7 @@ export default function ScreenerPage() {
     event.preventDefault();
     const term = query.trim();
     if (!term) return;
-    window.open(`https://in.tradingview.com/search/?query=${encodeURIComponent(term)}`, '_blank', 'noopener,noreferrer');
+    navigate(`/company/${encodeURIComponent(term.toUpperCase())}`);
   };
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function ScreenerPage() {
             id="stock-search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search a company or ticker, e.g. Reliance or TCS"
+            placeholder="Enter an NSE ticker to view company details, e.g. TCS"
             className="min-w-0 flex-1 rounded-xl bg-transparent px-4 py-3 text-text outline-none placeholder:text-text-muted focus:ring-1 focus:ring-gold-primary"
           />
           <button type="submit" className="btn-primary shrink-0 !px-5 !py-3" disabled={!query.trim()}>Search</button>
