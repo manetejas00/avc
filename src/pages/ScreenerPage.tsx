@@ -17,7 +17,7 @@ export default function ScreenerPage() {
   useEffect(() => {
     const controller = new AbortController();
     fetch('https://scanner.tradingview.com/india/scan', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
+      method: 'POST', signal: controller.signal,
       body: JSON.stringify({
         filter: [{ left: 'type', operation: 'in_range', right: ['stock'] }, { left: 'subtype', operation: 'in_range', right: ['common'] }],
         options: { lang: 'en' }, symbols: { query: { types: [] }, tickers: [] },
