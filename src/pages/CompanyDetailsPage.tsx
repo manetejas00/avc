@@ -35,7 +35,7 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
 
 export function CompanyDetailsContent({ ticker = '' }: { ticker?: string }) {
   const cleanTicker = ticker.replace(/[^a-z0-9._-]/gi, '').toUpperCase();
-  const symbol = `NSE:${cleanTicker || 'RELIANCE'}`;
+  const symbol = `BSE:${cleanTicker || 'RELIANCE'}`;
 
   return (
     <div className="min-h-screen bg-background pt-24 font-sans text-text">
@@ -45,7 +45,7 @@ export function CompanyDetailsContent({ ticker = '' }: { ticker?: string }) {
         <div className="mb-8">
           <p className="eyebrow mb-3">Company research</p>
           <h1 className="text-3xl font-bold md:text-5xl">{cleanTicker || 'RELIANCE'} <span className="text-gold-primary">Company Details</span></h1>
-          <p className="mt-4 max-w-3xl text-text-muted">Price activity, key market statistics, charts, financial statements, earnings and valuation information for this NSE-listed company.</p>
+          <p className="mt-4 max-w-3xl text-text-muted">Price activity, key market statistics, charts, financial statements, earnings and valuation information for this BSE-listed company.</p>
         </div>
         <section className="mb-6 overflow-hidden rounded-card border border-white/10 bg-surface p-3 shadow-xl md:p-4" aria-label="Company market summary">
           <TradingViewWidget name="symbol-info" symbol={symbol} height={180} />
