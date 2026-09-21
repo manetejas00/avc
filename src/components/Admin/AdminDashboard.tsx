@@ -92,7 +92,7 @@ const AdminDashboard = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'completed': return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-medium"><CheckCircle className="w-3 h-3" /> Completed</span>;
+      case 'completed': return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-primary-500/10 text-gold-primary text-xs font-medium"><CheckCircle className="w-3 h-3" /> Completed</span>;
       case 'rejected': return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-medium"><XCircle className="w-3 h-3" /> Rejected</span>;
       default: return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-medium"><Clock className="w-3 h-3" /> Pending</span>;
     }
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-surface border-b border-border sticky top-0 z-40">
+      <header className="bg-surface border-b border-white/5 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <h1 className="text-xl font-bold text-text">AVC Admin Panel</h1>
@@ -120,16 +120,16 @@ const AdminDashboard = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Tabs */}
-        <div className="flex space-x-4 mb-8 border-b border-border">
+        <div className="flex space-x-4 mb-8 border-b border-white/5">
           <button
             onClick={() => setActiveTab('submissions')}
-            className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 ${activeTab === 'submissions' ? 'border-primary text-primary' : 'border-transparent text-text-muted hover:text-text'}`}
+            className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 ${activeTab === 'submissions' ? 'border-gold-primary text-gold-primary' : 'border-transparent text-text-muted hover:text-text'}`}
           >
             Consultation Requests
           </button>
           <button
             onClick={() => setActiveTab('api')}
-            className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 flex items-center ${activeTab === 'api' ? 'border-primary text-primary' : 'border-transparent text-text-muted hover:text-text'}`}
+            className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 flex items-center ${activeTab === 'api' ? 'border-gold-primary text-gold-primary' : 'border-transparent text-text-muted hover:text-text'}`}
           >
             <Database className="w-4 h-4 mr-2" />
             API Status
@@ -151,17 +151,17 @@ const AdminDashboard = () => {
               <input 
                 type="text" 
                 placeholder="Search..." 
-                className="w-full pl-9 pr-4 py-2 bg-surface border border-border rounded-lg text-text text-sm focus:outline-none focus:border-primary"
+                className="w-full pl-9 pr-4 py-2 bg-surface border border-white/5 rounded-lg text-text text-sm focus:outline-none focus:border-gold-primary"
               />
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-surface border border-white/5 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-background/50 text-text-muted border-b border-border">
+              <thead className="bg-background/50 text-text-muted border-b border-white/5">
                 <tr>
                   <th className="px-6 py-4 font-medium">Name</th>
                   <th className="px-6 py-4 font-medium">Contact</th>
@@ -192,7 +192,7 @@ const AdminDashboard = () => {
                         <div className="text-text-muted text-xs mt-1">{sub.phone}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                        <span className="inline-flex px-2.5 py-1 rounded-md bg-gold-primary/10 text-gold-primary text-xs font-medium">
                           {sub.interest || 'Consultation'}
                         </span>
                       </td>
@@ -206,7 +206,7 @@ const AdminDashboard = () => {
                         <select 
                           value={sub.status}
                           onChange={(e) => updateStatus(sub.id, e.target.value)}
-                          className="text-xs bg-background border border-border rounded px-2 py-1 focus:outline-none text-text ml-auto"
+                          className="text-xs bg-background border border-white/5 rounded px-2 py-1 focus:outline-none text-text ml-auto"
                         >
                           <option value="pending">Pending</option>
                           <option value="completed">Completed</option>
@@ -232,16 +232,16 @@ const AdminDashboard = () => {
               </div>
               <button 
                 onClick={fetchApiLogs}
-                className="px-4 py-2 bg-surface border border-border rounded-lg text-sm font-medium hover:bg-surface-ii transition-colors"
+                className="px-4 py-2 bg-surface border border-white/5 rounded-lg text-sm font-medium hover:bg-surface-elevated transition-colors"
               >
                 Refresh Logs
               </button>
             </div>
 
-            <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-surface border border-white/5 rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-background/50 text-text-muted border-b border-border">
+                  <thead className="bg-background/50 text-text-muted border-b border-white/5">
                     <tr>
                       <th className="px-6 py-4 font-medium">Provider</th>
                       <th className="px-6 py-4 font-medium">Status</th>
@@ -264,7 +264,7 @@ const AdminDashboard = () => {
                           <td className="px-6 py-4 font-medium text-text">{log.provider}</td>
                           <td className="px-6 py-4">
                             {log.status === 'success' ? (
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-medium">Success</span>
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-primary-500/10 text-gold-primary text-xs font-medium">Success</span>
                             ) : (
                               <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-medium">Error</span>
                             )}

@@ -56,8 +56,8 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-      <div className="bg-surface border border-border w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gold-primary/80 backdrop-blur-sm">
+      <div className="bg-surface border border-white/5 w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden animate-in fade-in zoom-in duration-300">
         
         <button 
           onClick={onClose}
@@ -69,7 +69,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
         <div className="p-8">
           {status === 'success' ? (
             <div className="text-center py-12">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-6" />
+              <CheckCircle className="w-16 h-16 text-gold-primary mx-auto mb-6" />
               <h3 className="text-2xl font-semibold text-text mb-2">Thank You!</h3>
               <p className="text-text-muted">
                 Your request has been submitted successfully. Our team will contact you shortly.
@@ -95,7 +95,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -109,7 +109,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -121,7 +121,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
                       placeholder="+91 98765 43210"
                     />
                   </div>
@@ -133,7 +133,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                     name="interest"
                     value={formData.interest}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
                   >
                     <option value="Consultation">General Consultation</option>
                     <option value="Mutual Funds">Mutual Funds</option>
@@ -150,7 +150,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                     value={formData.message}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                    className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all resize-none"
                     placeholder="How can we help you?"
                   ></textarea>
                 </div>
@@ -158,7 +158,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                 <button
                   type="submit"
                   disabled={status === 'submitting'}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-gold-primary hover:bg-gold-secondary text-bg-primary shadow-[0_0_15px_rgba(212,175,55,0.3)] text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {status === 'submitting' ? (
                     <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>

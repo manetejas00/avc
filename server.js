@@ -8,6 +8,9 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { createMarketRouter } from './services/market.js';
+import { createCryptoRouter } from './services/crypto.js';
+import { createNewsRouter } from './services/newsApi.js';
+import { startNewsScheduler } from './services/newsScheduler.js';
 
 dotenv.config();
 
@@ -62,6 +65,27 @@ const initDB = () => {
       message TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS news (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      original_title TEXT NOT NULL,
+      title TEXT NOT NULL,
+      summary TEXT,
+      category TEXT NOT NULL DEFAULT 'Markets',
+      tags TEXT NOT NULL DEFAULT '[]',
+      source TEXT,
+      source_url TEXT NOT NULL,
+      image_url TEXT,
+      published_at DATETIME,
+      url_hash TEXT NOT NULL UNIQUE,
+      title_hash TEXT NOT NULL UNIQUE,
+      image_hash TEXT UNIQUE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_news_published_at ON news(published_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_news_category ON news(category);
   `);
 
   // Bootstrap Admin if environment variables are set and no admin exists
@@ -105,6 +129,8 @@ const authenticateAdmin = (req, res, next) => {
 
 // --- Public API ---
 app.use('/api/market', createMarketRouter(db));
+app.use('/api/crypto', createCryptoRouter(db));
+app.use('/api/news', createNewsRouter(db));
 
 app.post('/api/submit-form', (req, res) => {
   const { name, email, phone, interest, message } = req.body;
@@ -204,4 +230,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  startNewsScheduler(db);
 });

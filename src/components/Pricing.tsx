@@ -33,7 +33,7 @@ const Pricing = () => {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="py-24 bg-background border-t border-border/50">
+    <section ref={sectionRef} className="py-24 bg-background border-t border-white/5/50">
       <div className="container-custom">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-[52px] font-semibold mb-4">Pricing Plans</h2>
@@ -48,8 +48,8 @@ const Pricing = () => {
               key={index} 
               className={`pricing-card relative p-8 rounded-[32px] border flex flex-col h-full
                 ${plan.highlighted 
-                  ? 'pricing-highlight bg-surface border-primary shadow-[0_0_40px_rgba(255,102,26,0.1)] md:scale-105 z-10' 
-                  : 'bg-[#0a0a0a] border-border hover:border-primary/50 transition-colors'
+                  ? 'pricing-highlight bg-surface border-gold-primary shadow-[0_0_40px_rgba(255,102,26,0.1)] md:scale-105 z-10' 
+                  : 'bg-[#0a0a0a] border-white/5 hover:border-gold-primary/50 transition-colors'
                 }
               `}
             >
@@ -72,8 +72,8 @@ const Pricing = () => {
               <button 
                 className={`w-full py-4 rounded-full font-medium mb-8 transition-colors
                   ${plan.highlighted 
-                    ? 'bg-primary hover:bg-primary/90 text-white shadow-[0_0_20px_rgba(255,102,26,0.2)]' 
-                    : 'bg-surface-ii hover:bg-surface border border-border text-white'
+                    ? 'bg-gold-primary hover:bg-gold-secondary text-bg-primary shadow-[0_0_15px_rgba(212,175,55,0.3)] text-white shadow-[0_0_20px_rgba(255,102,26,0.2)]' 
+                    : 'bg-surface-elevated hover:bg-surface border border-white/5 text-white'
                   }
                 `}
               >
@@ -84,8 +84,8 @@ const Pricing = () => {
                 <p className="text-sm font-medium mb-4">What's included:</p>
                 {plan.features.map((feature, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="mt-0.5 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Check size={12} className="text-primary" />
+                    <div className="mt-0.5 w-5 h-5 rounded-full bg-gold-primary/10 flex items-center justify-center shrink-0">
+                      <Check size={12} className="text-gold-primary" />
                     </div>
                     <span className="text-sm text-text-muted">{feature}</span>
                   </div>

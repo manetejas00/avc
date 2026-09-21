@@ -37,10 +37,10 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-8 shadow-xl">
+      <div className="w-full max-w-md bg-surface border border-white/5 rounded-2xl p-8 shadow-xl">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Lock className="text-primary w-6 h-6" />
+          <div className="w-12 h-12 bg-gold-primary/10 rounded-full flex items-center justify-center mb-4">
+            <Lock className="text-gold-primary w-6 h-6" />
           </div>
           <h1 className="text-2xl font-bold text-text">Admin Login</h1>
           <p className="text-text-muted mt-2 text-center text-sm">Sign in to manage consultations and website settings</p>
@@ -73,7 +73,7 @@ const AdminLogin = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@gmail.com"
-              className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
             />
           </div>
           <div>
@@ -84,14 +84,14 @@ const AdminLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
             />
           </div>
           
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 mt-4"
+            className="w-full bg-gold-primary hover:bg-gold-secondary text-bg-primary shadow-[0_0_15px_rgba(212,175,55,0.3)] text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 mt-4"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
           </button>

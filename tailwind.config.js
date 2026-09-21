@@ -7,25 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#10b981", // Emerald green (BSE UP color) for trust and growth
-        "primary-hover": "#059669",
-        background: "#020617", // Slate 950 (deep premium dark blue)
-        surface: "#0f172a", // Slate 900
-        "surface-ii": "#1e293b", // Slate 800
+        primary: "rgb(212 175 55 / <alpha-value>)",
+        "primary-hover": "rgb(244 214 117 / <alpha-value>)",
+        
+        background: "rgb(5 5 5 / <alpha-value>)",
+        surface: "rgb(13 13 13 / <alpha-value>)",
+        "surface-elevated": "rgb(17 17 17 / <alpha-value>)",
+        
+        "gold-primary": "rgb(212 175 55 / <alpha-value>)",
+        "gold-secondary": "rgb(244 214 117 / <alpha-value>)",
+        "gold-muted": "rgb(184 150 46 / <alpha-value>)",
+        
+        "green-primary": "rgb(16 185 129 / <alpha-value>)",
+        "green-secondary": "rgb(5 150 105 / <alpha-value>)",
+        
         text: {
-          DEFAULT: "#f8fafc",
-          muted: "#94a3b8"
+          DEFAULT: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)"
         },
-        border: "#1e293b",
-        neutral: {
-          100: "#f1f1f1",
-          200: "#ebebef",
-          300: "#cacbd4",
-          600: "#3e404c",
-          700: "#24262d",
-        },
-        green: "#10b981",
-        gold: "#eab308",
+        border: "var(--border-subtle)",
       },
       fontFamily: {
         sans: ['Onest', 'sans-serif'],

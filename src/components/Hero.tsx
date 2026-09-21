@@ -52,19 +52,19 @@ const Hero = () => {
 
   return (
     <section ref={containerRef} className="pt-[140px] pb-32 overflow-x-clip relative">
-      <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80%] h-[600px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80%] h-[600px] bg-gold-primary/10 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="container-custom relative z-10">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
           
-          <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-surface mb-6">
-            <span className="w-2 h-2 rounded-full bg-primary" />
+          <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/5 bg-surface mb-6">
+            <span className="w-2 h-2 rounded-full bg-gold-primary" />
             <span className="text-sm font-medium text-text">SEBI Registered Sub Broker & Mutual Fund Distributor</span>
           </div>
           
           <h1 className="hero-title text-5xl md:text-[64px] leading-[1.1] font-semibold mb-6 tracking-tight text-text">
             Apna Paisa,<br />
-            <span className="text-primary">Sahi Disha.</span>
+            <span className="text-gold-primary">Sahi Disha.</span>
           </h1>
           
           <p className="hero-desc text-lg md:text-xl text-text-muted mb-10 max-w-3xl">
@@ -72,28 +72,26 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-wrap justify-center items-center gap-4 mb-16">
-            <button className="hero-btn bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-full font-medium transition-colors">
+            <button className="hero-btn btn-primary">
               Start Your SIP Today
             </button>
-            <button onClick={() => setIsModalOpen(true)} className="hero-btn group flex items-center gap-2 border border-border hover:bg-surface-ii px-8 py-3.5 rounded-full font-medium transition-colors relative overflow-hidden text-text">
+            <button onClick={() => setIsModalOpen(true)} className="hero-btn btn-secondary">
               <span className="relative z-10 flex items-center gap-2">
                 Book a Free Consultation
               </span>
-              <div className="absolute inset-0 bg-surface scale-y-0 group-hover:scale-y-100 origin-bottom transition-transform duration-300 ease-out" />
             </button>
-            <button className="hero-btn group flex items-center gap-2 border border-border hover:bg-surface-ii px-8 py-3.5 rounded-full font-medium transition-colors relative overflow-hidden text-text">
+            <button className="hero-btn btn-secondary">
               <span className="relative z-10 flex items-center gap-2">
-                <Play size={18} className="group-hover:scale-110 transition-transform text-primary" />
+                <Play size={18} className="group-hover:scale-110 transition-transform text-gold-primary" />
                 Track NSE/BSE Live
               </span>
-              <div className="absolute inset-0 bg-surface scale-y-0 group-hover:scale-y-100 origin-bottom transition-transform duration-300 ease-out" />
             </button>
           </div>
           
         </div>
         
-        <div className="hero-dashboard relative mx-auto w-full max-w-[1100px] mt-8 rounded-[32px] border border-[#D4AF37]/30 bg-[#0B0F10] p-4 sm:p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,55,0.15)] overflow-hidden">
-          <div className="relative rounded-2xl overflow-hidden mb-4 border border-[#D4AF37]/20 group">
+        <div className="hero-dashboard relative mx-auto w-full max-w-[1100px] mt-8 rounded-[32px] border border-gold-primary/30 bg-background p-4 sm:p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,55,0.15)] overflow-hidden">
+          <div className="relative rounded-2xl overflow-hidden mb-4 border border-gold-primary/20 group">
             <img
               src="/assets/hero/hero-indian-finance.webp"
               alt="Indian Stock Market & Mumbai Financial Data Visualization"
@@ -102,11 +100,11 @@ const Hero = () => {
               className="w-full h-48 sm:h-72 object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
               loading="eager"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F10] via-transparent to-transparent opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent opacity-80" />
             <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-4 flex items-center justify-between">
-              <div className="flex items-center gap-2 bg-[#0D1214]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#D4AF37]/30">
-                <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
-                <span className="text-xs font-semibold tracking-wider text-[#F5C542] uppercase">Live Market Intelligence</span>
+              <div className="flex items-center gap-2 bg-gold-primary/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-gold-primary/30">
+                <span className="w-2 h-2 rounded-full bg-gold-primary animate-pulse" />
+                <span className="text-xs font-semibold tracking-wider text-gold-secondary uppercase">Live Market Intelligence</span>
               </div>
               <span className="hidden sm:block text-xs text-gray-300 font-medium">BSE & NIFTY Realtime Data Engine</span>
             </div>

@@ -11,13 +11,13 @@ const MarketOverview = () => {
 
   useGSAP(() => {
     gsap.from('.market-title', {
-      y: 50, opacity: 0, duration: 1,
-      scrollTrigger: { trigger: containerRef.current, start: 'top 80%' }
+      y: 20, opacity: 0, duration: 1,
+      scrollTrigger: { trigger: containerRef.current, start: 'top 85%' }
     });
     
     gsap.from('.market-widget', {
-      y: 80, opacity: 0, duration: 1, delay: 0.2,
-      scrollTrigger: { trigger: containerRef.current, start: 'top 70%' }
+      y: 40, opacity: 0, duration: 1, delay: 0.2,
+      scrollTrigger: { trigger: containerRef.current, start: 'top 80%' }
     });
   }, { scope: containerRef });
 
@@ -190,7 +190,7 @@ const MarketOverview = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="py-24 bg-surface-ii overflow-hidden">
+    <section ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden">
       <div className="container-custom">
         <div className="market-title text-center mb-16">
           <h2 className="text-4xl md:text-[52px] font-semibold mb-4 text-text">Live Market Overview</h2>
@@ -199,7 +199,7 @@ const MarketOverview = () => {
           </p>
         </div>
         
-        <div className="market-widget w-full max-w-5xl mx-auto bg-surface border border-border rounded-card p-4 shadow-xl h-[640px]">
+        <div className="market-widget w-full max-w-5xl mx-auto bg-surface border border-white/5 rounded-card p-4 shadow-xl h-[640px]">
           <div className="tradingview-widget-container h-full w-full" ref={widgetContainerRef}>
             <div className="tradingview-widget-container__widget h-full w-full"></div>
           </div>

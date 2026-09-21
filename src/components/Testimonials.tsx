@@ -56,7 +56,7 @@ const Testimonials = () => {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-24 bg-surface-ii overflow-hidden">
+    <section ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden">
       <div className="container-custom">
         <div className="test-title text-center mb-16">
           <h2 className="text-4xl md:text-[52px] font-semibold mb-4">What Our Clients Say</h2>
@@ -71,9 +71,9 @@ const Testimonials = () => {
           {[...testimonials, ...testimonials, ...testimonials].map((testimonial, i) => (
             <div 
               key={i} 
-              className="w-[400px] shrink-0 bg-surface rounded-card p-8 border border-border flex flex-col gap-6 hover:border-primary/50 transition-colors"
+              className="w-[400px] shrink-0 bg-surface rounded-card p-8 border border-white/5 flex flex-col gap-6 hover:border-gold-primary/50 transition-colors"
             >
-              <div className="flex gap-1 text-primary">
+              <div className="flex gap-1 text-gold-primary">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} size={16} fill="currentColor" />
                 ))}
@@ -85,7 +85,7 @@ const Testimonials = () => {
                 <img 
                   src={testimonial.image} 
                   alt={testimonial.name} 
-                  className="w-12 h-12 rounded-full object-cover border border-border"
+                  className="w-12 h-12 rounded-full object-cover border border-white/5"
                   onError={(e) => {
                     e.currentTarget.src = `${import.meta.env.VITE_UI_AVATARS_API_URL}?name=${testimonial.name}&background=ff661a&color=fff`;
                   }}

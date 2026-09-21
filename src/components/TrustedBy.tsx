@@ -1,54 +1,82 @@
-import React, { useRef } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
+import React from 'react';
+
+const partnerLogos = [
+  { name: 'Motilal Oswal', src: '/assets/motilal_oswal.png' },
+  { name: 'SEBI Authorised', src: '/assets/sebi.png' },
+  { name: 'AMFI Registered', src: '/assets/amfi.png' },
+  { name: 'NSE', src: '/assets/nse.png' },
+  { name: 'BSE', src: '/assets/bse.png' },
+  { name: 'MCX', src: '/assets/mcx.png' },
+];
 
 const TrustedBy = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const marqueeRef = useRef<HTMLDivElement>(null);
-  const logos = [1, 2, 3, 4, 5, 6];
-  
-  useGSAP(() => {
-    // Initial reveal
-    gsap.from('.trusted-text', { opacity: 0, y: 20, duration: 1, delay: 0.5 });
-    
-    // GSAP Marquee
-    const q = gsap.utils.selector(marqueeRef);
-    const items = q('.logo-item');
-    
-    // Set up infinite scrolling
-    const tl = gsap.to(marqueeRef.current, {
-      xPercent: -50,
-      ease: "none",
-      duration: 20,
-      repeat: -1,
-    });
-
-    // Pause on hover
-    marqueeRef.current?.addEventListener('mouseenter', () => tl.pause());
-    marqueeRef.current?.addEventListener('mouseleave', () => tl.play());
-
-  }, { scope: containerRef });
-
   return (
-    <section id="about" ref={containerRef} className="py-12 border-y border-border/50 bg-surface overflow-hidden">
+    <section id="about" className="py-16 md:py-24 border-y border-white/5 bg-surface overflow-hidden">
       <div className="container-custom">
-        <p className="trusted-text text-center text-text-muted text-sm font-medium mb-8">
-          Trusted Financial Partner, Rooted in India. Backed by a network of 210+ Bank & NBFC Partners.
-        </p>
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+            Trusted Financial Partner, Rooted in India
+          </h2>
+          <p className="text-text-muted text-lg md:text-xl font-medium max-w-2xl mx-auto">
+            Backed by a network of <span className="text-gold-primary">210+ Bank & NBFC Partners</span>.
+          </p>
+        </div>
         
-        <div className="relative w-full flex overflow-hidden mask-horizontal">
-          <div ref={marqueeRef} className="flex gap-16 whitespace-nowrap items-center min-w-[200%]">
-            {/* First set */}
-            {['Motilal Oswal', 'SEBI Authorised', 'AMFI Registered', 'NSE', 'BSE', 'MCX', '210+ DSA Partners'].map((partner, i) => (
-               <div key={`logo-1-${i}`} className="logo-item text-xl font-bold text-text-muted/60 hover:text-primary transition-colors cursor-pointer shrink-0">{partner}</div>
-            ))}
-            {/* Duplicated set for seamless loop */}
-            {['Motilal Oswal', 'SEBI Authorised', 'AMFI Registered', 'NSE', 'BSE', 'MCX', '210+ DSA Partners'].map((partner, i) => (
-               <div key={`logo-2-${i}`} className="logo-item text-xl font-bold text-text-muted/60 hover:text-primary transition-colors cursor-pointer shrink-0">{partner}</div>
+        <div className="relative w-full flex overflow-hidden mask-horizontal marquee-container">
+          {/* Marquee Inner */}
+          <div className="flex gap-4 md:gap-6 items-center w-max animate-marquee pb-4 pt-2 hover:pause">
+            {[...partnerLogos, ...partnerLogos, ...partnerLogos, ...partnerLogos].map((logo, i) => (
+              <div 
+                key={`logo-${i}`} 
+                className="w-[140px] h-[70px] sm:w-[160px] sm:h-[80px] md:w-[200px] md:h-[90px] flex items-center justify-center bg-surface-elevated border border-white/5 rounded-2xl p-4 shrink-0 transition-colors duration-300 hover:border-white/20 hover:bg-surface group"
+                title={logo.name}
+              >
+                <span className="text-white/75 group-hover:text-gold-primary font-semibold text-sm sm:text-base md:text-lg text-center transition-colors duration-300">
+                  {logo.name}
+                </span>
+              </div>
             ))}
           </div>
         </div>
       </div>
+      
+      <style>{`
+        .mask-horizontal {
+          -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+          mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 40s linear infinite;
+        }
+        .animate-marquee.hover\\:pause:hover {
+          animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee {
+            animation: none;
+            transform: none;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            width: 100%;
+          }
+          .mask-horizontal {
+            -webkit-mask-image: none;
+            mask-image: none;
+          }
+          .marquee-container {
+            overflow: visible;
+          }
+          /* Hide duplicates in reduced motion mode */
+          .animate-marquee > div:nth-child(n+7) {
+            display: none;
+          }
+        }
+      `}</style>
     </section>
   );
 };

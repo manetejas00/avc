@@ -11,8 +11,8 @@ const CTA = () => {
   useGSAP(() => {
     // Reveal
     gsap.from('.cta-content > *', {
-      y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
-      scrollTrigger: { trigger: containerRef.current, start: 'top 75%' }
+      y: 15, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
+      scrollTrigger: { trigger: containerRef.current, start: 'top 80%' }
     });
 
     // Magnetic button effect on desktop
@@ -50,12 +50,12 @@ const CTA = () => {
 
   return (
     <section ref={containerRef} className="py-24 bg-background relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[300px] bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[300px] bg-gold-primary/20 blur-[100px] rounded-full pointer-events-none" />
       
       <div className="container-custom relative z-10">
-        <div className="cta-content bg-surface border border-border rounded-[48px] p-12 md:p-24 text-center max-w-5xl mx-auto relative overflow-hidden shadow-2xl">
+        <div className="cta-content bg-surface border border-white/5 rounded-[48px] p-12 md:p-24 text-center max-w-5xl mx-auto relative overflow-hidden shadow-2xl">
           
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-background mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/5 bg-background mb-8">
             <span className="w-2 h-2 rounded-full bg-primary" />
             <span className="text-sm font-medium text-text">Start Your Journey!</span>
           </div>
@@ -72,14 +72,14 @@ const CTA = () => {
             <button 
               ref={buttonRef} 
               onClick={() => setIsModalOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-medium transition-colors text-lg relative z-10"
+              className="btn-primary text-lg relative z-10"
             >
               Book a Free Consultation
             </button>
-            <button className="bg-surface-ii hover:bg-background border border-border text-text px-8 py-4 rounded-full font-medium transition-colors text-lg relative z-10">
+            <button className="btn-secondary text-lg relative z-10">
               WhatsApp Us
             </button>
-            <button className="bg-surface-ii hover:bg-background border border-border text-text px-8 py-4 rounded-full font-medium transition-colors text-lg relative z-10">
+            <button className="btn-secondary text-lg relative z-10">
               Call Now
             </button>
           </div>

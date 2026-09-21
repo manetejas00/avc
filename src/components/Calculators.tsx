@@ -22,13 +22,13 @@ const Calculators = () => {
 
   useGSAP(() => {
     gsap.fromTo('.calc-header > *', 
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, scrollTrigger: { trigger: containerRef.current, start: 'top 80%' } }
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, scrollTrigger: { trigger: containerRef.current, start: 'top 85%' } }
     );
     
     gsap.fromTo('.calc-box', 
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power3.out', scrollTrigger: { trigger: containerRef.current, start: 'top 70%' } }
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power3.out', scrollTrigger: { trigger: containerRef.current, start: 'top 80%' } }
     );
   }, { scope: containerRef });
 
@@ -89,12 +89,12 @@ const Calculators = () => {
   };
 
   return (
-    <section ref={containerRef} className="py-24 bg-background border-t border-border/50">
+    <section ref={containerRef} className="py-24 bg-background border-t border-white/5">
       <div className="container-custom">
         <div className="calc-header text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-surface mb-6">
-            <Calculator size={16} className="text-primary" />
-            <span className="text-sm font-medium">Smart Financial Tools</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/5 bg-surface-elevated mb-6">
+            <Calculator size={16} className="text-gold-primary" />
+            <span className="text-sm font-medium text-text">Smart Financial Tools</span>
           </div>
           <h2 className="text-4xl md:text-[52px] font-semibold mb-4 text-text">Financial Calculators</h2>
           <p className="text-text-muted text-lg max-w-2xl mx-auto">
@@ -102,18 +102,18 @@ const Calculators = () => {
           </p>
         </div>
 
-        <div className="calc-box max-w-5xl mx-auto bg-surface rounded-[32px] border border-border overflow-hidden shadow-2xl">
+        <div className="calc-box max-w-5xl mx-auto card-premium overflow-hidden">
           {/* Tabs */}
-          <div className="flex border-b border-border">
+          <div className="flex border-b border-white/5">
             <button 
               onClick={() => setActiveTab('sip')}
-              className={`flex-1 py-6 text-lg font-semibold transition-colors ${activeTab === 'sip' ? 'text-primary border-b-2 border-primary bg-surface-ii' : 'text-text-muted hover:text-text hover:bg-surface-ii'}`}
+              className={`flex-1 py-6 text-lg font-semibold transition-colors ${activeTab === 'sip' ? 'text-gold-primary border-b-2 border-gold-primary bg-surface-elevated' : 'text-text-muted hover:text-text hover:bg-surface-elevated'}`}
             >
               SIP Calculator
             </button>
             <button 
               onClick={() => setActiveTab('loan')}
-              className={`flex-1 py-6 text-lg font-semibold transition-colors ${activeTab === 'loan' ? 'text-primary border-b-2 border-primary bg-surface-ii' : 'text-text-muted hover:text-text hover:bg-surface-ii'}`}
+              className={`flex-1 py-6 text-lg font-semibold transition-colors ${activeTab === 'loan' ? 'text-gold-primary border-b-2 border-gold-primary bg-surface-elevated' : 'text-text-muted hover:text-text hover:bg-surface-elevated'}`}
             >
               Home Loan EMI
             </button>
@@ -130,34 +130,34 @@ const Calculators = () => {
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
                         <label className="text-text font-medium">Monthly Investment</label>
-                        <span className="text-primary font-bold text-xl">{formatCurrency(sipAmount)}</span>
+                        <span className="text-gold-primary font-bold text-xl">{formatCurrency(sipAmount)}</span>
                       </div>
                       <input 
                         type="range" min="500" max="100000" step="500"
                         value={sipAmount} onChange={(e) => setSipAmount(Number(e.target.value))}
-                        className="w-full accent-primary h-2 bg-surface-ii rounded-lg appearance-none cursor-pointer"
+                        className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
                         <label className="text-text font-medium">Expected Return Rate (p.a)</label>
-                        <span className="text-primary font-bold text-xl">{sipRate}%</span>
+                        <span className="text-gold-primary font-bold text-xl">{sipRate}%</span>
                       </div>
                       <input 
                         type="range" min="1" max="30" step="0.5"
                         value={sipRate} onChange={(e) => setSipRate(Number(e.target.value))}
-                        className="w-full accent-primary h-2 bg-surface-ii rounded-lg appearance-none cursor-pointer"
+                        className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
                         <label className="text-text font-medium">Time Period</label>
-                        <span className="text-primary font-bold text-xl">{sipYears} Years</span>
+                        <span className="text-gold-primary font-bold text-xl">{sipYears} Years</span>
                       </div>
                       <input 
                         type="range" min="1" max="40" step="1"
                         value={sipYears} onChange={(e) => setSipYears(Number(e.target.value))}
-                        className="w-full accent-primary h-2 bg-surface-ii rounded-lg appearance-none cursor-pointer"
+                        className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                   </>
@@ -166,34 +166,34 @@ const Calculators = () => {
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
                         <label className="text-text font-medium">Loan Amount</label>
-                        <span className="text-primary font-bold text-xl">{formatCurrency(loanAmount)}</span>
+                        <span className="text-gold-primary font-bold text-xl">{formatCurrency(loanAmount)}</span>
                       </div>
                       <input 
                         type="range" min="100000" max="20000000" step="100000"
                         value={loanAmount} onChange={(e) => setLoanAmount(Number(e.target.value))}
-                        className="w-full accent-primary h-2 bg-surface-ii rounded-lg appearance-none cursor-pointer"
+                        className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
                         <label className="text-text font-medium">Interest Rate (p.a)</label>
-                        <span className="text-primary font-bold text-xl">{loanRate}%</span>
+                        <span className="text-gold-primary font-bold text-xl">{loanRate}%</span>
                       </div>
                       <input 
                         type="range" min="5" max="15" step="0.1"
                         value={loanRate} onChange={(e) => setLoanRate(Number(e.target.value))}
-                        className="w-full accent-primary h-2 bg-surface-ii rounded-lg appearance-none cursor-pointer"
+                        className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
                         <label className="text-text font-medium">Loan Tenure</label>
-                        <span className="text-primary font-bold text-xl">{loanYears} Years</span>
+                        <span className="text-gold-primary font-bold text-xl">{loanYears} Years</span>
                       </div>
                       <input 
                         type="range" min="1" max="30" step="1"
                         value={loanYears} onChange={(e) => setLoanYears(Number(e.target.value))}
-                        className="w-full accent-primary h-2 bg-surface-ii rounded-lg appearance-none cursor-pointer"
+                        className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                   </>
@@ -201,7 +201,7 @@ const Calculators = () => {
               </div>
 
               {/* Results */}
-              <div className="bg-background rounded-3xl p-8 border border-border">
+              <div className="bg-background rounded-3xl p-8 border border-white/5">
                 {activeTab === 'sip' ? (
                   <div className="space-y-8">
                     <div>
@@ -210,11 +210,11 @@ const Calculators = () => {
                     </div>
                     <div>
                       <p className="text-text-muted mb-1">Est. Returns</p>
-                      <p className="text-2xl font-semibold text-green-500">{formatCurrency(sipResult.wealthGained)}</p>
+                      <p className="text-2xl font-semibold text-gold-primary">{formatCurrency(sipResult.wealthGained)}</p>
                     </div>
-                    <div className="pt-6 border-t border-border">
+                    <div className="pt-6 border-t border-white/5">
                       <p className="text-text-muted mb-2 font-medium">Total Value</p>
-                      <p className="text-4xl font-bold text-primary">{formatCurrency(sipResult.totalValue)}</p>
+                      <p className="text-4xl font-bold text-gold-primary">{formatCurrency(sipResult.totalValue)}</p>
                     </div>
                   </div>
                 ) : (
@@ -227,14 +227,14 @@ const Calculators = () => {
                       <p className="text-text-muted mb-1">Total Interest</p>
                       <p className="text-2xl font-semibold text-red-500">{formatCurrency(loanResult.totalInterest)}</p>
                     </div>
-                    <div className="pt-6 border-t border-border">
+                    <div className="pt-6 border-t border-white/5">
                       <p className="text-text-muted mb-2 font-medium">Monthly EMI</p>
-                      <p className="text-4xl font-bold text-primary">{formatCurrency(loanResult.emi)}</p>
+                      <p className="text-4xl font-bold text-gold-primary">{formatCurrency(loanResult.emi)}</p>
                     </div>
                   </div>
                 )}
                 
-                <button className="w-full mt-8 bg-primary hover:bg-primary/90 text-white py-4 rounded-full font-medium transition-colors">
+                <button className="w-full mt-8 btn-primary">
                   {activeTab === 'sip' ? 'Start Investing Now' : 'Apply for Loan'}
                 </button>
               </div>

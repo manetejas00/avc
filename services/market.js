@@ -1,6 +1,8 @@
 import express from 'express';
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
 import axios from 'axios';
+
+const yahooFinance = new YahooFinance();
 
 export const createMarketRouter = (db) => {
   const router = express.Router();
@@ -116,6 +118,106 @@ export const createMarketRouter = (db) => {
     } catch (error) {
       logApiSync('mfapi', 'error', error.message);
       res.status(500).json({ error: 'Failed to fetch mutual fund details' });
+    }
+  });
+
+  // 4. Stock Search
+  router.get('/search', async (req, res) => {
+    const { q } = req.query;
+    if (!q) return res.json([]);
+
+    const cacheKey = `stock_search_${q.toLowerCase()}`;
+    const cached = getCachedData(cacheKey);
+    if (cached) return res.json(cached);
+
+    try {
+      const results = await yahooFinance.search(q, { newsCount: 0 });
+      const filtered = results.quotes.filter(q => q.isYahooFinance);
+      
+      setCachedData(cacheKey, filtered, 60 * 60); // 1 hour cache
+      logApiSync('yahoo_finance', 'success', `Searched stocks for ${q}`);
+      res.json(filtered);
+    } catch (error) {
+      logApiSync('yahoo_finance', 'error', error.message);
+      res.status(500).json({ error: 'Failed to search stocks' });
+    }
+  });
+
+  // 6. Top Indian Stocks (Nifty 50/BSE) for Screener
+  router.get('/screener/stocks', async (req, res) => {
+    const cacheKey = 'screener_top_stocks';
+    const cached = getCachedData(cacheKey);
+    if (cached) return res.json(cached);
+
+    try {
+      // Top NIFTY 50 + prominent stocks as base
+      const symbols = [
+        'RELIANCE.NS', 'TCS.NS', 'HDFCBANK.NS', 'ICICIBANK.NS', 'INFY.NS',
+        'ITC.NS', 'SBIN.NS', 'BHARTIARTL.NS', 'HINDUNILVR.NS', 'BAJFINANCE.NS',
+        'L&T.NS', 'KOTAKBANK.NS', 'AXISBANK.NS', 'ASIANPAINT.NS', 'HCLTECH.NS',
+        'MARUTI.NS', 'SUNPHARMA.NS', 'TATAMOTORS.NS', 'TATASTEEL.NS', 'NTPC.NS',
+        'M&M.NS', 'ULTRACEMCO.NS', 'POWERGRID.NS', 'BAJAJFINSV.NS', 'WIPRO.NS',
+        'NESTLEIND.NS', 'ONGC.NS', 'ADANIENT.NS', 'ADANIPORTS.NS', 'GRASIM.NS',
+        'TECHM.NS', 'HINDALCO.NS', 'CIPLA.NS', 'APOLLOHOSP.NS', 'JSWSTEEL.NS',
+        'BRITANNIA.NS', 'COALINDIA.NS', 'EICHERMOT.NS', 'TATACONSUM.NS', 'DRREDDY.NS',
+        'DIVISLAB.NS', 'BAJAJ-AUTO.NS', 'HEROMOTOCO.NS', 'UPL.NS', 'INDUSINDBK.NS',
+        'BPCL.NS', 'HDFCLIFE.NS', 'SBILIFE.NS', 'SHREECEM.NS', 'LTIM.NS'
+      ];
+
+      const quotes = await yahooFinance.quote(symbols);
+      const data = quotes.map(q => ({
+        symbol: q.symbol,
+        shortName: q.shortName || q.longName,
+        exchange: q.exchange,
+        regularMarketPrice: q.regularMarketPrice,
+        regularMarketChange: q.regularMarketChange,
+        regularMarketChangePercent: q.regularMarketChangePercent,
+        marketCap: q.marketCap,
+        regularMarketVolume: q.regularMarketVolume,
+        averageDailyVolume3Month: q.averageDailyVolume3Month,
+        trailingPE: q.trailingPE,
+        priceToBook: q.priceToBook,
+        epsTrailingTwelveMonths: q.epsTrailingTwelveMonths,
+        dividendYield: q.dividendYield,
+        fiftyTwoWeekHigh: q.fiftyTwoWeekHigh,
+        fiftyTwoWeekLow: q.fiftyTwoWeekLow,
+        regularMarketOpen: q.regularMarketOpen,
+        regularMarketDayHigh: q.regularMarketDayHigh,
+        regularMarketDayLow: q.regularMarketDayLow,
+        regularMarketPreviousClose: q.regularMarketPreviousClose,
+        currency: q.currency
+      }));
+
+      setCachedData(cacheKey, data, 15 * 60); // 15 mins
+      logApiSync('yahoo_finance', 'success', 'Fetched screener base stocks');
+      res.json(data);
+    } catch (error) {
+      logApiSync('yahoo_finance', 'error', error.message);
+      res.status(500).json({ error: 'Failed to fetch screener stocks' });
+    }
+  });
+  
+  // 7. Get multiple quotes (for watchlist / explicit lookup)
+  router.get('/quotes', async (req, res) => {
+    const { symbols } = req.query;
+    if (!symbols) return res.json([]);
+    
+    const symbolArray = symbols.split(',').filter(Boolean);
+    if (symbolArray.length === 0) return res.json([]);
+
+    const cacheKey = `quotes_${symbolArray.sort().join(',')}`;
+    const cached = getCachedData(cacheKey);
+    if (cached) return res.json(cached);
+
+    try {
+      const quotes = await yahooFinance.quote(symbolArray);
+      // Yahoo finance can return an array or single object if 1 symbol requested
+      const results = Array.isArray(quotes) ? quotes : [quotes];
+      
+      setCachedData(cacheKey, results, 5 * 60); // 5 mins
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch quotes' });
     }
   });
 

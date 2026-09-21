@@ -21,8 +21,8 @@ const FAQ = () => {
   useGSAP(() => {
     // Reveal animation
     gsap.from('.faq-item', {
-      y: 30, opacity: 0, duration: 0.6, stagger: 0.1,
-      scrollTrigger: { trigger: containerRef.current, start: 'top 80%' }
+      y: 15, opacity: 0, duration: 0.6, stagger: 0.1,
+      scrollTrigger: { trigger: containerRef.current, start: 'top 85%' }
     });
   }, { scope: containerRef });
 
@@ -75,7 +75,7 @@ const FAQ = () => {
               <div 
                 key={index} 
                 className={`faq-item border rounded-2xl transition-colors duration-300 overflow-hidden
-                  ${isOpen ? 'bg-surface border-primary/50' : 'bg-transparent border-border hover:border-text-muted/50'}
+                  ${isOpen ? 'bg-surface border-gold-primary/50' : 'bg-transparent border-white/5 hover:border-text-muted/50'}
                 `}
               >
                 <button 
@@ -84,7 +84,7 @@ const FAQ = () => {
                 >
                   <span className="text-lg font-medium pr-8">{faq.question}</span>
                   <div className={`shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300
-                    ${isOpen ? 'bg-primary border-primary text-white rotate-180' : 'border-border text-text rotate-0'}
+                    ${isOpen ? 'bg-primary border-gold-primary text-white rotate-180' : 'border-white/5 text-text rotate-0'}
                   `}>
                     {isOpen ? <Minus size={16} /> : <Plus size={16} />}
                   </div>
