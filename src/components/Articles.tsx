@@ -22,45 +22,39 @@ const Articles = () => {
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const apiToken = import.meta.env.VITE_MARKETAUX_API_KEY;
+    if (!apiToken) {
+      setLoading(false);
+      return;
+    }
+
+    const loadNews = async () => {
       try {
-        const res = await fetch('/api/news?limit=10');
-        if (!res.ok) throw new Error('Failed to fetch news');
-        
-        const data = await res.json();
-        
-        if (!data.articles?.length) {
-          setArticles([]);
-          setLoading(false);
-          return;
-        }
-        
-        // Clean up descriptions if needed
-        const parsedArticles = data.articles.map((item: any) => {
-          let cleanDesc = item.summary || '';
-          cleanDesc = cleanDesc.replace(/<[^>]*>?/gm, '').trim();
-          if (cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + '...';
-          
+        const params = new URLSearchParams({ api_token: apiToken, language: 'en', limit: '9' });
+        const response = await fetch(`https://api.marketaux.com/v1/news/all?${params}`);
+        if (!response.ok) throw new Error('Unable to load news');
+        const payload = await response.json() as { data?: Array<Record<string, unknown>> };
+        setArticles((payload.data ?? []).map((item) => {
+          const description = String(item.description ?? item.snippet ?? '').replace(/<[^>]*>?/gm, '').trim();
+          const publishedAt = typeof item.published_at === 'string' ? new Date(item.published_at) : null;
           return {
-            category: item.category || 'News',
-            title: item.title,
-            subtitle: cleanDesc,
-            link: item.url || '#',
-            image: typeof item.image === 'string' && item.image.startsWith('https://') ? item.image : '',
-            date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Latest news',
-            details: item.summary || cleanDesc
+            category: typeof item.source === 'string' ? item.source : 'Financial news',
+            title: String(item.title ?? 'Market update'),
+            subtitle: description.length > 120 ? `${description.slice(0, 120)}…` : description,
+            link: typeof item.url === 'string' ? item.url : '#',
+            image: typeof item.image_url === 'string' ? item.image_url : '',
+            date: publishedAt && !Number.isNaN(publishedAt.valueOf()) ? publishedAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Latest news',
+            details: description
           };
-        });
-        
-        setArticles(parsedArticles);
-        setLoading(false);
-      } catch (err) {
+        }));
+      } catch {
         setArticles([]);
+      } finally {
         setLoading(false);
       }
     };
-    
-    fetchNews();
+
+    void loadNews();
   }, []);
 
   useGSAP(() => {

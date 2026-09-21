@@ -12,9 +12,6 @@ import FAQ from './components/FAQ';
 import Articles from './components/Articles';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
-import MutualFundExplorer from './components/MutualFundExplorer';
-import AdminLogin from './components/Admin/AdminLogin';
-import AdminDashboard from './components/Admin/AdminDashboard';
 import ScreenerPage from './pages/ScreenerPage';
 import V2Page from '../v2/V2Page';
 
@@ -25,7 +22,6 @@ const HomePage = () => (
     <TrustedBy />
     <Process />
     <Benefits />
-    <MutualFundExplorer />
     <Features />
     <Calculators />
     <MarketOverview />
@@ -44,8 +40,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/v2" element={<V2Page />} />
           <Route path="/screener" element={<ScreenerPage />} />
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

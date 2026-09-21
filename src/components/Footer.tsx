@@ -54,11 +54,9 @@ const Footer: React.FC = () => {
               <li><a href="#" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> Home Overview</a></li>
               <li><a href="#services" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> Financial Services</a></li>
               <li><a href="#markets" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> Stock Markets <span className="bg-[#D4AF37]/20 text-[#F5C542] text-[10px] px-1.5 py-0.2 rounded font-semibold uppercase">Live</span></a></li>
-              <li><a href="#mutual-funds" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> Mutual Fund Explorer</a></li>
               <li><a href="#calculators" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> Wealth Calculators</a></li>
               <li><a href="#news" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> Financial News</a></li>
               <li><a href="#faq" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5"><span>•</span> FAQ & Support</a></li>
-              <li><a href="/admin" className="hover:text-[#F5C542] transition-colors flex items-center gap-1.5 text-[#D4AF37]"><span>🔒</span> Admin Portal Login</a></li>
             </ul>
           </div>
 

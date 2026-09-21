@@ -26,33 +26,8 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('submitting');
-    setErrorMessage('');
-
-    try {
-      const res = await fetch('/api/submit-form', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to submit the form.');
-      }
-      
-      setStatus('success');
-      setFormData({ name: '', email: '', phone: '', interest: 'Consultation', message: '' });
-      
-      setTimeout(() => {
-        onClose();
-        setStatus('idle');
-      }, 3000);
-    } catch (err: any) {
-      setStatus('error');
-      setErrorMessage(err.message || 'Something went wrong. Please try again.');
-    }
+    setStatus('error');
+    setErrorMessage('This is a static site. Connect this form to your preferred email or form service before publishing.');
   };
 
   return (
