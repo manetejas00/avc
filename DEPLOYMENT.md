@@ -2,18 +2,9 @@
 
 This document outlines the steps to deploy the application to Hostinger using SSH or Git Auto-Deploy.
 
-## Hostinger SSH Details
+## Hostinger connection details
 
-- **IP Address:** `82.112.239.95`
-- **Port:** `65002`
-- **Username:** `u382139760`
-- **SSH Command:** `ssh -p 65002 u382139760@82.112.239.95`
-
-### Authorized SSH Key (Ngo)
-```text
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5UYL/OQuOQuGrV/dpyAwEZOBDelpMUjXlGsHG0zaldT manetejas00
-```
-*(This key allows passwordless SSH access for the `manetejas00` machine if configured locally).*
+Store the server host, port, username, and SSH key securely outside this repository. Use the deployment details in the Hostinger control panel or your team's password manager.
 
 ---
 
@@ -25,7 +16,7 @@ You currently have Hostinger configured to pull from your GitHub repository (`ma
 Whenever you make changes, build the app locally and push everything (including the `dist` folder) to the `main` branch.
 ```bash
 npm run build
-git add src dist .env -f
+git add src dist
 git commit -m "Update website"
 git push origin main
 ```
@@ -61,14 +52,9 @@ scp -P 65002 -r dist/* u382139760@82.112.239.95:/home/u382139760/domains/test1.a
 
 You can also use an FTP client (like FileZilla or SmartFTP) to upload your files.
 
-### FTP Credentials
-- **FTP IP (Hostname):** `82.112.239.95` (or `ftp://82.112.239.95`)
-- **FTP Username:** `u382139760.test1.avinyacarefoundation.org`
-- **FTP Port:** `21`
-- **FTP Password:** `@qLVTyl.U8` *(based on your screenshot)*
+### FTP credentials
 
-> [!WARNING]
-> Storing passwords in plain text in your code repository is a security risk. If your GitHub repository is public, anyone can see this password and access your server. Consider keeping this password locally or changing it if compromised.
+Retrieve FTP host, username, port, and password from Hostinger or the team's password manager. Never save credentials in this repository. Rotate any credential that was previously recorded here.
 
 ### Steps
 1. Open your FTP client and connect using the credentials above.
