@@ -16,7 +16,7 @@ const fallbackCompanies: Company[] = [
   ['ITC', 'ITC Limited'], ['HINDUNILVR', 'Hindustan Unilever Limited'], ['MARUTI', 'Maruti Suzuki India Limited'],
   ['SUNPHARMA', 'Sun Pharmaceutical Industries Limited'], ['BAJFINANCE', 'Bajaj Finance Limited'], ['ADANIENT', 'Adani Enterprises Limited'],
   ['ADANIPORTS', 'Adani Ports & Special Economic Zone Limited'], ['AXISBANK', 'Axis Bank Limited'], ['KOTAKBANK', 'Kotak Mahindra Bank Limited']
-].map(([ticker, name]) => ({ ticker, name, exchange: 'NSE' as const }));
+].map(([ticker, name]) => ({ ticker, name, exchange: 'BSE' as const }));
 
 export default function ScreenerPage() {
   const navigate = useNavigate();
@@ -43,13 +43,13 @@ export default function ScreenerPage() {
           body: JSON.stringify({
             filter: [
               { left: 'type', operation: 'equal', right: 'stock' },
-              { left: 'exchange', operation: 'in_range', right: ['NSE', 'BSE'] }
+              { left: 'exchange', operation: 'in_range', right: ['BSE'] }
             ],
             options: { lang: 'en' },
             symbols: { query: { types: [] }, tickers: [] },
             columns: ['name', 'description', 'exchange'],
             sort: { sortBy: 'name', sortOrder: 'asc' },
-            // India currently has more than 6,000 NSE/BSE records. Fetch the
+            // India currently has more than 6,000 BSE records. Fetch the
             // complete directory so companies later in alphabetical order are searchable too.
             range: [0, 10000]
           })
@@ -65,7 +65,7 @@ export default function ScreenerPage() {
         }).filter((company): company is Company => company !== null);
         if (listedCompanies.length) setCompanies(listedCompanies);
       } catch (error) {
-        if (!controller.signal.aborted) console.warn('Could not load the full NSE/BSE directory.', error);
+        if (!controller.signal.aborted) console.warn('Could not load the full BSE directory.', error);
       } finally {
         if (!controller.signal.aborted) setDirectoryLoading(false);
       }
@@ -126,7 +126,7 @@ export default function ScreenerPage() {
         <div className="mx-auto mb-10 max-w-3xl text-center">
           <p className="eyebrow mb-4">Live market intelligence</p>
           <h1 className="text-4xl font-bold md:text-6xl">Market <span className="text-gold-primary">Screener</span></h1>
-          <p className="mt-5 text-text-muted md:text-lg">Explore NSE and BSE listed Indian stocks, sort results, and apply filters directly in the screener.</p>
+          <p className="mt-5 text-text-muted md:text-lg">Explore BSE-listed Indian stocks, sort results, and apply filters directly in the screener.</p>
         </div>
         <form onSubmit={searchStock} className="relative mx-auto mb-8 flex max-w-2xl gap-3 rounded-2xl border border-white/10 bg-surface p-2 shadow-lg">
           <label htmlFor="stock-search" className="sr-only">Search stocks</label>
@@ -143,20 +143,20 @@ export default function ScreenerPage() {
             <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#151515] text-left shadow-2xl">
               {suggestions.length > 0 ? suggestions.map((company) => (
                 <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => selectCompany(company)} className="flex w-full items-center justify-between gap-4 border-b border-white/5 px-4 py-3 transition hover:bg-white/5 last:border-0">
-                  <span className="min-w-0 truncate text-sm font-medium text-text">{company.name}</span><span className="shrink-0 text-xs font-semibold text-gold-primary">{company.ticker} · {company.exchange}</span>
+                  <span className="min-w-0 truncate text-sm font-medium text-text">{company.name}</span><span className="shrink-0 text-xs font-semibold text-gold-primary">{company.exchange}</span>
                 </button>
-              )) : <p className="px-4 py-3 text-sm text-text-muted">{directoryLoading ? 'Loading the NSE and BSE company directory…' : 'No NSE or BSE company found. Try a ticker such as TCS or RELIANCE.'}</p>}
+              )) : <p className="px-4 py-3 text-sm text-text-muted">{directoryLoading ? 'Loading the BSE company directory…' : 'No BSE company found. Try a company name such as Tata Consultancy Services.'}</p>}
             </div>
           )}
         </form>
         <div className="mx-auto mb-3 flex max-w-5xl items-center justify-between gap-3 text-xs text-text-muted">
           <span>Indian stock universe</span>
-          <span className="rounded-full border border-gold-primary/40 bg-gold-primary/10 px-3 py-1 font-semibold text-gold-primary">NSE &amp; BSE listed stocks only</span>
+          <span className="rounded-full border border-gold-primary/40 bg-gold-primary/10 px-3 py-1 font-semibold text-gold-primary">BSE-listed stocks only</span>
         </div>
-        <section className="overflow-hidden rounded-card border border-white/10 bg-surface p-2 shadow-xl md:p-4" aria-label="Live NSE and BSE stock screener">
+        <section className="overflow-hidden rounded-card border border-white/10 bg-surface p-2 shadow-xl md:p-4" aria-label="Live BSE stock screener">
           <div ref={widgetRef} className="tradingview-widget-container min-h-[720px]" />
         </section>
-        <p className="mx-auto mt-5 max-w-4xl text-center text-xs leading-5 text-text-muted">The screener is set to the India market (NSE and BSE listings). Live data is supplied by TradingView and may be delayed. It is for informational purposes only and is not investment advice.</p>
+        <p className="mx-auto mt-5 max-w-4xl text-center text-xs leading-5 text-text-muted">The screener is set to BSE-listed Indian stocks. Live data is supplied by TradingView and may be delayed. It is for informational purposes only and is not investment advice.</p>
       </main>
       <Footer />
     </div>
