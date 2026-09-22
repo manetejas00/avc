@@ -1,58 +1,2044 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/logo_icon_only.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>AVC Dhanam Solutions | SEBI Registered Sub Broker & Mutual Fund Distributor in Mumbai</title>
-    <meta name="description" content="AVC Dhanam Solutions is a SEBI registered sub broker (Motilal Oswal) & AMFI registered mutual fund distributor in Mumbai offering SIP, PMS, AIF, IPO & Algo Trading." />
-    <meta name="keywords" content="mutual fund investment plans India, SIP investment online, best mutual fund distributor in Mumbai, SEBI registered sub broker, Motilal Oswal sub broker Mumbai, stock market investment advisor India, portfolio management services (PMS) India, AIF investment India, IPO application online India, demat account opening Mumbai, algo trading software India, commodity trading account India, term insurance plans online India, personal loan DSA agent, wealth management company Mumbai, financial advisor Virar Mumbai" />
-    
-    <!-- Open Graph & Twitter -->
-    <meta property="og:title" content="AVC Dhanam Solutions | Wealth Management in Mumbai" />
-    <meta property="og:description" content="SEBI registered sub broker & mutual fund distributor offering SIP, PMS, AIF, IPO & expert stock market advice." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://avcdhanam.com" />
-    <meta property="og:image" content="/assets/brand/avc-og-image.webp" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AVC Dhanam Solutions | Indian Stock Market & Wealth" />
-    <meta name="twitter:description" content="SEBI registered sub broker & mutual fund distributor offering SIP, PMS, AIF, IPO & expert stock market advice." />
-    <meta name="twitter:image" content="/assets/brand/avc-og-image.webp" />
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "@id": "https://avcdhanam.com/#website",
-          "url": "https://avcdhanam.com",
-          "name": "AVC Dhanam Solutions"
-        },
-        {
-          "@type": "FinancialService",
-          "@id": "https://avcdhanam.com/#organization",
-          "name": "AVC Dhanam Solutions Pvt. Ltd.",
-          "description": "SEBI-authorised Sub Broker of Motilal Oswal and an AMFI-registered Mutual Fund Distributor.",
-          "url": "https://avcdhanam.com",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Virar West, Mumbai",
-            "addressRegion": "Maharashtra",
-            "addressCountry": "IN"
-          },
-          "areaServed": "India",
-          "knowsAbout": ["Mutual Funds", "SIP", "PMS", "AIF", "Stock Market Investment", "Commodities", "Insurance", "Loans"]
-        }
-      ]
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sellix — Next-Generation Cross-Border Finance Platform</title>
+  <meta name="description" content="Sellix is the enterprise cross-border finance platform for accepting payments, managing digital asset custody, and executing instant crypto-fiat settlement.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=block" rel="stylesheet">
+  
+  <style>
+    /* ============================================================
+       0. CSS RESET & VARIABLES
+       ============================================================ */
+    @font-face {
+      font-family: 'PJS';
+      src: local('Plus Jakarta Sans');
+      font-display: block;
     }
-    </script>
-  </head>
-  <body class="bg-background text-text font-sans antialiased">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+    :root {
+      --u: min(calc(100vw / 1280), calc(100dvh / 760));
+      
+      --bg-dark:       #060608;
+      --panel-dark:    #0f0f14;
+      --panel-card:    rgba(18, 18, 24, 0.7);
+      --ink:           #ffffff;
+      --ink-muted:     #a1a1aa;
+      --ink-subtle:    #71717a;
+      
+      --violet-glow:   #8b5cf6;
+      --violet-accent: #a78bfa;
+      --purple-deep:   #6d28d9;
+      --cyan-accent:   #06b6d4;
+      
+      --white-btn:     #ffffff;
+      --btn-ink:       #09090b;
+      --glass-fill:    rgba(15, 15, 20, 0.75);
+      --glass-line:    rgba(255, 255, 255, 0.08);
+      --glass-line-hover: rgba(167, 139, 250, 0.3);
+      
+      --e-reveal: cubic-bezier(.16, 1, .3, 1);
+      --e-soft:   cubic-bezier(.25, .8, .3, 1);
+    }
+
+    @supports not (height: 100dvh) {
+      :root { --u: min(calc(100vw / 1280), calc(100vh / 760)); }
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-dark);
+      color: var(--ink);
+      font-family: 'PJS', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: geometricPrecision;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--ink);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Custom Selection */
+    ::selection {
+      background: rgba(139, 92, 246, 0.35);
+      color: #fff;
+    }
+
+    /* Focus visible */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--violet-accent);
+      outline-offset: 3px;
+      border-radius: 8px;
+    }
+
+    /* ============================================================
+       1. CUSTOM CURSOR (DESKTOP)
+       ============================================================ */
+    .v2-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 8px; height: 8px;
+      background: var(--violet-accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, background 0.2s ease;
+      display: none;
+    }
+
+    .v2-cursor-follower {
+      position: fixed;
+      top: 0; left: 0;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(167, 139, 250, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease-out, width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+      display: none;
+    }
+
+    @media (pointer: fine) {
+      .v2-cursor, .v2-cursor-follower { display: block; }
+    }
+
+    /* Mouse Light Glow Canvas */
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 30%), rgba(139, 92, 246, 0.07), transparent 80%);
+      transition: opacity 0.5s ease;
+    }
+
+    /* ============================================================
+       2. NAVIGATION V2
+       ============================================================ */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+      z-index: 100;
+      transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-bottom 0.3s ease, height 0.3s ease;
+    }
+
+    .nav.scrolled {
+      background-color: rgba(6, 6, 8, 0.85);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-line);
+      height: 64px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      text-decoration: none;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-dot {
+      width: 7px; height: 7px;
+      background: var(--violet-glow);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--violet-glow);
+    }
+
+    .nav-links {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.15px;
+      line-height: 1;
+      transition: color 0.2s ease, transform 0.2s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; width: 0%; height: 2px;
+      background: var(--violet-accent);
+      border-radius: 2px;
+      transition: width 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Shared Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      border: 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-login {
+      height: 36px;
+      padding: 0 18px;
+      border-radius: 18px;
+      background: var(--panel-dark);
+      color: #e8e8e8;
+      font-size: 13.5px;
+      border: 1px solid var(--glass-line);
+    }
+
+    .btn-login:hover {
+      background: #1c1c24;
+      color: #fff;
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-1px);
+    }
+
+    .btn-nav-start {
+      height: 36px;
+      padding: 0 18px;
+      border-radius: 18px;
+      background: var(--white-btn);
+      color: var(--btn-ink);
+      font-size: 13.5px;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-nav-start:hover {
+      background: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-nav-start .arw {
+      width: 12px; height: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-nav-start:hover .arw {
+      transform: translateX(3px);
+    }
+
+    .burger {
+      display: none;
+      margin-left: auto;
+      width: 44px; height: 36px;
+      align-items: center;
+      justify-content: center;
+      background: var(--panel-dark);
+      border-radius: 18px;
+      border: 1px solid var(--glass-line);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .burger span {
+      display: block; width: 18px; height: 1.5px; background: #ededed; border-radius: 2px; position: relative;
+      transition: background 0.2s ease;
+    }
+
+    .burger span::before, .burger span::after {
+      content: ""; position: absolute; left: 0; width: 18px; height: 1.5px;
+      background: #ededed; border-radius: 2px; transition: transform 0.25s ease, top 0.25s ease;
+    }
+
+    .burger span::before { top: -6px; }
+    .burger span::after { top: 6px; }
+
+    .burger.open span { background: transparent; }
+    .burger.open span::before { top: 0; transform: rotate(45deg); }
+    .burger.open span::after { top: 0; transform: rotate(-45deg); }
+
+    .arw { flex: 0 0 auto; display: block; }
+
+    /* Mobile Drawer */
+    .menu {
+      display: none;
+      position: fixed;
+      top: 72px; right: 20px;
+      width: min(340px, calc(100vw - 40px));
+      background: rgba(12, 12, 16, 0.92);
+      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-line);
+      border-radius: 20px;
+      padding: 12px 10px 16px;
+      flex-direction: column;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+      z-index: 99;
+      transform-origin: top right;
+    }
+
+    .menu.open {
+      display: flex;
+      animation: menuIn 0.22s var(--e-reveal) both;
+    }
+
+    .menu a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-radius: 12px;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .menu a:hover {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+
+    .menu .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 8px 16px;
+    }
+
+    .menu .m-start {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--white-btn);
+      color: var(--btn-ink);
+      margin: 6px 8px 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       3. HERO SECTION V2
+       ============================================================ */
+    .hero {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Canvas Particle Overlay */
+    #heroCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bg {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100vw, calc(100dvh * 1.6));
+      height: max(62.5vw, 100dvh);
+      background-color: var(--bg-dark);
+    }
+
+    @supports not (height: 100dvh) {
+      .bg { width: max(100vw, calc(100vh * 1.6)); height: max(62.5vw, 100vh); }
+    }
+
+    .bg-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: 51% 8%;
+      display: block;
+      background-color: var(--bg-dark);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.9s linear;
+    }
+
+    .bg-video.is-active { opacity: 0.85; }
+
+    .hero-overlay-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(6,6,8,0.2) 0%, rgba(6,6,8,0.85) 85%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 120px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.1s ease-out;
+    }
+
+    /* Live Badge Pill */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.25);
+      color: var(--violet-accent);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .live-badge-dot {
+      width: 6px; height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    h1.hero-title {
+      margin: 0;
+      font-weight: 700;
+      font-size: clamp(42px, 6.2vw, 84px);
+      line-height: 1.05;
+      letter-spacing: -1.8px;
+      color: var(--ink);
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #ffffff 30%, #c4b5fd 70%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    p.sub {
+      margin-top: 24px;
+      font-weight: 300;
+      font-size: clamp(16px, 1.6vw, 20px);
+      line-height: 1.6;
+      letter-spacing: -0.3px;
+      color: #e4e4e7;
+      max-width: 680px;
+    }
+
+    .ctas {
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-lg {
+      height: 48px;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.3px;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: var(--white-btn);
+      color: var(--btn-ink);
+      padding: 0 26px;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-ghost {
+      background: var(--glass-fill);
+      color: #e4e4e7;
+      padding: 0 24px;
+      border: 1px solid var(--glass-line);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(24, 24, 32, 0.85);
+      border-color: var(--glass-line-hover);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .btn-lg .arw {
+      width: 14px; height: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-primary:hover .arw, .btn-ghost:hover .arw {
+      transform: translateX(3px);
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-subtle);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.25s ease;
+    }
+
+    .scroll-indicator:hover { opacity: 1; color: var(--violet-accent); }
+
+    .scroll-chevron {
+      width: 16px; height: 16px;
+      stroke: currentColor;
+      animation: bounceChevron 2s infinite;
+    }
+
+    @keyframes bounceChevron {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(6px); }
+      60% { transform: translateY(3px); }
+    }
+
+    /* ============================================================
+       4. SECTIONS COMMON LAYOUT
+       ============================================================ */
+    section.v2-section {
+      position: relative;
+      z-index: 2;
+      padding: 120px 40px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--violet-accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 3.8vw, 48px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--ink-muted);
+      max-width: 640px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* Reveal Animation Utility */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--e-reveal), transform 0.8s var(--e-reveal);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       5. SECTION 02 — TRUST / STATS
+       ============================================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .stat-card {
+      background: var(--panel-card);
+      border: 1px solid var(--glass-line);
+      border-radius: 20px;
+      padding: 36px 28px;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--violet-glow), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--glass-line-hover);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-number {
+      font-size: clamp(36px, 3.2vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--ink-muted);
+      font-weight: 400;
+    }
+
+    /* ============================================================
+       6. SECTION 03 — PRODUCT SHOWCASE
+       ============================================================ */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .product-card {
+      background: var(--panel-card);
+      border: 1px solid var(--glass-line);
+      border-radius: 24px;
+      padding: 40px;
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-card:hover {
+      border-color: var(--glass-line-hover);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(139, 92, 246, 0.08);
+    }
+
+    .product-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--violet-accent);
+      margin-bottom: 24px;
+    }
+
+    .product-card h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .product-card p {
+      font-size: 15px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      font-weight: 300;
+      margin-bottom: 24px;
+    }
+
+    .product-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill-tag {
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--ink-muted);
+    }
+
+    /* ============================================================
+       7. SECTION 04 — INTERACTIVE PRODUCT VISUALIZATION
+       ============================================================ */
+    .viz-container {
+      margin-top: 60px;
+      background: var(--panel-card);
+      border: 1px solid var(--glass-line);
+      border-radius: 28px;
+      padding: 44px;
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .viz-interactive-box {
+      background: rgba(10, 10, 14, 0.8);
+      border: 1px solid var(--glass-line);
+      border-radius: 20px;
+      padding: 28px;
+    }
+
+    .viz-field {
+      margin-bottom: 20px;
+    }
+
+    .viz-label {
+      font-size: 12px;
+      color: var(--ink-subtle);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .viz-input-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--glass-line);
+      border-radius: 14px;
+      padding: 12px 16px;
+    }
+
+    .viz-input-row input {
+      background: transparent;
+      border: 0;
+      color: #fff;
+      font-size: 20px;
+      font-family: inherit;
+      font-weight: 600;
+      width: 140px;
+    }
+
+    .viz-select {
+      background: rgba(255,255,255,0.08);
+      border: 0;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .viz-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .viz-node {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--violet-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--violet-accent);
+      z-index: 2;
+    }
+
+    .viz-line {
+      flex: 1;
+      height: 2px;
+      background: var(--glass-line);
+      margin: 0 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viz-pulse {
+      position: absolute;
+      top: 0; left: -50%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, var(--violet-glow), transparent);
+      animation: pulseLine 2s infinite linear;
+    }
+
+    @keyframes pulseLine {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
+
+    .viz-btn {
+      width: 100%;
+      height: 46px;
+      border-radius: 14px;
+      background: var(--purple-deep);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      border: 0;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .viz-btn:hover {
+      background: #7c3aed;
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       8. SECTION 05 — GLOBAL NETWORK
+       ============================================================ */
+    .network-map-box {
+      margin-top: 60px;
+      background: var(--panel-card);
+      border: 1px solid var(--glass-line);
+      border-radius: 28px;
+      padding: 48px 24px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .network-svg {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .node-point {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .node-point:hover {
+      transform: scale(1.4);
+    }
+
+    /* ============================================================
+       9. SECTION 06 — DEVELOPER SECTION
+       ============================================================ */
+    .dev-container {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .code-window {
+      background: #09090d;
+      border: 1px solid var(--glass-line);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+
+    .code-header {
+      background: rgba(255,255,255,0.03);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--glass-line);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .code-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .code-dot.red { background: #ef4444; }
+    .code-dot.yellow { background: #f59e0b; }
+    .code-dot.green { background: #10b981; }
+
+    .code-tabs {
+      display: flex;
+      gap: 12px;
+    }
+
+    .code-tab {
+      font-size: 12px;
+      color: var(--ink-subtle);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .code-tab.active {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .code-body {
+      padding: 24px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #a78bfa;
+      overflow-x: auto;
+    }
+
+    .code-keyword { color: #f472b6; }
+    .code-string { color: #34d399; }
+    .code-number { color: #fbbf24; }
+    .code-comment { color: #6b7280; }
+
+    .code-actions {
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid var(--glass-line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-run-btn {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--violet-accent);
+      color: var(--violet-accent);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .code-run-btn:hover {
+      background: var(--violet-accent);
+      color: #000;
+    }
+
+    /* ============================================================
+       10. SECTION 07 — SECURITY & COMPLIANCE
+       ============================================================ */
+    .sec-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .sec-card {
+      background: var(--panel-card);
+      border: 1px solid var(--glass-line);
+      border-radius: 20px;
+      padding: 32px 24px;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+
+    .sec-card h4 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: #fff;
+    }
+
+    .sec-card p {
+      font-size: 14px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       11. SECTION 08 — FINAL CTA
+       ============================================================ */
+    .final-cta-box {
+      margin-top: 40px;
+      background: linear-gradient(180deg, rgba(15, 15, 20, 0.8) 0%, rgba(109, 40, 217, 0.15) 100%);
+      border: 1px solid var(--glass-line-hover);
+      border-radius: 32px;
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       12. FOOTER
+       ============================================================ */
+    footer.v2-footer {
+      border-top: 1px solid var(--glass-line);
+      padding: 80px 40px 40px;
+      background: #040406;
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 40px;
+    }
+
+    .footer-brand p {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--ink-muted);
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    .footer-col h5 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 12px;
+    }
+
+    .footer-col a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .footer-col a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 60px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--glass-line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--ink-subtle);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      font-size: 12px;
+    }
+
+    /* Switcher Floating Button (V1 / V2 Switcher) */
+    .version-switch-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      background: rgba(15, 15, 20, 0.9);
+      border: 1px solid var(--glass-line-hover);
+      color: var(--violet-accent);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+
+    .version-switch-btn:hover {
+      background: var(--violet-accent);
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       13. RESPONSIVE BREAKPOINTS
+       ============================================================ */
+    @media (max-width: 1160px) {
+      .nav-links, .nav-actions { display: none; }
+      .burger { display: flex; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: 1fr; }
+      .viz-container { grid-template-columns: 1fr; }
+      .dev-container { grid-template-columns: 1fr; }
+      .sec-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 552px) {
+      .nav { padding: 0 20px; height: 60px; }
+      section.v2-section { padding: 80px 20px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .ctas { flex-direction: column; width: 100%; }
+      .btn-lg { width: 100%; }
+      .viz-container { padding: 24px 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .v2-cursor, .v2-cursor-follower { display: none !important; }
+    }
+  </style>
+
+  <script>
+    /* Synchronous Entrance & Motion Setup */
+    (function(){
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.documentElement.classList.add('anim-ready');
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="v2-cursor" id="v2Cursor"></div>
+  <div class="v2-cursor-follower" id="v2CursorFollower"></div>
+  <div class="ambient-glow" id="ambientGlow"></div>
+
+  <!-- Version Switcher Float -->
+  <a href="v1.html" class="version-switch-btn">⚡ View V1 Baseline</a>
+
+  <!-- Navigation V2 -->
+  <header class="nav" id="mainNav">
+    <a href="#" class="logo">
+      Sellix
+      <span class="logo-dot"></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#products">Products</a>
+      <a href="#metrics">Pricing</a>
+      <a href="#developer">Developers</a>
+      <a href="#network">Network</a>
+      <a href="#security">Security</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-login">Login</a>
+      <a href="#" class="btn btn-nav-start">
+        Get Started
+        <svg class="arw" viewBox="0 0 12 10" fill="none" aria-hidden="true">
+          <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+      <span></span>
+    </button>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <nav class="menu" id="menu" aria-label="Mobile Navigation">
+    <a href="#products">Products</a>
+    <a href="#metrics">Pricing</a>
+    <a href="#developer">Developers</a>
+    <a href="#network">Network</a>
+    <a href="#security">Security</a>
+    <div class="divider"></div>
+    <a href="#">Login</a>
+    <a href="#" class="m-start">
+      Get Started
+      <svg class="arw" viewBox="0 0 12 10" fill="none" aria-hidden="true">
+        <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </nav>
+
+  <!-- SECTION 01: HERO V2 -->
+  <main class="hero" id="hero">
+    <canvas id="heroCanvas"></canvas>
+
+    <div class="bg" role="img" aria-label="Stylised globe of Earth rendered as a purple dot matrix against a starfield">
+      <video class="bg-video is-active" id="bgVideoA" autoplay muted loop playsinline preload="auto" disablepictureinpicture aria-hidden="true" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/82e7eb75-c65f-490a-99b5-f3d1cad54200.webp">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104036_bd6924f6-3c8e-417e-8465-6d03c8c2e9e6.mp4" type="video/mp4">
+      </video>
+      <video class="bg-video" id="bgVideoB" muted loop playsinline preload="auto" disablepictureinpicture aria-hidden="true" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/82e7eb75-c65f-490a-99b5-f3d1cad54200.webp">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104036_bd6924f6-3c8e-417e-8465-6d03c8c2e9e6.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="hero-overlay-gradient"></div>
+
+    <div class="hero-inner" id="heroInner">
+      <div class="live-badge">
+        <span class="live-badge-dot"></span>
+        Sellix Engine v2.4 Active • $4.2B+ Daily Volume
+      </div>
+      
+      <h1 class="hero-title">
+        Global finance,<br>
+        <span class="hero-gradient">without borders.</span>
+      </h1>
+      
+      <p class="sub">
+        Accept payments, manage and custody your assets with institutional security,
+        enjoy instant crypto-fiat settlement, and build on high-throughput rails.
+      </p>
+      
+      <div class="ctas">
+        <a href="#products" class="btn btn-lg btn-primary">
+          Get Started
+          <svg class="arw" viewBox="0 0 12 10" fill="none" aria-hidden="true">
+            <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#developer" class="btn btn-lg btn-ghost">
+          Explore API Specs
+          <svg class="arw" viewBox="0 0 12 10" fill="none" aria-hidden="true">
+            <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <a href="#metrics" class="scroll-indicator" aria-label="Scroll down">
+      Scroll
+      <svg class="scroll-chevron" viewBox="0 0 24 24" fill="none">
+        <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </main>
+
+  <!-- SECTION 02: TRUST & METRICS -->
+  <section class="v2-section" id="metrics">
+    <div class="reveal">
+      <span class="section-tag">GLOBAL THROUGHPUT</span>
+      <h2 class="section-title">Built for money that moves globally.</h2>
+      <p class="section-desc">Operating at scale across institutional banking networks and decentralized liquidity pools.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-number" data-target="4.2" data-prefix="$" data-suffix="B+">$0B+</div>
+        <div class="stat-label">Daily Settlement Volume</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-number" data-target="180" data-suffix="+">0+</div>
+        <div class="stat-label">Countries & Territories</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-number" data-target="50" data-suffix="+">0+</div>
+        <div class="stat-label">Fiat & Crypto Currencies</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-number" data-target="1.2" data-prefix="&lt; " data-suffix="s">&lt; 0s</div>
+        <div class="stat-label">Average Settlement Speed</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03: PRODUCT SHOWCASE -->
+  <section class="v2-section" id="products">
+    <div class="reveal">
+      <span class="section-tag">CORE ENGINE</span>
+      <h2 class="section-title">Complete cross-border stack</h2>
+      <p class="section-desc">Four core modules designed for high-growth digital businesses and platforms.</p>
+    </div>
+
+    <div class="products-grid">
+      <div class="product-card reveal">
+        <div>
+          <div class="product-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <h3>Accept</h3>
+          <p>Accept payments seamlessly worldwide with localized checkout flows, automated fraud detection, and multi-currency routing.</p>
+        </div>
+        <div class="product-pills">
+          <span class="pill-tag">Global Checkout</span>
+          <span class="pill-tag">Cards & Alternative Rails</span>
+          <span class="pill-tag">Instant Webhooks</span>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div>
+          <div class="product-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </div>
+          <h3>Move</h3>
+          <p>Route cross-border transfers across real-time banking rails and crypto liquidity bridges with zero friction.</p>
+        </div>
+        <div class="product-pills">
+          <span class="pill-tag">Automated FX Routing</span>
+          <span class="pill-tag">SEPA / SWIFT / ACH</span>
+          <span class="pill-tag">Sub-second Clearing</span>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div>
+          <div class="product-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>Hold</h3>
+          <p>Institutional-grade multi-signature custody and segregated vaults for enterprise digital asset reserves.</p>
+        </div>
+        <div class="product-pills">
+          <span class="pill-tag">MPC Vaults</span>
+          <span class="pill-tag">Institutional Insurance</span>
+          <span class="pill-tag">Ledger Transparency</span>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div>
+          <div class="product-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8"/><path d="M8 8h8v8"/></svg>
+          </div>
+          <h3>Convert</h3>
+          <p>On-ramp and off-ramp between crypto and fiat dynamically with tight spreads and automated reconciliation.</p>
+        </div>
+        <div class="product-pills">
+          <span class="pill-tag">Crypto & Fiat On/Off Ramp</span>
+          <span class="pill-tag">Zero Spread FX</span>
+          <span class="pill-tag">Automated Ledger</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04: INTERACTIVE VISUALIZATION -->
+  <section class="v2-section">
+    <div class="reveal">
+      <span class="section-tag">LIVE DEMO</span>
+      <h2 class="section-title">Interactive Settlement Engine</h2>
+      <p class="section-desc">Simulate live cross-border payment conversion & automated liquidity routing.</p>
+    </div>
+
+    <div class="viz-container reveal">
+      <div>
+        <h3 style="font-size:24px; font-weight:700; margin-bottom:12px;">Instant Liquidity Converter</h3>
+        <p style="color:var(--ink-muted); line-height:1.6; margin-bottom:24px;">Experience real-time execution across global currencies with zero slippage guarantees.</p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px; color:var(--violet-accent); font-size:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Automated Smart Order Routing
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; color:var(--violet-accent); font-size:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Institutional Liquidity Aggregation
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; color:var(--violet-accent); font-size:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Cryptographic Proof of Delivery
+          </div>
+        </div>
+      </div>
+
+      <div class="viz-interactive-box">
+        <div class="viz-field">
+          <label class="viz-label">You Send</label>
+          <div class="viz-input-row">
+            <input type="number" id="vizSendAmt" value="10000" min="100">
+            <select class="viz-select" id="vizSendCurr">
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="viz-route">
+          <div class="viz-node" id="nodeA">USD</div>
+          <div class="viz-line"><div class="viz-pulse"></div></div>
+          <div class="viz-node" style="border-color:var(--cyan-accent); color:var(--cyan-accent);">FX</div>
+          <div class="viz-line"><div class="viz-pulse"></div></div>
+          <div class="viz-node" id="nodeB">EUR</div>
+        </div>
+
+        <div class="viz-field">
+          <label class="viz-label">Recipient Receives (Estimated)</label>
+          <div class="viz-input-row">
+            <input type="text" id="vizRecAmt" value="9,240.00" readonly>
+            <select class="viz-select" id="vizRecCurr">
+              <option value="EUR">EUR</option>
+              <option value="USDC">USDC</option>
+              <option value="BTC">BTC</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="viz-btn" id="vizSimulateBtn">Execute Test Transaction</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 05: GLOBAL NETWORK -->
+  <section class="v2-section" id="network">
+    <div class="reveal" style="text-align:center;">
+      <span class="section-tag">INFRASTRUCTURE</span>
+      <h2 class="section-title">Global High-Throughput Rails</h2>
+      <p class="section-desc" style="margin:0 auto;">Connected directly to strategic financial nodes across North America, Europe, Asia, and Latin America.</p>
+    </div>
+
+    <div class="network-map-box reveal">
+      <svg class="network-svg" viewBox="0 0 800 400" fill="none">
+        <!-- World map grid lines -->
+        <path d="M 50 100 Q 200 40 400 100 T 750 100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <path d="M 50 200 Q 200 150 400 200 T 750 200" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <path d="M 50 300 Q 200 250 400 300 T 750 300" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+
+        <!-- Animated connection arcs -->
+        <path d="M 220 140 Q 330 60 440 120" stroke="url(#arcGrad1)" stroke-width="2" stroke-dasharray="6,6"/>
+        <path d="M 440 120 Q 560 70 660 160" stroke="url(#arcGrad1)" stroke-width="2" stroke-dasharray="6,6"/>
+        <path d="M 220 140 Q 440 220 660 160" stroke="url(#arcGrad1)" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- Node points -->
+        <!-- NYC -->
+        <circle class="node-point" cx="220" cy="140" r="6" fill="#a78bfa"/>
+        <circle cx="220" cy="140" r="14" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+        <text x="220" y="170" fill="#a78bfa" font-size="11" font-weight="600" text-anchor="middle">New York (NYC-1)</text>
+
+        <!-- London -->
+        <circle class="node-point" cx="440" cy="120" r="6" fill="#06b6d4"/>
+        <circle cx="440" cy="120" r="14" stroke="#06b6d4" stroke-width="1" opacity="0.4"/>
+        <text x="440" y="100" fill="#06b6d4" font-size="11" font-weight="600" text-anchor="middle">London (LDN-4)</text>
+
+        <!-- Tokyo -->
+        <circle class="node-point" cx="660" cy="160" r="6" fill="#10b981"/>
+        <circle cx="660" cy="160" r="14" stroke="#10b981" stroke-width="1" opacity="0.4"/>
+        <text x="660" y="190" fill="#10b981" font-size="11" font-weight="600" text-anchor="middle">Tokyo (TYO-2)</text>
+
+        <!-- Gradients -->
+        <defs>
+          <linearGradient id="arcGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8b5cf6"/>
+            <stop offset="50%" stop-color="#06b6d4"/>
+            <stop offset="100%" stop-color="#10b981"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </section>
+
+  <!-- SECTION 06: DEVELOPERS -->
+  <section class="v2-section" id="developer">
+    <div class="dev-container">
+      <div class="reveal">
+        <span class="section-tag">DEVELOPER FIRST</span>
+        <h2 class="section-title">Built for developers.</h2>
+        <p class="section-desc">Integrate robust multi-currency payments, wallet management, and real-time webhooks with a single unified REST API.</p>
+        <div style="margin-top:24px;">
+          <a href="#" class="btn btn-nav-start">View API Documentation</a>
+        </div>
+      </div>
+
+      <div class="code-window reveal">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot red"></div>
+            <div class="code-dot yellow"></div>
+            <div class="code-dot green"></div>
+          </div>
+          <div class="code-tabs">
+            <span class="code-tab active" data-tab="payment">POST /v1/payments</span>
+            <span class="code-tab" data-tab="transfer">POST /v1/transfers</span>
+          </div>
+        </div>
+
+        <div class="code-body" id="codeBody">
+<span class="code-comment">// Create an instant cross-border payment endpoint</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(<span class="code-string">'https://api.sellix.io/v1/payments'</span>, {
+  method: <span class="code-string">'POST'</span>,
+  headers: {
+    <span class="code-string">'Authorization'</span>: <span class="code-string">'Bearer slx_live_9f82d1...'</span>,
+    <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>
+  },
+  body: JSON.stringify({
+    amount: <span class="code-number">2500.00</span>,
+    currency: <span class="code-string">'USD'</span>,
+    destination_country: <span class="code-string">'DE'</span>,
+    settlement_rail: <span class="code-string">'INSTANT_SEPA'</span>
+  })
+});
+        </div>
+
+        <div class="code-actions">
+          <span style="font-size:12px; color:var(--ink-subtle);" id="codeStatusText">Ready • HTTP 200 OK</span>
+          <button class="code-run-btn" id="codeRunBtn">Execute Request</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 07: SECURITY -->
+  <section class="v2-section" id="security">
+    <div class="reveal">
+      <span class="section-tag">SECURITY FIRST</span>
+      <h2 class="section-title">Institutional-grade security</h2>
+      <p class="section-desc">Engineered with bank-grade encryption, multi-key custodial vaults, and automated compliance engines.</p>
+    </div>
+
+    <div class="sec-grid">
+      <div class="sec-card reveal">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--violet-accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h4>SOC 2 Type II Certified</h4>
+        <p>Continuous compliance monitoring with end-to-end encryption for stored data and transfers.</p>
+      </div>
+
+      <div class="sec-card reveal">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--violet-accent)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <h4>MPC Custody Vaults</h4>
+        <p>Multi-Party Computation key management eliminating single points of failure for digital asset reserves.</p>
+      </div>
+
+      <div class="sec-card reveal">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--violet-accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <h4>Automated Compliance</h4>
+        <p>Real-time AML, Sanctions screening, and transaction risk scoring across every settlement.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 08: FINAL CTA -->
+  <section class="v2-section">
+    <div class="final-cta-box reveal">
+      <h2 style="font-size:clamp(32px, 4vw, 56px); font-weight:700; margin-bottom:16px;">Move money without borders.</h2>
+      <p style="font-size:18px; color:var(--ink-muted); max-width:560px; margin:0 auto 36px;">Join forward-thinking companies deploying high-throughput cross-border finance today.</p>
+      <div class="ctas">
+        <a href="#" class="btn btn-lg btn-primary">
+          Get Started Now
+          <svg class="arw" viewBox="0 0 12 10" fill="none" aria-hidden="true">
+            <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#" class="btn btn-lg btn-ghost">Contact Sales Team</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="v2-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          Sellix
+          <span class="logo-dot"></span>
+        </a>
+        <p>Next-generation cross-border finance platform built for speed, security, and global scale.</p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Products</h5>
+        <ul>
+          <li><a href="#products">Accept Payments</a></li>
+          <li><a href="#products">Move Money</a></li>
+          <li><a href="#products">Asset Custody</a></li>
+          <li><a href="#products">Crypto Off-Ramp</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Developers</h5>
+        <ul>
+          <li><a href="#developer">API Reference</a></li>
+          <li><a href="#developer">SDK Libraries</a></li>
+          <li><a href="#developer">Webhooks</a></li>
+          <li><a href="#developer">Sandbox Mode</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About Sellix</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Security</a></li>
+          <li><a href="#">Contact Sales</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Compliance</a></li>
+          <li><a href="#">Cookie Settings</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Sellix Inc. All rights reserved.</div>
+      <div class="status-pill">
+        <span style="width:6px; height:6px; background:#10b981; border-radius:50%;"></span>
+        All Systems Operational
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       SCRIPTS: INTERACTIONS & ANIMATIONS
+       ============================================================ -->
+  <script>
+    /* 1. CURSOR & PARALLAX EFFECT */
+    (function(){
+      var cursor = document.getElementById('v2Cursor');
+      var follower = document.getElementById('v2CursorFollower');
+      var ambient = document.getElementById('ambientGlow');
+      var heroInner = document.getElementById('heroInner');
+
+      if (!cursor || !follower) return;
+
+      var mouseX = window.innerWidth / 2;
+      var mouseY = window.innerHeight / 2;
+      var posX = mouseX, posY = mouseY;
+
+      document.addEventListener('mousemove', function(e){
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        cursor.style.left = mouseX + 'px';
+        cursor.style.top = mouseY + 'px';
+
+        if (ambient) {
+          ambient.style.setProperty('--mouse-x', mouseX + 'px');
+          ambient.style.setProperty('--mouse-y', mouseY + 'px');
+        }
+
+        // Slight parallax on hero text
+        if (heroInner && window.innerWidth > 768) {
+          var tiltX = (mouseX - window.innerWidth / 2) * 0.015;
+          var tiltY = (mouseY - window.innerHeight / 2) * 0.015;
+          heroInner.style.transform = 'translate(' + tiltX + 'px, ' + tiltY + 'px)';
+        }
+      });
+
+      function loop() {
+        posX += (mouseX - posX) * 0.15;
+        posY += (mouseY - posY) * 0.15;
+
+        follower.style.left = posX + 'px';
+        follower.style.top = posY + 'px';
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+
+    /* 2. NAVBAR SCROLL EFFECT */
+    (function(){
+      var nav = document.getElementById('mainNav');
+      window.addEventListener('scroll', function(){
+        if (window.scrollY > 40) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      });
+    })();
+
+    /* 3. MOBILE BURGER MENU */
+    (function(){
+      var burger = document.getElementById('burger');
+      var menu = document.getElementById('menu');
+      if (!burger || !menu) return;
+
+      function setMenu(open) {
+        menu.classList.toggle('open', open);
+        burger.classList.toggle('open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      burger.addEventListener('click', function(e){
+        e.stopPropagation();
+        setMenu(!menu.classList.contains('open'));
+      });
+
+      document.addEventListener('click', function(e){
+        if (menu.classList.contains('open') && !menu.contains(e.target) && !burger.contains(e.target)) {
+          setMenu(false);
+        }
+      });
+
+      menu.querySelectorAll('a').forEach(function(a){
+        a.addEventListener('click', function(){ setMenu(false); });
+      });
+    })();
+
+    /* 4. HERO PARTICLES CANVAS */
+    (function(){
+      var canvas = document.getElementById('heroCanvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var width = canvas.width = window.innerWidth;
+      var height = canvas.height = window.innerHeight;
+
+      var particles = [];
+      var numParticles = Math.min(Math.floor(width / 25), 60);
+
+      for (var i = 0; i < numParticles; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.5 + 0.1,
+          speedY: -Math.random() * 0.3 - 0.1,
+          speedX: (Math.random() - 0.5) * 0.2
+        });
+      }
+
+      window.addEventListener('resize', function(){
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          p.y += p.speedY;
+          p.x += p.speedX;
+
+          if (p.y < 0) p.y = height;
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(167, 139, 250, ' + p.alpha + ')';
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* 5. BACKGROUND VIDEO CROSS-FADE */
+    (function(){
+      var A = document.getElementById('bgVideoA');
+      var B = document.getElementById('bgVideoB');
+      if (!A || !B) return;
+
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        A.pause(); B.pause();
+        return;
+      }
+
+      var FADE = 0.9;
+      var cur = A, nxt = B;
+      var swapping = false;
+
+      function play(v) {
+        var p = v.play();
+        if (p && p.catch) p.catch(function(){});
+      }
+      play(A);
+
+      function tick() {
+        if (swapping || !cur.duration) return;
+        if (cur.duration - cur.currentTime > FADE) return;
+
+        swapping = true;
+        var out = cur;
+        nxt.currentTime = 0;
+        play(nxt);
+        nxt.classList.add('is-active');
+        out.classList.remove('is-active');
+
+        var tmp = cur; cur = nxt; nxt = tmp;
+
+        setTimeout(function(){
+          out.pause();
+          try { out.currentTime = 0; } catch(e){}
+          swapping = false;
+        }, FADE * 1000 + 100);
+      }
+
+      A.addEventListener('timeupdate', tick);
+      B.addEventListener('timeupdate', tick);
+    })();
+
+    /* 6. INTERSECTION OBSERVER FOR REVEAL & COUNTERS */
+    (function(){
+      var reveals = document.querySelectorAll('.reveal');
+
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+
+            // Counter animation inside stat cards
+            var numbers = entry.target.querySelectorAll('.stat-number');
+            numbers.forEach(function(numEl){
+              if (numEl.dataset.animated) return;
+              numEl.dataset.animated = "true";
+
+              var target = parseFloat(numEl.dataset.target);
+              var prefix = numEl.dataset.prefix || '';
+              var suffix = numEl.dataset.suffix || '';
+              var count = 0;
+              var duration = 1500;
+              var stepTime = 30;
+              var steps = duration / stepTime;
+              var inc = target / steps;
+
+              var timer = setInterval(function(){
+                count += inc;
+                if (count >= target) {
+                  count = target;
+                  clearInterval(timer);
+                }
+                numEl.textContent = prefix + (Number.isInteger(target) ? Math.floor(count) : count.toFixed(1)) + suffix;
+              }, stepTime);
+            });
+          }
+        });
+      }, { threshold: 0.15 });
+
+      reveals.forEach(function(r){ observer.observe(r); });
+    })();
+
+    /* 7. INTERACTIVE VIZ DEMO CONVERTER */
+    (function(){
+      var sendAmt = document.getElementById('vizSendAmt');
+      var sendCurr = document.getElementById('vizSendCurr');
+      var recAmt = document.getElementById('vizRecAmt');
+      var recCurr = document.getElementById('vizRecCurr');
+      var simBtn = document.getElementById('vizSimulateBtn');
+      var nodeA = document.getElementById('nodeA');
+      var nodeB = document.getElementById('nodeB');
+
+      var rates = {
+        USD: { EUR: 0.924, USDC: 1.0, BTC: 0.000015 },
+        EUR: { EUR: 1.0, USDC: 1.08, BTC: 0.000016 },
+        GBP: { EUR: 1.18, USDC: 1.28, BTC: 0.000019 }
+      };
+
+      function updateCalc() {
+        if (!sendAmt || !recAmt) return;
+        var val = parseFloat(sendAmt.value) || 0;
+        var from = sendCurr.value;
+        var to = recCurr.value;
+        
+        nodeA.textContent = from;
+        nodeB.textContent = to;
+
+        var rate = (rates[from] && rates[from][to]) ? rates[from][to] : 0.924;
+        var res = (val * rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+        recAmt.value = res;
+      }
+
+      if (sendAmt) sendAmt.addEventListener('input', updateCalc);
+      if (sendCurr) sendCurr.addEventListener('change', updateCalc);
+      if (recCurr) recCurr.addEventListener('change', updateCalc);
+
+      if (simBtn) {
+        simBtn.addEventListener('click', function(){
+          simBtn.textContent = "⚡ Processing Routing Lock...";
+          simBtn.style.background = "#06b6d4";
+
+          setTimeout(function(){
+            simBtn.textContent = "✓ Settled in 0.84s";
+            simBtn.style.background = "#10b981";
+
+            setTimeout(function(){
+              simBtn.textContent = "Execute Test Transaction";
+              simBtn.style.background = "var(--purple-deep)";
+            }, 2500);
+          }, 1200);
+        });
+      }
+    })();
+
+    /* 8. DEVELOPER CODE STUDIO INTERACTION */
+    (function(){
+      var codeBody = document.getElementById('codeBody');
+      var codeRunBtn = document.getElementById('codeRunBtn');
+      var codeStatusText = document.getElementById('codeStatusText');
+      var tabs = document.querySelectorAll('.code-tab');
+
+      var snippets = {
+        payment: `<span class="code-comment">// Create an instant cross-border payment endpoint</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(<span class="code-string">'https://api.sellix.io/v1/payments'</span>, {
+  method: <span class="code-string">'POST'</span>,
+  headers: {
+    <span class="code-string">'Authorization'</span>: <span class="code-string">'Bearer slx_live_9f82d1...'</span>,
+    <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>
+  },
+  body: JSON.stringify({
+    amount: <span class="code-number">2500.00</span>,
+    currency: <span class="code-string">'USD'</span>,
+    destination_country: <span class="code-string">'DE'</span>,
+    settlement_rail: <span class="code-string">'INSTANT_SEPA'</span>
+  })
+});`,
+        transfer: `<span class="code-comment">// Execute instant multi-sig transfer</span>
+<span class="code-keyword">const</span> transfer = <span class="code-keyword">await</span> sellix.transfers.create({
+  source_vault: <span class="code-string">'vlt_corp_treasury_01'</span>,
+  destination: <span class="code-string">'0x71C765...d897'</span>,
+  asset: <span class="code-string">'USDC'</span>,
+  amount: <span class="code-number">50000.00</span>,
+  auto_hedge: <span class="code-keyword">true</span>
+});`
+      };
+
+      tabs.forEach(function(tab){
+        tab.addEventListener('click', function(){
+          tabs.forEach(function(t){ t.classList.remove('active'); });
+          tab.classList.add('active');
+          var key = tab.dataset.tab;
+          if (snippets[key] && codeBody) {
+            codeBody.innerHTML = snippets[key];
+          }
+        });
+      });
+
+      if (codeRunBtn) {
+        codeRunBtn.addEventListener('click', function(){
+          codeStatusText.textContent = "Sending request to mainnet...";
+          codeRunBtn.textContent = "Executing...";
+
+          setTimeout(function(){
+            codeStatusText.textContent = "HTTP 200 OK • 14ms latency";
+            codeStatusText.style.color = "#10b981";
+            codeRunBtn.textContent = "✓ Success";
+
+            codeBody.innerHTML = `<span class="code-comment">// Response payload (200 OK)</span>
+{
+  <span class="code-string">"id"</span>: <span class="code-string">"pay_98f21a44c7"</span>,
+  <span class="code-string">"status"</span>: <span class="code-string">"settled"</span>,
+  <span class="code-string">"amount"</span>: <span class="code-number">2500.00</span>,
+  <span class="code-string">"currency"</span>: <span class="code-string">"USD"</span>,
+  <span class="code-string">"settled_at"</span>: <span class="code-string">"2026-09-22T12:25:00Z"</span>,
+  <span class="code-string">"fee_bps"</span>: <span class="code-number">0</span>
+}`;
+
+            setTimeout(function(){
+              codeRunBtn.textContent = "Execute Request";
+              codeStatusText.style.color = "var(--ink-subtle)";
+            }, 3000);
+          }, 800);
+        });
+      }
+    })();
+  </script>
+</body>
 </html>
