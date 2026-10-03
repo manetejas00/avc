@@ -113,7 +113,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
       <V1Nav />
       <main className="company-premium__main">
         <Link to="/screener" className="company-premium__back"><ArrowLeft size={16} /> Back to screener</Link>
-        <header className="company-premium__hero"><p className="company-premium__eyebrow">06 — COMPANY RESEARCH · {safeExchange}</p><h1 className="company-premium__title">{cleanTicker || 'RELIANCE'}<br /><em>in focus.</em></h1><p className="company-premium__copy">Price activity, key market statistics, charts, financial statements, dividend dates, earnings and valuation for this {safeExchange}-listed company.</p></header>
+        <header className="company-premium__hero"><p className="company-premium__eyebrow">06 — EQUITY RESEARCH & ANALYSIS · {safeExchange}</p><h1 className="company-premium__title">{cleanTicker || 'RELIANCE'}<br /><em>in focus.</em></h1><p className="company-premium__copy">Price activity, key market statistics, charts, financial statements, dividend calendar, earnings and valuation for {cleanTicker || 'RELIANCE'} on the {safeExchange} exchange ecosystem.</p></header>
         <section className="company-premium__panel company-premium__summary" aria-label="Company market summary"><div className="company-premium__panel-kicker">LIVE MARKET SUMMARY <ArrowUpRight size={14} /></div>
           <TradingViewWidget name="symbol-info" symbol={symbol} height={180} />
         </section>
@@ -124,7 +124,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
         <section className="company-premium__panel" aria-label="Company financials"><div className="company-premium__panel-heading"><div><p>Fundamental research</p><h2>Financials and valuation</h2></div><span>Live statements</span></div>
           <TradingViewWidget name="financials" symbol={symbol} height={760} />
         </section>
-        <p className="company-premium__disclaimer">Data is supplied by TradingView and may be delayed. It is for research only and is not investment advice.</p>
+        <p className="company-premium__disclaimer">Market data is supplied by TradingView for research purposes. AVC Dhanam Solutions Pvt. Ltd. does not issue stock tips or guaranteed trading advice.</p>
       </main>
       <V1Footer />
     </div>

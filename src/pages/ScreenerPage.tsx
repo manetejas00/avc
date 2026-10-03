@@ -24,6 +24,10 @@ export default function ScreenerPage() {
   const [companies, setCompanies] = useState<Company[]>(fallbackCompanies);
   const [directoryLoading, setDirectoryLoading] = useState(true);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [companyReference, requestedSearch]);
+
   useGSAP(() => {
     const scope = pageRef.current;
     if (!scope) return;
@@ -68,11 +72,11 @@ export default function ScreenerPage() {
   return <div ref={pageRef} className="screener-premium">
     <V1Nav />
     <main className="screener-premium__main">
-      <header className="screener-premium__hero"><p className="screener-premium__eyebrow">06 — PREMIUM MARKET SCREENER</p><h1 className="screener-premium__title">Find conviction<br />in the <em>details.</em></h1><p className="screener-premium__copy">A considered view of BSE-listed companies, designed to help you identify the signals worth investigating.</p></header>
-      <form onSubmit={submit} className="screener-premium__search"><Search size={18} /><label htmlFor="stock-search" className="sr-only">Search BSE companies</label><input id="stock-search" value={query} onChange={event => { setQuery(event.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} placeholder="Search a company or ticker" autoComplete="off" /><button type="submit">Open company <ArrowUpRight size={17} /></button>{showSuggestions && query.trim() && <div className="screener-premium__suggestions">{suggestions.length ? suggestions.map(company => <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={event => event.preventDefault()} onClick={() => select(company)}><span>{company.name}<small>{company.ticker}</small></span><b>{company.exchange}</b></button>) : <p>{directoryLoading ? 'Loading the BSE company directory…' : 'No company found. Try a ticker such as TCS.'}</p>}</div>}</form>
+      <header className="screener-premium__hero"><p className="screener-premium__eyebrow">06 — MARKET RESEARCH & EQUITY SCREENER</p><h1 className="screener-premium__title">BSE Market Research<br />& <em>Equity Discovery.</em></h1><p className="screener-premium__copy">AVC Dhanam Solutions Pvt. Ltd. provides a focused equity research workspace to filter, compare, and analyze BSE-listed companies in India.</p></header>
+      <form onSubmit={submit} className="screener-premium__search"><Search size={18} /><label htmlFor="stock-search" className="sr-only">Search BSE listed companies</label><input id="stock-search" value={query} onChange={event => { setQuery(event.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} placeholder="Search a BSE company or ticker (e.g. RELIANCE, TCS)" autoComplete="off" /><button type="submit">Open company <ArrowUpRight size={17} /></button>{showSuggestions && query.trim() && <div className="screener-premium__suggestions">{suggestions.length ? suggestions.map(company => <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={event => event.preventDefault()} onClick={() => select(company)}><span>{company.name}<small>{company.ticker}</small></span><b>{company.exchange}</b></button>) : <p>{directoryLoading ? 'Loading the BSE company directory…' : 'No company found. Try a ticker such as TCS.'}</p>}</div>}</form>
       <div className="screener-premium__metrics"><div><small>UNIVERSE</small><strong>BSE-listed equities</strong></div><div><small>DATA MODE</small><strong>Live market scan</strong></div><div><small>WORKSPACE</small><strong>Filter · compare · investigate</strong></div></div>
       <section className="screener-premium__workspace" aria-label="Live BSE stock screener"><div className="screener-premium__workspace-bar"><span><i /> LIVE DISCOVERY</span><span>India · INR · BSE</span></div><div ref={widgetRef} className="tradingview-widget-container screener-premium__widget" /></section>
-      <p className="screener-premium__disclaimer">Live BSE market data is supplied by TradingView and may be delayed. Information shown here is for research only and is not investment advice.</p>
+      <p className="screener-premium__disclaimer">Live BSE market data is powered by TradingView for educational research. Information presented here does not constitute financial advice or stock recommendations.</p>
     </main>
     <V1Footer />
   </div>;

@@ -62,6 +62,22 @@ export default function LiveMarketOverview() {
   const [points, setPoints] = useState<Point[]>([]);
   const [status, setStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const [selectedSymbol, setSelectedSymbol] = useState('^NSEI');
+
+  const loadChart = async (symbol: string, signal?: AbortSignal) => {
+    const parsePoints = (payload: { chart?: { result?: Array<{ timestamp?: number[]; indicators?: { quote?: Array<{ close?: Array<number | null> }> } }> } }) => {
+      const result = payload.chart?.result?.[0]; const closes = result?.indicators?.quote?.[0]?.close ?? []; const timestamps = result?.timestamp ?? [];
+      return closes.map((value, index) => value === null ? null : { value, timestamp: new Date((timestamps[index] ?? 0) * 1000).toISOString() }).filter((point): point is Point => point !== null);
+    };
+    const primary = await fetch(`/api/market/chart?symbol=${encodeURIComponent(symbol)}`, { signal });
+    if (primary.ok && primary.headers.get('content-type')?.includes('application/json')) {
+      const history = await primary.json() as Point[];
+      if (history.length) { setPoints(history); return; }
+    }
+    const fallback = await fetch(import.meta.env.DEV ? `/api/yahoo/v8/finance/chart/${encodeURIComponent(symbol)}?range=3mo&interval=1d` : `/api/yahoo.php?symbol=${encodeURIComponent(symbol)}&range=3mo&interval=1d`, { signal });
+    if (!fallback.ok) throw new Error('Price history unavailable');
+    setPoints(parsePoints(await fallback.json()));
+  };
 
   const loadMarket = async (signal?: AbortSignal) => {
     setStatus(current => current === 'ready' ? current : 'loading');
@@ -70,17 +86,13 @@ export default function LiveMarketOverview() {
       if (!dashboard.ok) throw new Error('Dashboard unavailable');
       const liveQuotes: Quote[] = await dashboard.json();
       setQuotes(liveQuotes);
-      const chart = await fetch('/api/market/chart?symbol=%5ENSEI', { signal });
-      if (chart.ok) {
-        const history: Point[] = await chart.json();
-        setPoints(history);
-      }
+      await loadChart(selectedSymbol, signal);
       setUpdatedAt(new Date());
       setStatus('ready');
     } catch (error) {
       if ((error as Error).name === 'AbortError') return;
       try {
-        const responses = await Promise.all(marketSymbols.map(symbol => fetch(`/api/yahoo/v8/finance/chart/${encodeURIComponent(symbol)}?range=3mo&interval=1d`, { signal })));
+        const responses = await Promise.all(marketSymbols.map(symbol => fetch(import.meta.env.DEV ? `/api/yahoo/v8/finance/chart/${encodeURIComponent(symbol)}?range=3mo&interval=1d` : `/api/yahoo.php?symbol=${encodeURIComponent(symbol)}&range=3mo&interval=1d`, { signal })));
         if (responses.some(response => !response.ok)) throw new Error('Live market data unavailable');
         const payloads = await Promise.all(responses.map(response => response.json() as Promise<{ chart?: { result?: Array<{ meta?: Record<string, unknown>; timestamp?: number[]; indicators?: { quote?: Array<{ close?: Array<number | null> }> } }> } }>));
         const liveQuotes = payloads.map((payload, index): Quote | null => {
@@ -103,6 +115,11 @@ export default function LiveMarketOverview() {
     return () => { controller.abort(); window.clearInterval(interval); };
   }, []);
 
+  const selectMarket = (symbol: string) => {
+    setSelectedSymbol(symbol);
+    void loadChart(symbol).catch(() => setStatus('unavailable'));
+  };
+
   useGSAP(() => {
     const scope = sectionRef.current;
     if (!scope) return;
@@ -112,7 +129,7 @@ export default function LiveMarketOverview() {
       .fromTo('.live-market__line', { strokeDasharray: 2, strokeDashoffset: 2 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, '-=.55');
   }, { scope: sectionRef });
 
-  const featured = quotes.find(quote => quote.symbol === '^NSEI') ?? quotes[0];
+  const featured = quotes.find(quote => quote.symbol === selectedSymbol) ?? quotes[0];
   const secondary = quotes.filter(quote => quote.symbol !== featured?.symbol).slice(0, 5);
 
   return <section ref={sectionRef} id="market-overview" className="live-market" aria-labelledby="live-market-title">
@@ -131,10 +148,10 @@ export default function LiveMarketOverview() {
           <Chart points={points} positive={(featured?.changePercent ?? 0) >= 0} />
         </article>
         <div className="live-market__quotes">
-          {secondary.map(quote => <article className="live-market__quote" key={quote.symbol}>
+          {secondary.map(quote => <button type="button" className="live-market__quote" key={quote.symbol} onClick={() => selectMarket(quote.symbol)} aria-label={`Show ${labels[quote.symbol] ?? quote.name} chart`}>
             <div><small>{labels[quote.symbol] ?? quote.name}</small><strong>{money(quote.price, quote.currency)}</strong></div>
             <span className={quote.changePercent >= 0 ? 'is-up' : 'is-down'}>{quote.changePercent >= 0 ? '+' : ''}{quote.changePercent.toFixed(2)}%</span>
-          </article>)}
+          </button>)}
           {status === 'loading' && Array.from({ length: 5 }, (_, index) => <div className="live-market__quote live-market__skeleton" key={index} />)}
         </div>
       </div>
