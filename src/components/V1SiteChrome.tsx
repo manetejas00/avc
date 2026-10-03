@@ -13,8 +13,17 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.classList.add('mobile-nav-open');
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('mobile-nav-open');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('mobile-nav-open');
+    };
   }, [isMobileMenuOpen]);
 
   const closeMobile = () => setIsMobileMenuOpen(false);
@@ -64,35 +73,36 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
+    </nav>
 
-      {isMobileMenuOpen && (
-        <div className="v1-mobile-menu" role="dialog" aria-modal="true">
-          <div className="v1-mobile-menu__backdrop" onClick={closeMobile} />
-          <div className="v1-mobile-menu__panel">
-            <div className="v1-mobile-menu__links">
-              <a href={toHomeSection('markets')} onClick={closeMobile}>Live Markets</a>
-              <a href={toHomeSection('system')} onClick={closeMobile}>Financial Services</a>
-              <a href={toHomeSection('approach')} onClick={closeMobile}>About AVC Dhanam</a>
-              <a href={toHomeSection('calculators')} onClick={closeMobile}>Wealth Calculators</a>
-              <a href={toHomeSection('news')} onClick={closeMobile}>Insights & Articles</a>
-              <a href={toHomeSection('faq')} onClick={closeMobile}>FAQ & Guidance</a>
-              <a href="/screener" onClick={closeMobile} className="v1-mobile-menu__screener">
-                Market Screener <Sparkles size={14} />
-              </a>
-            </div>
-            <div className="v1-mobile-menu__footer">
-              <button 
-                type="button" 
-                onClick={() => { closeMobile(); setIsContactOpen(true); }} 
-                className="v1-mobile-menu__btn"
-              >
-                Talk to a Consultant <ArrowUpRight size={16} />
-              </button>
-            </div>
+    {isMobileMenuOpen && (
+      <div className="v1-mobile-menu" role="dialog" aria-modal="true">
+        <div className="v1-mobile-menu__backdrop" onClick={closeMobile} />
+        <div className="v1-mobile-menu__panel">
+          <div className="v1-mobile-menu__links">
+            <a href={toHomeSection('markets')} onClick={closeMobile}>Live Markets</a>
+            <a href={toHomeSection('system')} onClick={closeMobile}>Financial Services</a>
+            <a href={toHomeSection('approach')} onClick={closeMobile}>About AVC Dhanam</a>
+            <a href={toHomeSection('calculators')} onClick={closeMobile}>Wealth Calculators</a>
+            <a href={toHomeSection('news')} onClick={closeMobile}>Insights & Articles</a>
+            <a href={toHomeSection('faq')} onClick={closeMobile}>FAQ & Guidance</a>
+            <a href="/screener" onClick={closeMobile} className="v1-mobile-menu__screener">
+              Market Screener <Sparkles size={14} />
+            </a>
+          </div>
+          <div className="v1-mobile-menu__footer">
+            <button 
+              type="button" 
+              onClick={() => { closeMobile(); setIsContactOpen(true); }} 
+              className="v1-mobile-menu__btn"
+            >
+              Talk to a Consultant <ArrowUpRight size={16} />
+            </button>
           </div>
         </div>
-      )}
-    </nav>
+      </div>
+    )}
+
     <ContactFormModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
   </>;
 });
