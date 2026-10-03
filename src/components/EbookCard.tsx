@@ -42,11 +42,22 @@ export default function EbookCard({ book, onBuyNow, onPreview }: EbookCardProps)
         <div
           className={`w-full h-56 rounded-xl bg-gradient-to-br ${book.coverGradient} p-6 flex flex-col justify-between relative overflow-hidden border border-white/10 shadow-lg group-hover:scale-[1.01] transition-transform duration-300`}
         >
+          {book.coverImage && (
+            <img
+              src={book.coverImage}
+              alt={book.title}
+              className="absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-105 transition-transform duration-500"
+            />
+          )}
+
+          {/* Dark Overlay gradient over image */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/60 z-0 pointer-events-none" />
+
           {/* Subtle Background Glow */}
-          <div className="absolute -right-10 -bottom-10 w-36 h-36 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 w-36 h-36 rounded-full bg-white/5 blur-2xl pointer-events-none z-0" />
 
           <div className="flex justify-between items-start z-10">
-            <span className="px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-black/40 backdrop-blur-md text-white border border-white/10">
+            <span className="px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10">
               {book.category}
             </span>
 
@@ -59,14 +70,14 @@ export default function EbookCard({ book, onBuyNow, onPreview }: EbookCardProps)
 
           {/* Book Title & Icon on Cover */}
           <div className="z-10 text-white">
-            <div className="text-[#D4AF37] mb-2 opacity-90">{renderIcon(book.coverIcon)}</div>
-            <h3 className="text-base font-bold text-white line-clamp-2 leading-tight drop-shadow-sm">
+            {!book.coverImage && <div className="text-[#D4AF37] mb-2 opacity-90">{renderIcon(book.coverIcon)}</div>}
+            <h3 className="text-base font-bold text-white line-clamp-2 leading-tight drop-shadow-md">
               {book.title}
             </h3>
-            <p className="text-[11px] text-neutral-300 mt-1 font-medium">{book.author}</p>
+            <p className="text-[11px] text-neutral-200 mt-1 font-medium drop-shadow">{book.author}</p>
           </div>
 
-          <div className="z-10 flex items-center justify-between text-[11px] text-neutral-300 border-t border-white/10 pt-2">
+          <div className="z-10 flex items-center justify-between text-[11px] text-neutral-200 border-t border-white/20 pt-2 drop-shadow">
             <span>{book.pages} Pages</span>
             <span>{book.difficulty}</span>
           </div>

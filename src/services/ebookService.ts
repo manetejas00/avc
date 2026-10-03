@@ -21,6 +21,7 @@ export interface EBook {
   publishedYear: string;
   coverGradient: string;
   coverAccent: string;
+  coverImage?: string;
   coverIcon: 'trending' | 'chart' | 'book' | 'pie' | 'shield' | 'zap';
   tableOfContents: { chapter: string; title: string; summary: string }[];
   whatYouWillLearn: string[];
@@ -52,6 +53,7 @@ export const EBOOKS_DATA: EBook[] = [
     publishedYear: '2026',
     coverGradient: 'from-amber-700 via-amber-900 to-black',
     coverAccent: '#D4AF37',
+    coverImage: '/assets/ebooks/ebook_beginners_playbook.jpg',
     coverIcon: 'trending',
     tags: ['Stock Market', 'Beginner', 'Investing', 'NSE', 'BSE', 'Demat'],
     whatYouWillLearn: [
@@ -102,6 +104,7 @@ export const EBOOKS_DATA: EBook[] = [
     publishedYear: '2026',
     coverGradient: 'from-emerald-800 via-slate-900 to-black',
     coverAccent: '#10b981',
+    coverImage: '/assets/ebooks/ebook_fundamental_analysis.jpg',
     coverIcon: 'chart',
     tags: ['Fundamental Analysis', 'Investing', 'Valuation', 'Balance Sheet', 'Financial Analysis'],
     whatYouWillLearn: [
@@ -152,6 +155,7 @@ export const EBOOKS_DATA: EBook[] = [
     publishedYear: '2026',
     coverGradient: 'from-blue-900 via-slate-950 to-black',
     coverAccent: '#3b82f6',
+    coverImage: '/assets/ebooks/ebook_technical_analysis.jpg',
     coverIcon: 'zap',
     tags: ['Technical Analysis', 'Stock Market', 'Price Action', 'Trading', 'Candlesticks'],
     whatYouWillLearn: [
@@ -202,6 +206,7 @@ export const EBOOKS_DATA: EBook[] = [
     publishedYear: '2026',
     coverGradient: 'from-amber-900 via-stone-900 to-black',
     coverAccent: '#f59e0b',
+    coverImage: '/assets/ebooks/ebook_wealth_creation.jpg',
     coverIcon: 'book',
     tags: ['Investing', 'Long-Term', 'Wealth Creation', 'SIP', 'Compounding', 'Beginner'],
     whatYouWillLearn: [

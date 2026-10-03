@@ -127,10 +127,21 @@ export default function EbookDetailsPage() {
               <div
                 className={`w-full h-[420px] rounded-2xl bg-gradient-to-br ${book.coverGradient} p-8 flex flex-col justify-between border border-white/10 shadow-2xl relative overflow-hidden`}
               >
-                <div className="absolute -right-16 -bottom-16 w-56 h-56 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+                {book.coverImage && (
+                  <img
+                    src={book.coverImage}
+                    alt={book.title}
+                    className="absolute inset-0 w-full h-full object-cover z-0"
+                  />
+                )}
+
+                {/* Dark Overlay gradient over image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/60 z-0 pointer-events-none" />
+
+                <div className="absolute -right-16 -bottom-16 w-56 h-56 rounded-full bg-white/5 blur-3xl pointer-events-none z-0" />
 
                 <div className="flex justify-between items-start z-10">
-                  <span className="px-3 py-1 rounded-md text-xs uppercase font-bold tracking-wider bg-black/50 backdrop-blur-md text-white border border-white/10">
+                  <span className="px-3 py-1 rounded-md text-xs uppercase font-bold tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10">
                     {book.category}
                   </span>
 
@@ -142,16 +153,18 @@ export default function EbookDetailsPage() {
                 </div>
 
                 <div className="z-10 text-white space-y-2">
-                  <div className="text-[#D4AF37]">
-                    <BookOpen size={48} />
-                  </div>
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">
+                  {!book.coverImage && (
+                    <div className="text-[#D4AF37]">
+                      <BookOpen size={48} />
+                    </div>
+                  )}
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
                     {book.title}
                   </h1>
-                  <p className="text-xs md:text-sm text-neutral-300">{book.subtitle}</p>
+                  <p className="text-xs md:text-sm text-neutral-200 drop-shadow">{book.subtitle}</p>
                 </div>
 
-                <div className="z-10 flex items-center justify-between text-xs text-neutral-300 border-t border-white/10 pt-3">
+                <div className="z-10 flex items-center justify-between text-xs text-neutral-200 border-t border-white/20 pt-3 drop-shadow">
                   <span>Author: <b>{book.author}</b></span>
                   <span>{book.pages} Pages</span>
                 </div>
