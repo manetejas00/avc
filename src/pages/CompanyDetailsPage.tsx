@@ -113,7 +113,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
       <V1Nav />
       <main className="company-premium__main">
         <Link to="/screener" className="company-premium__back"><ArrowLeft size={16} /> Back to screener</Link>
-        <header className="company-premium__hero"><p className="company-premium__eyebrow">06 — EQUITY RESEARCH & ANALYSIS · {safeExchange}</p><h1 className="company-premium__title">{cleanTicker || 'RELIANCE'}<br /><em>in focus.</em></h1><p className="company-premium__copy">Price activity, key market statistics, charts, financial statements, dividend calendar, earnings and valuation for {cleanTicker || 'RELIANCE'} on the {safeExchange} exchange ecosystem.</p></header>
+        <header className="company-premium__hero"><p className="company-premium__eyebrow">06 — EQUITY RESEARCH & ANALYSIS · {safeExchange}</p><h1 className="company-premium__title">{cleanTicker || 'RELIANCE'} <em>In Focus.</em></h1><p className="company-premium__copy">Price activity, market statistics, charts, and financials for {cleanTicker || 'RELIANCE'} on {safeExchange}.</p></header>
         <section className="company-premium__panel company-premium__summary" aria-label="Company market summary"><div className="company-premium__panel-kicker">LIVE MARKET SUMMARY <ArrowUpRight size={14} /></div>
           <TradingViewWidget name="symbol-info" symbol={symbol} height={180} />
         </section>
