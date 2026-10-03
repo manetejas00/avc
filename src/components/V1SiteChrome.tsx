@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useState } from 'react';
-import { ArrowUpRight, Award, Clock, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { ArrowUpRight, Award, BookOpen, Clock, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
 import RegulatoryDisclaimer from './RegulatoryDisclaimer';
 
@@ -45,6 +45,23 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
       </div>
 
       <div className="v1-nav__right">
+        <div className="v1-mobile-nav-chips flex lg:hidden items-center gap-1.5 mr-1">
+          <a
+            href="/ipo"
+            onClick={closeMobile}
+            className="px-2.5 py-1 rounded-lg bg-[#D4AF37]/15 hover:bg-[#D4AF37] hover:text-black border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold transition-all flex items-center gap-1 shadow-sm"
+          >
+            <TrendingUp size={12} /> IPOs
+          </a>
+          <a
+            href="/ebooks"
+            onClick={closeMobile}
+            className="px-2.5 py-1 rounded-lg bg-[#D4AF37]/15 hover:bg-[#D4AF37] hover:text-black border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold transition-all flex items-center gap-1 shadow-sm"
+          >
+            <BookOpen size={12} /> E-Books
+          </a>
+        </div>
+
         <button 
           type="button" 
           onClick={() => { closeMobile(); setIsContactOpen(true); }} 
@@ -72,8 +89,12 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
           <div className="v1-mobile-menu__links">
             <a href={toHomeSection('markets')} onClick={closeMobile}>Live Markets</a>
             <a href={toHomeSection('system')} onClick={closeMobile}>Financial Services</a>
-            <a href="/ipo" onClick={closeMobile}>IPOs</a>
-            <a href="/ebooks" onClick={closeMobile}>Stock Market E-Books</a>
+            <a href="/ipo" onClick={closeMobile} className="flex items-center justify-between text-[#D4AF37]">
+              IPOs <TrendingUp size={15} />
+            </a>
+            <a href="/ebooks" onClick={closeMobile} className="flex items-center justify-between text-[#D4AF37]">
+              Stock Market E-Books <BookOpen size={15} />
+            </a>
             <a href={toHomeSection('approach')} onClick={closeMobile}>About AVC Dhanam</a>
             <a href={toHomeSection('calculators')} onClick={closeMobile}>Wealth Calculators</a>
             <a href={toHomeSection('news')} onClick={closeMobile}>Insights & Articles</a>
