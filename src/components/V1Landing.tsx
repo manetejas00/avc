@@ -6,6 +6,7 @@ import { ArrowUpRight, BarChart3, Calculator, ChevronRight, ExternalLink, Layers
 import TradingViewTicker from './TradingViewTicker';
 import ContactFormModal from './ContactFormModal';
 import LiveMarketOverview from './LiveMarketOverview';
+import HomeEbooksSection from './HomeEbooksSection';
 import ScreenerGateway from './ScreenerGateway';
 import FAQ from './FAQ';
 import { V1Footer, V1Nav } from './V1SiteChrome';
@@ -181,6 +182,7 @@ export default function V1Landing() {
       </div></div>
     </section>
     <LiveMarketOverview />
+    <HomeEbooksSection />
     <ScreenerGateway />
     <FAQ />
     <V1Footer />

@@ -36,6 +36,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
         <a href={toHomeSection('markets')}>Markets</a>
         <a href={toHomeSection('system')}>Services</a>
         <a href="/ipo">IPOs</a>
+        <a href="/ebooks">E-Books</a>
         <a href={toHomeSection('approach')}>About Us</a>
         <a href={toHomeSection('calculators')}>Calculators</a>
         <a href={toHomeSection('news')}>Insights</a>
@@ -71,6 +72,8 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
           <div className="v1-mobile-menu__links">
             <a href={toHomeSection('markets')} onClick={closeMobile}>Live Markets</a>
             <a href={toHomeSection('system')} onClick={closeMobile}>Financial Services</a>
+            <a href="/ipo" onClick={closeMobile}>IPOs</a>
+            <a href="/ebooks" onClick={closeMobile}>Stock Market E-Books</a>
             <a href={toHomeSection('approach')} onClick={closeMobile}>About AVC Dhanam</a>
             <a href={toHomeSection('calculators')} onClick={closeMobile}>Wealth Calculators</a>
             <a href={toHomeSection('news')} onClick={closeMobile}>Insights & Articles</a>
@@ -109,7 +112,7 @@ export function V1Footer() {
     <div className="v1-footer__masthead"><div><p>A Complete Financial Journey Under One Roof</p><h2>Ready to build your<br /><em>financial future?</em></h2></div><a href="tel:+917030247878">Talk to a Financial Consultant <ArrowUpRight size={17} /></a></div>
     <div className="v1-footer__grid">
       <div className="v1-footer__brand"><a href="/" className="v1-logo" aria-label="AVC Dhanam Solutions Home"><img src="/logo_gold_transparent.svg" alt="AVC Dhanam Solutions Pvt. Ltd." /></a><p>AVC Dhanam Solutions Pvt. Ltd. is a trusted financial consultancy in Virar West, Mumbai Metropolitan Region. Operating for 8+ years under Directors Chandresh Pandey and Ajay Pandey, we provide investments, loans, insurance, tax services, and business funding under one roof.</p><ul><li><MapPin size={15} />210, Second Floor, Global Plaza, Global City, Virar West, Maharashtra – 401305</li><li><Phone size={15} /><a href="tel:+917030247878">+91 7030247878</a></li><li><Mail size={15} /><a href="mailto:support@avcdhanam.com">support@avcdhanam.com</a></li><li><Clock size={15} />Mon – Sat · 9:30 AM – 6:30 PM (IST)</li></ul></div>
-      <div className="v1-footer__link-group"><h4>Explore</h4><a href="/#system">Services Suite</a><a href="/#approach">About AVC Dhanam</a><a href="/#markets">Live Markets</a><a href="/#calculators">Calculators</a><a href="/#faq">FAQ & Guidance</a><a href="/screener">Market Screener</a></div>
+      <div className="v1-footer__link-group"><h4>Explore</h4><a href="/#system">Services Suite</a><a href="/#approach">About AVC Dhanam</a><a href="/#markets">Live Markets</a><a href="/#calculators">Calculators</a><a href="/ebooks">Stock Market E-Books</a><a href="/#faq">FAQ & Guidance</a><a href="/screener">Market Screener</a></div>
       <div className="v1-footer__link-group"><h4>Solutions</h4><a href="/#system">Mutual Funds & SIP</a><a href="/#system">Business & Home Loans</a><a href="/#system">Life & Health Insurance</a><a href="/#system">Tax Planning & CA Support</a><a href="/#system">Merchant Banking & Funding</a><a href="/#system">Retirement & Literacy</a></div>
       <div className="v1-footer__registration"><h4>Credentials & Trust</h4><div className="v1-footer__credential-list"><p><ShieldCheck size={17} /><span><b>Motilal Oswal Franchise Partner</b><small>8+ Years Sub-Broker Association</small><strong>Franchise Network</strong></span></p><p><Award size={17} /><span><b>AMFI Mutual Fund Distributor</b><small>AMFI Registration Number</small><strong>ARN-184920</strong></span></p></div><a href="/sitemap.xml" target="_blank" rel="noreferrer">View XML sitemap <ExternalLink size={13} /></a></div>
     </div>

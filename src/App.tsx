@@ -5,6 +5,8 @@ import ScreenerPage from './pages/ScreenerPage';
 import CompanyDetailsPage from './pages/CompanyDetailsPage';
 import IpoPage from './pages/IpoPage';
 import IpoDetailsPage from './pages/IpoDetailsPage';
+import EbooksPage from './pages/EbooksPage';
+import EbookDetailsPage from './pages/EbookDetailsPage';
 import V2Page from '../v2/V2Page';
 import SiteLoader from './components/SiteLoader';
 
@@ -31,6 +33,8 @@ function App() {
           <Route path="/ipo" element={<IpoPage />} />
           <Route path="/ipos" element={<IpoPage />} />
           <Route path="/ipo/:id" element={<IpoDetailsPage />} />
+          <Route path="/ebooks" element={<EbooksPage />} />
+          <Route path="/ebooks/:slug" element={<EbookDetailsPage />} />
           <Route path="/company/:ticker" element={<CompanyDetailsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
