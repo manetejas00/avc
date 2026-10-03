@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 const TradingViewTicker = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -84,13 +86,13 @@ const TradingViewTicker = () => {
         "showSymbolLogo": true,
         "isTransparent": true,
         "displayMode": "adaptive",
-        "colorTheme": "dark",
+        "colorTheme": "${theme === 'light' ? 'light' : 'dark'}",
         "locale": "in"
       }
     `;
     
     containerRef.current.appendChild(script);
-  }, []);
+  }, [theme]);
 
   return (
     <div className="tradingview-widget-container" ref={containerRef}>

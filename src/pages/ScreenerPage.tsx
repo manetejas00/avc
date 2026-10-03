@@ -5,12 +5,13 @@ import { useGSAP } from '@gsap/react';
 import { ArrowUpRight, Search } from 'lucide-react';
 import { CompanyDetailsContent } from './CompanyDetailsPage';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
-
 import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
 import { Company, fallbackCompanies, fetchCompanyDirectory } from '../data/companyDirectory';
+import { useTheme } from '../context/ThemeContext';
 
 export default function ScreenerPage() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [searchParams] = useSearchParams();
   const companyReference = searchParams.get('company');
   const requestedSearch = searchParams.get('search') ?? '';
@@ -54,10 +55,10 @@ export default function ScreenerPage() {
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
     script.async = true;
-    script.text = JSON.stringify({ width: '100%', height: 720, defaultColumn: 'overview', screener_type: 'stock', displayCurrency: 'INR', colorTheme: 'dark', locale: 'in', isTransparent: true, market: 'india', showToolbar: true });
+    script.text = JSON.stringify({ width: '100%', height: 720, defaultColumn: 'overview', screener_type: 'stock', displayCurrency: 'INR', colorTheme: theme === 'light' ? 'light' : 'dark', locale: 'in', isTransparent: true, market: 'india', showToolbar: true });
     container.appendChild(script);
     return () => { container.replaceChildren(); };
-  }, []);
+  }, [theme]);
 
   const suggestions = query.trim() ? companies.filter(company => `${company.ticker} ${company.name}`.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 10) : [];
   const select = (company: Company) => { setQuery(company.name); setShowSuggestions(false); navigate(`/screener?company=${encodeURIComponent(`${company.exchange}:${company.ticker}`)}`); };

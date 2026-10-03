@@ -439,8 +439,22 @@ html.light .v1-stats span { color: #64748B !important; }
 html.light .v1-scroll { color: #64748B !important; }
 
 /* Ticker Strip */
-html.light .v1-ticker-only { background: #FFFFFF !important; border-color: rgba(184, 134, 11, 0.4) !important; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important; }
+html.light .v1-ticker-only { background: #FFFFFF !important; border-color: rgba(184, 134, 11, 0.4) !important; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important; color: #0F172A !important; }
 html.light .v1-ticker-only__label { color: #B8860B !important; border-color: rgba(0, 0, 0, 0.1) !important; }
+html.light .v1-ticker-only * { color: #0F172A !important; }
+
+/* About & Productivity Section Light Mode Fix */
+html.light .v1-productivity { background: #F8F9FB !important; color: #0F172A !important; border-top: 1px solid rgba(0, 0, 0, 0.08); border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+html.light .v1-productivity h2, html.light .v1-productivity h2 * { color: #0F172A !important; }
+html.light .v1-productivity__copy p { color: #475569 !important; }
+html.light .v1-productivity__grid { background-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px) !important; opacity: 0.04 !important; }
+html.light .v1-steps > div { background: #FFFFFF !important; border-color: rgba(0, 0, 0, 0.1) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important; }
+html.light .v1-steps span { color: #475569 !important; }
+html.light .v1-steps strong { color: #0F172A !important; }
+html.light .v1-window { background: #FFFFFF !important; border-color: rgba(0, 0, 0, 0.12) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08) !important; }
+html.light .v1-window__top { border-bottom-color: rgba(0, 0, 0, 0.08) !important; color: #64748B !important; }
+html.light .v1-code { color: #1E293B !important; }
+html.light .v1-code span { color: #94A3B8 !important; }
 
 /* Feature Cards & Glass Panel */
 html.light .v1-tool-list button { color: #1E293B !important; }
@@ -519,6 +533,17 @@ html.light .v1-service-modal__close, html.light .v1-legal-modal__panel > button,
 /* Contact Form Modal Light Mode Overrides */
 html.light .bg-surface { background-color: #FFFFFF !important; }
 html.light input:not([type="range"]), html.light select, html.light textarea { color: #0F172A !important; }
+
+/* Footer Section Light Mode High Contrast Fix */
+html.light .v1-footer { background: #09090B !important; color: #A1A1AA !important; }
+html.light .v1-footer h2, html.light .v1-footer h2 *, html.light .v1-footer__masthead h2 { color: #FFFFFF !important; }
+html.light .v1-footer h4, html.light .v1-footer__grid h4 { color: #D4AF37 !important; }
+html.light .v1-footer p, html.light .v1-footer__brand p, html.light .v1-footer__registration p, html.light .v1-footer__registration p span { color: #A1A1AA !important; }
+html.light .v1-footer__brand li, html.light .v1-footer__brand a, html.light .v1-footer__link-group a, html.light .v1-footer__bottom a, html.light .v1-footer__bottom span { color: #CBD5E1 !important; }
+html.light .v1-footer__registration b, html.light .v1-footer__registration strong { color: #F4D675 !important; }
+html.light .v1-footer__registration p b { color: #FFFFFF !important; }
+html.light .v1-footer__brand { background: rgba(255, 255, 255, 0.04) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+html.light .v1-footer__registration { background: rgba(212, 175, 55, 0.08) !important; border-color: rgba(212, 175, 55, 0.3) !important; }
 
 
 /* Mobile Navigation Drawer System */

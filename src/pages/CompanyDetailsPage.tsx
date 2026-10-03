@@ -5,11 +5,13 @@ import { useGSAP } from '@gsap/react';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
+import { useTheme } from '../context/ThemeContext';
 
 type WidgetName = 'symbol-info' | 'advanced-chart' | 'financials';
 
 function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol: string; height: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -19,17 +21,18 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
     const script = document.createElement('script');
     script.src = `https://s3.tradingview.com/external-embedding/embed-widget-${name}.js`;
     script.async = true;
+    const widgetTheme = theme === 'light' ? 'light' : 'dark';
     script.text = JSON.stringify({
       symbol,
       width: '100%',
       height,
-      colorTheme: 'dark',
+      colorTheme: widgetTheme,
       locale: 'in',
       isTransparent: true,
       ...(name === 'advanced-chart' ? { 
         interval: 'D', 
         timezone: 'Asia/Kolkata',
-        theme: 'dark',
+        theme: widgetTheme,
         style: '1',
         locale: 'in',
         enable_publishing: false,
@@ -51,7 +54,7 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
     });
     container.appendChild(script);
     return () => container.replaceChildren();
-  }, [name, symbol, height]);
+  }, [name, symbol, height, theme]);
 
   return <div ref={containerRef} className="tradingview-widget-container" />;
 }
