@@ -2,14 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { useTheme } from '../context/ThemeContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MarketOverview = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
 
   useGSAP(() => {
     gsap.from('.market-title', {
@@ -34,7 +32,7 @@ const MarketOverview = () => {
     script.async = true;
     script.innerHTML = `
       {
-        "colorTheme": "${theme === 'light' ? 'light' : 'dark'}",
+        "colorTheme": "dark",
         "dateRange": "12M",
         "showChart": true,
         "locale": "in",
@@ -189,7 +187,7 @@ const MarketOverview = () => {
     `;
     
     widgetContainerRef.current.appendChild(script);
-  }, [theme]);
+  }, []);
 
   return (
     <section id="markets" ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden">

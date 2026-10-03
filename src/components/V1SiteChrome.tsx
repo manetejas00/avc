@@ -1,8 +1,7 @@
 import { forwardRef, useEffect, useState } from 'react';
-import { ArrowUpRight, Award, Clock, ExternalLink, Mail, MapPin, Menu, Moon, Phone, ShieldCheck, Sparkles, Sun, X } from 'lucide-react';
+import { ArrowUpRight, Award, Clock, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
 import RegulatoryDisclaimer from './RegulatoryDisclaimer';
-import { useTheme } from '../context/ThemeContext';
 
 type NavProps = { home?: boolean };
 
@@ -10,7 +9,6 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
   const toHomeSection = (id: string) => home ? `#${id}` : `/#${id}`;
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -45,16 +43,6 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
       </div>
 
       <div className="v1-nav__right">
-        <button 
-          type="button" 
-          onClick={toggleTheme} 
-          className="v1-theme-toggle" 
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
-
         <button 
           type="button" 
           onClick={() => { closeMobile(); setIsContactOpen(true); }} 

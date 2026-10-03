@@ -1,6 +1,5 @@
-import { ChevronDown, Menu, Moon, Sun, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
 
 const navItems = [['Home', '/'], ['Screener', '/screener'], ['Services', '/#services'], ['Markets', '/#markets'], ['Calculators', '/#calculators'], ['News', '/#news'], ['FAQ', '/#faq']] as const;
 const primaryItems = navItems.slice(0, 4);
@@ -10,7 +9,6 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [exploreOpen, setExploreOpen] = useState(false);
   const [active, setActive] = useState('/');
-  const { theme, toggleTheme } = useTheme();
   const isHome = window.location.pathname === '/';
   const closeMenus = () => { setOpen(false); setExploreOpen(false); };
 
@@ -56,15 +54,6 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <button 
-          type="button" 
-          onClick={toggleTheme} 
-          className="v1-theme-toggle" 
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
         <a href="/#contact" onClick={closeMenus} className="hidden sm:inline-flex btn-primary !px-5 !py-2.5 !text-sm">Contact us</a>
         <button type="button" aria-label={open ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(!open)} className="btn-icon !h-10 !w-10 lg:hidden">{open ? <X size={20} /> : <Menu size={20} />}</button>
       </div>
