@@ -7,11 +7,7 @@ import { CompanyDetailsContent } from './CompanyDetailsPage';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 
 import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
-
-type Company = { ticker: string; name: string; exchange: 'NSE' | 'BSE' };
-const fallbackCompanies: Company[] = [
-  ['RELIANCE', 'Reliance Industries Limited'], ['TCS', 'Tata Consultancy Services Limited'], ['TATASTEEL', 'Tata Steel Limited'], ['TATAMOTORS', 'Tata Motors Limited'], ['TATAPOWER', 'Tata Power Company Limited'], ['TITAN', 'Titan Company Limited'], ['HDFCBANK', 'HDFC Bank Limited'], ['ICICIBANK', 'ICICI Bank Limited'], ['SBIN', 'State Bank of India'], ['BHARTIARTL', 'Bharti Airtel Limited'], ['INFY', 'Infosys Limited'], ['HCLTECH', 'HCL Technologies Limited'], ['ITC', 'ITC Limited'], ['SUNPHARMA', 'Sun Pharmaceutical Industries Limited'], ['BAJFINANCE', 'Bajaj Finance Limited'], ['ADANIENT', 'Adani Enterprises Limited']
-].map(([ticker, name]) => ({ ticker, name, exchange: 'BSE' as const }));
+import { Company, fallbackCompanies, fetchCompanyDirectory } from '../data/companyDirectory';
 
 export default function ScreenerPage() {
   const navigate = useNavigate();
@@ -40,14 +36,11 @@ export default function ScreenerPage() {
   useEffect(() => {
     const controller = new AbortController();
     void (async () => {
-      try {
-        const response = await fetch('https://scanner.tradingview.com/india/scan', { method: 'POST', signal: controller.signal, headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ filter: [{ left: 'type', operation: 'equal', right: 'stock' }, { left: 'exchange', operation: 'in_range', right: ['BSE'] }], options: { lang: 'en' }, symbols: { query: { types: [] }, tickers: [] }, columns: ['name', 'description', 'exchange'], sort: { sortBy: 'name', sortOrder: 'asc' }, range: [0, 10000] }) });
-        if (!response.ok) throw new Error('Company directory unavailable');
-        const result = await response.json() as { data?: Array<{ s?: string; d?: unknown[] }> };
-        const listed = (result.data ?? []).map(row => { const [ticker, name, exchange] = row.d ?? []; const resolved = exchange === 'NSE' || exchange === 'BSE' ? exchange : row.s?.split(':')[0]; return typeof ticker === 'string' && typeof name === 'string' && (resolved === 'NSE' || resolved === 'BSE') ? { ticker, name, exchange: resolved } : null; }).filter((company): company is Company => company !== null);
-        if (listed.length) setCompanies(listed);
-      } catch { /* The supplied fallback directory remains searchable. */ }
-      finally { if (!controller.signal.aborted) setDirectoryLoading(false); }
+      const directory = await fetchCompanyDirectory(controller.signal);
+      if (!controller.signal.aborted) {
+        setCompanies(directory);
+        setDirectoryLoading(false);
+      }
     })();
     return () => controller.abort();
   }, []);
