@@ -14,7 +14,7 @@ const MarketOverview = () => {
       y: 20, opacity: 0, duration: 1,
       scrollTrigger: { trigger: containerRef.current, start: 'top 85%' }
     });
-    
+
     gsap.from('.market-widget', {
       y: 40, opacity: 0, duration: 1, delay: 0.2,
       scrollTrigger: { trigger: containerRef.current, start: 'top 80%' }
@@ -23,9 +23,9 @@ const MarketOverview = () => {
 
   useEffect(() => {
     if (!widgetContainerRef.current) return;
-    
+
     widgetContainerRef.current.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-    
+
     const script = document.createElement('script');
     script.src = import.meta.env.VITE_TRADINGVIEW_WIDGET_MARKET_OVERVIEW;
     script.type = 'text/javascript';
@@ -185,7 +185,7 @@ const MarketOverview = () => {
         ]
       }
     `;
-    
+
     widgetContainerRef.current.appendChild(script);
   }, []);
 
@@ -198,7 +198,7 @@ const MarketOverview = () => {
             Track NSE/BSE indices, sectoral performance, global commodities, and major US Markets in real-time.
           </p>
         </div>
-        
+
         <div className="market-widget w-full max-w-5xl mx-auto bg-surface border border-white/5 rounded-card p-4 shadow-xl h-[640px]">
           <div className="tradingview-widget-container h-full w-full" ref={widgetContainerRef}>
             <div className="tradingview-widget-container__widget h-full w-full"></div>

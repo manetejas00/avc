@@ -27,8 +27,8 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
       colorTheme: widgetTheme,
       locale: 'in',
       isTransparent: true,
-      ...(name === 'advanced-chart' ? { 
-        interval: 'D', 
+      ...(name === 'advanced-chart' ? {
+        interval: 'D',
         timezone: 'Asia/Kolkata',
         theme: widgetTheme,
         style: '1',

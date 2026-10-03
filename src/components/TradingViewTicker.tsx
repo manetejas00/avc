@@ -5,10 +5,10 @@ const TradingViewTicker = () => {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     // Clean up previous script if re-rendering
     containerRef.current.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-    
+
     const script = document.createElement('script');
     script.src = import.meta.env.VITE_TRADINGVIEW_WIDGET_TICKER_TAPE;
     script.type = 'text/javascript';
@@ -88,7 +88,7 @@ const TradingViewTicker = () => {
         "locale": "in"
       }
     `;
-    
+
     containerRef.current.appendChild(script);
   }, []);
 
