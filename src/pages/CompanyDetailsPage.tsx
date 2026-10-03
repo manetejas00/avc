@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
+import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
 
 type WidgetName = 'symbol-info' | 'advanced-chart' | 'financials';
 
@@ -144,7 +145,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
         <section className="company-premium__panel" aria-label="Company financials"><div className="company-premium__panel-heading"><div><p>Fundamental research</p><h2>Financials and valuation</h2></div><span>Live statements</span></div>
           <TradingViewWidget name="financials" symbol={symbol} height={760} />
         </section>
-        <p className="company-premium__disclaimer">Market data is supplied by TradingView for research purposes. AVC Dhanam Solutions Pvt. Ltd. does not issue stock tips or guaranteed trading advice.</p>
+        <RegulatoryDisclaimer />
       </main>
       <V1Footer />
     </div>

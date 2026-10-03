@@ -6,6 +6,8 @@ import { ArrowUpRight, Search } from 'lucide-react';
 import { CompanyDetailsContent } from './CompanyDetailsPage';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 
+import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
+
 type Company = { ticker: string; name: string; exchange: 'NSE' | 'BSE' };
 const fallbackCompanies: Company[] = [
   ['RELIANCE', 'Reliance Industries Limited'], ['TCS', 'Tata Consultancy Services Limited'], ['TATASTEEL', 'Tata Steel Limited'], ['TATAMOTORS', 'Tata Motors Limited'], ['TATAPOWER', 'Tata Power Company Limited'], ['TITAN', 'Titan Company Limited'], ['HDFCBANK', 'HDFC Bank Limited'], ['ICICIBANK', 'ICICI Bank Limited'], ['SBIN', 'State Bank of India'], ['BHARTIARTL', 'Bharti Airtel Limited'], ['INFY', 'Infosys Limited'], ['HCLTECH', 'HCL Technologies Limited'], ['ITC', 'ITC Limited'], ['SUNPHARMA', 'Sun Pharmaceutical Industries Limited'], ['BAJFINANCE', 'Bajaj Finance Limited'], ['ADANIENT', 'Adani Enterprises Limited']
@@ -76,7 +78,7 @@ export default function ScreenerPage() {
       <form onSubmit={submit} className="screener-premium__search"><Search size={18} /><label htmlFor="stock-search" className="sr-only">Search BSE listed companies</label><input id="stock-search" value={query} onChange={event => { setQuery(event.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} placeholder="Search a BSE company or ticker (e.g. RELIANCE, TCS)" autoComplete="off" /><button type="submit">Open company <ArrowUpRight size={17} /></button>{showSuggestions && query.trim() && <div className="screener-premium__suggestions">{suggestions.length ? suggestions.map(company => <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={event => event.preventDefault()} onClick={() => select(company)}><span>{company.name}<small>{company.ticker}</small></span><b>{company.exchange}</b></button>) : <p>{directoryLoading ? 'Loading the BSE company directory…' : 'No company found. Try a ticker such as TCS.'}</p>}</div>}</form>
       <div className="screener-premium__metrics"><div><small>UNIVERSE</small><strong>BSE-listed equities</strong></div><div><small>DATA MODE</small><strong>Live market scan</strong></div><div><small>WORKSPACE</small><strong>Filter · compare · investigate</strong></div></div>
       <section className="screener-premium__workspace" aria-label="Live BSE stock screener"><div className="screener-premium__workspace-bar"><span><i /> LIVE DISCOVERY</span><span>India · INR · BSE</span></div><div ref={widgetRef} className="tradingview-widget-container screener-premium__widget" /></section>
-      <p className="screener-premium__disclaimer">Live BSE market data is powered by TradingView for educational research. Information presented here does not constitute financial advice or stock recommendations.</p>
+      <RegulatoryDisclaimer />
     </main>
     <V1Footer />
   </div>;

@@ -1,6 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { ArrowUpRight, Award, Clock, ExternalLink, Mail, MapPin, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
+import RegulatoryDisclaimer from './RegulatoryDisclaimer';
 
 type NavProps = { home?: boolean };
 
@@ -37,7 +38,7 @@ export function V1Footer() {
       <div className="v1-footer__link-group"><h4>Solutions</h4><a href="/#system">Mutual Funds & SIP</a><a href="/#system">Business & Home Loans</a><a href="/#system">Life & Health Insurance</a><a href="/#system">Tax Planning & CA Support</a><a href="/#system">Merchant Banking & Funding</a><a href="/#system">Retirement & Literacy</a></div>
       <div className="v1-footer__registration"><h4>Credentials & Trust</h4><div className="v1-footer__credential-list"><p><ShieldCheck size={17} /><span><b>Motilal Oswal Franchise Partner</b><small>8+ Years Sub-Broker Association</small><strong>Franchise Network</strong></span></p><p><Award size={17} /><span><b>AMFI Mutual Fund Distributor</b><small>AMFI Registration Number</small><strong>ARN-184920</strong></span></p></div><a href="/sitemap.xml" target="_blank" rel="noreferrer">View XML sitemap <ExternalLink size={13} /></a></div>
     </div>
-    <div className="v1-footer__risk"><b>Regulatory Notice:</b> Mutual Fund investments are subject to market risks; read all scheme-related documents carefully before investing. AVC Dhanam Solutions Pvt. Ltd. is an AMFI-registered Mutual Fund Distributor (ARN-184920) and Motilal Oswal franchise partner. Loan facilities are subject to lender approval across 210+ bank/NBFC partners. We do not provide guaranteed returns or unauthorized financial claims.</div>
+    <RegulatoryDisclaimer variant="compact" />
     <div className="v1-footer__bottom"><span>© {year} AVC Dhanam Solutions Pvt. Ltd. All rights reserved. Directors: Chandresh Pandey & Ajay Pandey.</span><div><a href="#privacy" onClick={openLegal('privacy')}>Privacy Policy</a><a href="#terms" onClick={openLegal('terms')}>Terms of Service</a><a href="#disclosures" onClick={openLegal('disclosures')}>Disclosures</a><a href="/sitemap.xml">Sitemap</a></div></div>
     {legalItem && <div className="v1-legal-modal" role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" onMouseDown={() => setLegalItem(null)}><div className="v1-legal-modal__panel" onMouseDown={event => event.stopPropagation()}><button type="button" aria-label="Close" onClick={() => setLegalItem(null)}><X size={18} /></button><p>AVC DHANAM SOLUTIONS · LEGAL NOTICE</p><h2 id="legal-modal-title">{legalContent[legalItem].title}</h2><div /><span>{legalContent[legalItem].text}</span><a href="mailto:support@avcdhanam.com">Questions? Contact support@avcdhanam.com <ArrowUpRight size={15} /></a></div></div>}
   </footer>;
