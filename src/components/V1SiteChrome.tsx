@@ -1,13 +1,15 @@
 import { forwardRef, useState } from 'react';
-import { ArrowUpRight, Award, Clock, ExternalLink, Mail, MapPin, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { ArrowUpRight, Award, Clock, ExternalLink, Mail, MapPin, Moon, Phone, ShieldCheck, Sparkles, Sun, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
 import RegulatoryDisclaimer from './RegulatoryDisclaimer';
+import { useTheme } from '../context/ThemeContext';
 
 type NavProps = { home?: boolean };
 
 export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = false }, ref) {
   const toHomeSection = (id: string) => home ? `#${id}` : `/#${id}`;
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   return <>
     <nav ref={ref} className="v1-nav">
       <a href="/" className="v1-logo" aria-label="AVC Dhanam Solutions Home"><img src="/logo_gold_transparent.svg" alt="AVC Dhanam Solutions Pvt. Ltd." /></a>
@@ -15,7 +17,18 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
         <a href={toHomeSection('markets')}>Markets</a><a href={toHomeSection('system')}>Services</a><a href={toHomeSection('approach')}>About Us</a><a href={toHomeSection('calculators')}>Calculators</a><a href={toHomeSection('news')}>Insights</a><a href={toHomeSection('faq')}>FAQ</a>
         <a className="v1-nav__screener" href="/screener">Screener <Sparkles size={13} /></a>
       </div>
-      <button type="button" onClick={() => setIsContactOpen(true)} className="v1-action v1-nav__cta">Start Your Journey<span><ArrowUpRight size={18} /></span></button>
+      <div className="v1-nav__right">
+        <button 
+          type="button" 
+          onClick={toggleTheme} 
+          className="v1-theme-toggle" 
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+        <button type="button" onClick={() => setIsContactOpen(true)} className="v1-action v1-nav__cta">Start Your Journey<span><ArrowUpRight size={18} /></span></button>
+      </div>
     </nav>
     <ContactFormModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
   </>;

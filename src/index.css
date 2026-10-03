@@ -361,3 +361,71 @@ nav a, nav button { font-family: 'Roboto Mono', monospace; text-transform: upper
   .v1-disclaimer-card__header { flex-direction:column; align-items:flex-start; }
 }
 
+/* Theme Toggle Button & Light Mode System */
+.v1-nav__right { display:flex; align-items:center; gap:10px; margin-left:auto; }
+.v1-theme-toggle { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; border:1px solid rgba(212,175,55,.4); background:rgba(212,175,55,.08); color:#f0d364; cursor:pointer; transition:all .25s ease; }
+.v1-theme-toggle:hover { background:#d4af37; color:#111; border-color:#d4af37; transform:scale(1.06); }
+
+html.light {
+  --bg-primary: #F8F9FB;
+  --bg-secondary: #FFFFFF;
+  --bg-elevated: #F1F3F7;
+  --bg-surface: #E8EBEF;
+  --gold-primary: #B8860B;
+  --gold-secondary: #8B6508;
+  --gold-muted: #997008;
+  --text-primary: #121217;
+  --text-secondary: #42424A;
+  --text-muted: #686872;
+  --border-subtle: rgba(0,0,0,.08);
+  --border-gold: rgba(184,134,11,.35);
+}
+html.light body { background-color:#F8F9FB !important; color:#121217 !important; background-image:none !important; }
+html.light .v1-site { background:#F8F9FB !important; color:#121217 !important; }
+html.light .v1-nav { background:rgba(255,255,255,.9) !important; border-color:rgba(0,0,0,.12) !important; box-shadow:0 12px 40px rgba(0,0,0,.08) !important; }
+html.light .v1-nav__links a { color:#333338 !important; }
+html.light .v1-nav__links a:hover { background:rgba(0,0,0,.06) !important; color:#b8860b !important; }
+html.light .v1-nav__screener { border-color:rgba(184,134,11,.5) !important; background:rgba(184,134,11,.1) !important; color:#8b6508 !important; }
+html.light .v1-nav__screener:hover { background:#b8860b !important; color:#ffffff !important; }
+html.light .v1-theme-toggle { border-color:rgba(184,134,11,.4) !important; background:rgba(184,134,11,.1) !important; color:#8b6508 !important; }
+html.light .v1-theme-toggle:hover { background:#b8860b !important; color:#ffffff !important; }
+html.light .v1-hero,
+html.light .v1-features,
+html.light .v1-market,
+html.light .v1-approach,
+html.light .v1-calculator,
+html.light .v1-news,
+html.light .v1-faq,
+html.light .screener-gateway,
+html.light .screener-premium,
+html.light .company-premium,
+html.light .v1-footer { background:#F8F9FB !important; color:#121217 !important; }
+html.light h1, html.light h2, html.light h3, html.light h4, html.light h5, html.light h6,
+html.light .v1-hero h1, html.light .v1-features h2, html.light .v1-market h2,
+html.light .v1-approach h2, html.light .v1-calculator h2, html.light .v1-news h2,
+html.light .v1-faq h2, html.light .screener-gateway h2, html.light .screener-premium__title,
+html.light .company-premium__title, html.light .company-premium__panel-heading h2 { color:#111116 !important; }
+html.light p, html.light span:not(.v1-index):not(.v1-badge),
+html.light .v1-hero__body p, html.light .screener-premium__copy, html.light .company-premium__copy { color:#484852 !important; }
+html.light .v1-footer__brand,
+html.light .v1-footer__registration,
+html.light .screener-gateway__panel,
+html.light .screener-premium__workspace,
+html.light .company-premium__panel,
+html.light .v1-disclaimer-card,
+html.light .v1-market-card,
+html.light .v1-calculator__panel,
+html.light .screener-premium__search,
+html.light .company-premium__dividend-card { background:#FFFFFF !important; border-color:rgba(0,0,0,.12) !important; box-shadow:0 16px 45px rgba(0,0,0,.06) !important; color:#121217 !important; }
+html.light .screener-gateway__query,
+html.light .screener-gateway__suggestions,
+html.light .screener-premium__suggestions { background:#FFFFFF !important; border-color:rgba(184,134,11,.4) !important; color:#121217 !important; }
+html.light .screener-gateway__suggestions button,
+html.light .screener-premium__suggestions button { background:#FFFFFF !important; color:#121217 !important; }
+html.light .screener-gateway__suggestions button:hover,
+html.light .screener-premium__suggestions button:hover { background:rgba(184,134,11,.08) !important; }
+html.light .screener-gateway__suggestions button span,
+html.light .screener-premium__suggestions button span { color:#121217 !important; }
+html.light .v1-disclaimer-card { background:radial-gradient(circle at 50% 0%,rgba(184,134,11,.08),transparent 70%),#FFFFFF !important; }
+
+
