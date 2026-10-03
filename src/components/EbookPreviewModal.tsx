@@ -20,7 +20,7 @@ export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: E
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fadeIn"
       onClick={onClose}
       role="dialog"
       aria-modal="true"

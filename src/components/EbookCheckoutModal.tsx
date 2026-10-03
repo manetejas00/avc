@@ -53,7 +53,7 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
       onClick={resetAndClose}
       role="dialog"
       aria-modal="true"
