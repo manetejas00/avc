@@ -3,6 +3,8 @@ import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-route
 import V1Landing from './components/V1Landing';
 import ScreenerPage from './pages/ScreenerPage';
 import CompanyDetailsPage from './pages/CompanyDetailsPage';
+import IpoPage from './pages/IpoPage';
+import IpoDetailsPage from './pages/IpoDetailsPage';
 import V2Page from '../v2/V2Page';
 import SiteLoader from './components/SiteLoader';
 
@@ -26,6 +28,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/v2" element={<V2Page />} />
           <Route path="/screener" element={<ScreenerPage />} />
+          <Route path="/ipo" element={<IpoPage />} />
+          <Route path="/ipos" element={<IpoPage />} />
+          <Route path="/ipo/:id" element={<IpoDetailsPage />} />
           <Route path="/company/:ticker" element={<CompanyDetailsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

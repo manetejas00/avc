@@ -1,7 +1,7 @@
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const navItems = [['Home', '/'], ['Screener', '/screener'], ['Services', '/#services'], ['Markets', '/#markets'], ['Calculators', '/#calculators'], ['News', '/#news'], ['FAQ', '/#faq']] as const;
+const navItems = [['Home', '/'], ['Screener', '/screener'], ['IPOs', '/ipo'], ['Services', '/#services'], ['Markets', '/#markets'], ['Calculators', '/#calculators'], ['News', '/#news'], ['FAQ', '/#faq']] as const;
 const primaryItems = navItems.slice(0, 4);
 const exploreItems = navItems.slice(4);
 

@@ -35,6 +35,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
       <div className="v1-nav__links">
         <a href={toHomeSection('markets')}>Markets</a>
         <a href={toHomeSection('system')}>Services</a>
+        <a href="/ipo">IPOs</a>
         <a href={toHomeSection('approach')}>About Us</a>
         <a href={toHomeSection('calculators')}>Calculators</a>
         <a href={toHomeSection('news')}>Insights</a>

@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { createMarketRouter } from './services/market.js';
 import { createCryptoRouter } from './services/crypto.js';
 import { createNewsRouter } from './services/newsApi.js';
+import { createIpoRouter } from './services/ipo.js';
 import { startNewsScheduler } from './services/newsScheduler.js';
 
 dotenv.config();
@@ -131,6 +132,7 @@ const authenticateAdmin = (req, res, next) => {
 app.use('/api/market', createMarketRouter(db));
 app.use('/api/crypto', createCryptoRouter(db));
 app.use('/api/news', createNewsRouter(db));
+app.use('/api/ipo', createIpoRouter(db));
 
 app.post('/api/submit-form', (req, res) => {
   const { name, email, phone, interest, message } = req.body;

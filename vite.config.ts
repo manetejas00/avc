@@ -13,6 +13,11 @@ export default defineConfig(({ mode }) => {
     // Keep the Vite preview connected to the existing Express market API.
     server: {
       proxy: {
+        '/api/indianapi': {
+          target: 'https://stock.indianapi.in',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/indianapi/, '')
+        },
         '/api/marketaux': {
           target: 'https://api.marketaux.com',
           changeOrigin: true,
