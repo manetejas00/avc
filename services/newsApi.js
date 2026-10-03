@@ -1,4 +1,5 @@
 import express from 'express';
+import axios from 'axios';
 
 const clamp = (value, fallback, maximum) => {
   const parsed = Number.parseInt(value, 10);
@@ -11,6 +12,18 @@ export const invalidateNewsCache = (db) => {
 
 export const createNewsRouter = (db) => {
   const router = express.Router();
+
+  // Live provider passthrough used by the V1 market-news experience.
+  router.get('/live', async (req, res) => {
+    const token = process.env.MARKETAUX_API_KEY;
+    if (!token) return res.status(503).json({ error: 'News provider is not configured' });
+    try {
+      const response = await axios.get('https://api.marketaux.com/v1/news/all', { params: { api_token: token, language: 'en', limit: 12, search: 'stock market' }, timeout: 10000 });
+      res.json(response.data);
+    } catch (error) {
+      res.status(502).json({ error: 'Live news provider unavailable' });
+    }
+  });
 
   router.get('/', (req, res) => {
     const page = clamp(req.query.page, 1, 100000);

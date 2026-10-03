@@ -10,6 +10,22 @@ export default defineConfig(({ mode }) => {
     // attempts to load JavaScript from paths such as /api/market/assets/...
     base: '/',
     plugins: [react()],
+    // Keep the Vite preview connected to the existing Express market API.
+    server: {
+      proxy: {
+        '/api/marketaux': {
+          target: 'https://api.marketaux.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/marketaux/, '')
+        },
+        '/api/yahoo': {
+          target: 'https://query1.finance.yahoo.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/yahoo/, '')
+        },
+        '/api': 'http://127.0.0.1:3000'
+      }
+    },
     // This intentionally makes the Marketaux token available to browser code,
     // as requested for the static deployment.
     define: {

@@ -1,41 +1,17 @@
 import React from 'react';
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import TrustedBy from './components/TrustedBy';
-import Process from './components/Process';
-import Benefits from './components/Benefits';
-import Features from './components/Features';
-import Calculators from './components/Calculators';
-import MarketOverview from './components/MarketOverview';
-import FAQ from './components/FAQ';
-import Articles from './components/Articles';
-import CTA from './components/CTA';
-import Footer from './components/Footer';
+import V1Landing from './components/V1Landing';
 import ScreenerPage from './pages/ScreenerPage';
 import CompanyDetailsPage from './pages/CompanyDetailsPage';
 import V2Page from '../v2/V2Page';
+import SiteLoader from './components/SiteLoader';
 
-const HomePage = () => (
-  <>
-    <Navbar />
-    <Hero />
-    <TrustedBy />
-    <Process />
-    <Benefits />
-    <Features />
-    <Calculators />
-    <MarketOverview />
-    <FAQ />
-    <Articles />
-    <CTA />
-    <Footer />
-  </>
-);
+const HomePage = () => <V1Landing />;
 
 function App() {
   return (
     <div className="min-h-screen bg-background font-sans text-text">
+      <SiteLoader />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />

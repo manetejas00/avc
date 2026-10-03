@@ -47,17 +47,18 @@ const Hero = () => {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="pt-[140px] pb-32 overflow-x-clip relative">
+    <section ref={containerRef} className="hero-blueprint pt-[140px] pb-32 overflow-x-clip relative">
       <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80%] h-[600px] bg-gold-primary/10 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="container-custom relative z-10">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
           
-          <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/5 bg-surface mb-6">
+          <div className="hero-badge blueprint-tag inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/5 bg-surface mb-6">
             <span className="w-2 h-2 rounded-full bg-gold-primary" />
             <span className="text-sm font-medium text-text">SEBI Registered Sub Broker & Mutual Fund Distributor</span>
           </div>
           
+          <p className="blueprint-coordinate">SECTION 01 / WEALTH ARCHITECTURE / x:120 y:180</p>
           <h1 className="hero-title text-5xl md:text-[64px] leading-[1.1] font-semibold mb-6 tracking-tight text-text">
             Apna Paisa,<br />
             <span className="text-gold-primary">Sahi Disha.</span>
@@ -86,7 +87,8 @@ const Hero = () => {
           
         </div>
         
-        <div className="hero-dashboard relative mx-auto w-full max-w-[1100px] mt-8 rounded-[32px] border border-gold-primary/30 bg-background p-4 sm:p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,55,0.15)] overflow-hidden">
+        <div className="blueprint-dimension blueprint-dimension--top">&lt;────────────── MARKET INTELLIGENCE PANEL / 1100px ──────────────&gt;</div>
+        <div className="hero-dashboard blueprint-frame relative mx-auto w-full max-w-[1100px] mt-8 rounded-[32px] border border-gold-primary/30 bg-background p-4 sm:p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,55,0.15)] overflow-hidden">
           <div className="relative rounded-2xl overflow-hidden mb-4 border border-gold-primary/20 group">
             <img
               src="/assets/hero/hero-indian-finance.webp"

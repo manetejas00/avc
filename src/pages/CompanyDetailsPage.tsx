@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 
 type WidgetName = 'symbol-info' | 'advanced-chart' | 'financials';
 
@@ -48,15 +50,12 @@ function formatDate(value: number | null) {
 
 function DividendCard({ title, event, upcoming }: { title: string; event: DividendEvent | null; upcoming?: boolean }) {
   const hasData = event && (event.exDate || event.paymentDate || event.amount || event.yield);
-  return <article className="rounded-2xl border border-white/10 bg-background/60 p-5">
-    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-primary">{title}</p>
-    {hasData ? <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <div><p className="text-xs text-text-muted">Ex-dividend date</p><p className="mt-1 font-semibold">{formatDate(event.exDate)}</p></div>
-      <div><p className="text-xs text-text-muted">Payment date</p><p className="mt-1 font-semibold">{formatDate(event.paymentDate)}</p></div>
-      <div><p className="text-xs text-text-muted">Amount per share</p><p className="mt-1 font-semibold">{event.amount !== null ? `₹${event.amount.toLocaleString('en-IN')}` : 'Not announced'}</p></div>
-      <div><p className="text-xs text-text-muted">Dividend yield</p><p className="mt-1 font-semibold">{event.yield !== null ? `${event.yield.toFixed(2)}%` : 'Not announced'}</p></div>
-    </div> : <p className="mt-3 text-sm text-text-muted">{upcoming ? 'No upcoming dividend has been announced for this company.' : 'No recent dividend data is available for this company.'}</p>}
-    {hasData && event.frequency && <p className="mt-4 text-xs text-text-muted">Frequency: {event.frequency}</p>}
+  return <article className="company-premium__dividend-card">
+    <p>{title}</p>
+    {hasData ? <div className="company-premium__dividend-data">
+      <div><small>Ex-dividend date</small><strong>{formatDate(event.exDate)}</strong></div><div><small>Payment date</small><strong>{formatDate(event.paymentDate)}</strong></div><div><small>Amount per share</small><strong>{event.amount !== null ? `₹${event.amount.toLocaleString('en-IN')}` : 'Not announced'}</strong></div><div><small>Dividend yield</small><strong>{event.yield !== null ? `${event.yield.toFixed(2)}%` : 'Not announced'}</strong></div>
+    </div> : <span className="company-premium__empty">{upcoming ? 'No upcoming dividend has been announced for this company.' : 'No recent dividend data is available for this company.'}</span>}
+    {hasData && event.frequency && <small className="company-premium__frequency">Frequency: {event.frequency}</small>}
   </article>;
 }
 
@@ -91,9 +90,9 @@ function DividendCalendar({ symbol }: { symbol: string }) {
     return () => controller.abort();
   }, [symbol]);
 
-  return <section className="mb-6 rounded-card border border-white/10 bg-surface p-4 shadow-xl md:p-6" aria-label="Dividend calendar">
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow mb-2">Shareholder returns</p><h2 className="text-xl font-semibold">Dividend calendar</h2></div><span className="text-xs text-text-muted">Ex-date, payment date, amount and yield</span></div>
-    {loading ? <p className="py-8 text-center text-sm text-text-muted">Loading dividend dates…</p> : <div className="grid gap-4"><DividendCard title="Upcoming dividend" event={upcoming} upcoming /><DividendCard title="Most recent dividend" event={recent} /></div>}
+  return <section className="company-premium__panel company-premium__dividends" aria-label="Dividend calendar">
+    <div className="company-premium__panel-heading"><div><p>Shareholder returns</p><h2>Dividend calendar</h2></div><span>Ex-date · payment · amount · yield</span></div>
+    {loading ? <p className="company-premium__loading">Loading dividend dates…</p> : <div className="company-premium__dividend-grid"><DividendCard title="Upcoming dividend" event={upcoming} upcoming /><DividendCard title="Most recent dividend" event={recent} /></div>}
   </section>;
 }
 
@@ -101,32 +100,33 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
   const cleanTicker = ticker.replace(/[^a-z0-9._-]/gi, '').toUpperCase();
   const safeExchange = exchange === 'NSE' ? 'NSE' : 'BSE';
   const symbol = `${safeExchange}:${cleanTicker || 'RELIANCE'}`;
+  const pageRef = useRef<HTMLDivElement>(null);
+  useGSAP(() => {
+    const scope = pageRef.current;
+    if (!scope) return;
+    gsap.timeline().fromTo('.company-premium__back, .company-premium__eyebrow, .company-premium__title, .company-premium__copy', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .08, duration: .72, ease: 'power3.out' })
+      .fromTo('.company-premium__panel', { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .1, duration: .8, ease: 'power3.out' }, '-=.32');
+  }, { scope: pageRef });
 
   return (
-    <div className="min-h-screen bg-background pt-24 font-sans text-text">
-      <Navbar />
-      <main className="container-custom py-10 md:py-16">
-        <Link to="/screener" className="mb-8 inline-flex text-sm font-medium text-gold-primary hover:text-gold-light">← Back to Screener</Link>
-        <div className="mb-8">
-          <p className="eyebrow mb-3">Company research</p>
-          <h1 className="text-3xl font-bold md:text-5xl">{cleanTicker || 'RELIANCE'} <span className="text-gold-primary">Company Details</span></h1>
-          <p className="mt-4 max-w-3xl text-text-muted">Price activity, key market statistics, charts, financial statements, dividend dates, earnings and valuation information for this {safeExchange}-listed company.</p>
-        </div>
-        <section className="mb-6 overflow-hidden rounded-card border border-white/10 bg-surface p-3 shadow-xl md:p-4" aria-label="Company market summary">
+    <div ref={pageRef} className="company-premium">
+      <V1Nav />
+      <main className="company-premium__main">
+        <Link to="/screener" className="company-premium__back"><ArrowLeft size={16} /> Back to screener</Link>
+        <header className="company-premium__hero"><p className="company-premium__eyebrow">06 — COMPANY RESEARCH · {safeExchange}</p><h1 className="company-premium__title">{cleanTicker || 'RELIANCE'}<br /><em>in focus.</em></h1><p className="company-premium__copy">Price activity, key market statistics, charts, financial statements, dividend dates, earnings and valuation for this {safeExchange}-listed company.</p></header>
+        <section className="company-premium__panel company-premium__summary" aria-label="Company market summary"><div className="company-premium__panel-kicker">LIVE MARKET SUMMARY <ArrowUpRight size={14} /></div>
           <TradingViewWidget name="symbol-info" symbol={symbol} height={180} />
         </section>
-        <section className="mb-6 overflow-hidden rounded-card border border-white/10 bg-surface p-3 shadow-xl md:p-4" aria-label="Company price chart">
-          <h2 className="mb-4 px-1 text-xl font-semibold">Price chart</h2>
+        <section className="company-premium__panel" aria-label="Company price chart"><div className="company-premium__panel-heading"><div><p>Market movement</p><h2>Price chart</h2></div><span>Daily view</span></div>
           <TradingViewWidget name="advanced-chart" symbol={symbol} height={560} />
         </section>
         <DividendCalendar symbol={symbol} />
-        <section className="overflow-hidden rounded-card border border-white/10 bg-surface p-3 shadow-xl md:p-4" aria-label="Company financials">
-          <h2 className="mb-4 px-1 text-xl font-semibold">Financials and valuation</h2>
+        <section className="company-premium__panel" aria-label="Company financials"><div className="company-premium__panel-heading"><div><p>Fundamental research</p><h2>Financials and valuation</h2></div><span>Live statements</span></div>
           <TradingViewWidget name="financials" symbol={symbol} height={760} />
         </section>
-        <p className="mx-auto mt-5 max-w-4xl text-center text-xs leading-5 text-text-muted">Data is supplied by TradingView and may be delayed. It is for informational purposes only and is not investment advice.</p>
+        <p className="company-premium__disclaimer">Data is supplied by TradingView and may be delayed. It is for research only and is not investment advice.</p>
       </main>
-      <Footer />
+      <V1Footer />
     </div>
   );
 }

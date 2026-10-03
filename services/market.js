@@ -221,5 +221,30 @@ export const createMarketRouter = (db) => {
     }
   });
 
+  // 8. Closing-price history for the live market overview chart.
+  router.get('/chart', async (req, res) => {
+    const symbol = typeof req.query.symbol === 'string' ? req.query.symbol : '^NSEI';
+    const supportedSymbols = new Set(['^NSEI', '^BSESN', '^GSPC', '^IXIC', 'GC=F', 'CL=F']);
+    if (!supportedSymbols.has(symbol)) return res.status(400).json({ error: 'Unsupported market symbol' });
+
+    const cacheKey = `chart_${symbol}`;
+    const cached = getCachedData(cacheKey);
+    if (cached) return res.json(cached);
+
+    try {
+      const period1 = new Date();
+      period1.setDate(period1.getDate() - 90);
+      const history = await yahooFinance.chart(symbol, { period1, interval: '1d' });
+      const points = (history.quotes || [])
+        .filter(quote => quote.date && Number.isFinite(quote.close))
+        .map(quote => ({ timestamp: quote.date.toISOString(), value: quote.close }));
+      setCachedData(cacheKey, points, 15 * 60);
+      res.json(points);
+    } catch (error) {
+      logApiSync('yahoo_finance', 'error', `Chart ${symbol}: ${error.message}`);
+      res.status(500).json({ error: 'Failed to fetch price history' });
+    }
+  });
+
   return router;
 };
