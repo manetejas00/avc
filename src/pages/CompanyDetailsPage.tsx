@@ -25,7 +25,27 @@ function TradingViewWidget({ name, symbol, height }: { name: WidgetName; symbol:
       colorTheme: 'dark',
       locale: 'in',
       isTransparent: true,
-      ...(name === 'advanced-chart' ? { interval: 'D', allow_symbol_change: false, calendar: false, support_host: 'https://www.tradingview.com' } : {}),
+      ...(name === 'advanced-chart' ? { 
+        interval: 'D', 
+        timezone: 'Asia/Kolkata',
+        theme: 'dark',
+        style: '1',
+        locale: 'in',
+        enable_publishing: false,
+        allow_symbol_change: true,
+        calendar: true,
+        support_host: 'https://www.tradingview.com',
+        studies: [
+          'STD;RSI',
+          'STD;MACD',
+          'STD;EMA'
+        ],
+        show_popup_button: true,
+        popup_width: '1000',
+        popup_height: '650',
+        withdateranges: true,
+        hide_side_toolbar: false
+      } : {}),
       ...(name === 'financials' ? { displayMode: 'regular', largeChartUrl: '' } : {})
     });
     container.appendChild(script);
