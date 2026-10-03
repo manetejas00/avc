@@ -50,18 +50,6 @@ export default function EbookDetailsPage() {
     }
   }, [slug, navigate]);
 
-  if (!book) return null;
-
-  const handleBuyNow = (targetBook: EBook = book) => {
-    setCheckoutBook(targetBook);
-    setIsCheckoutOpen(true);
-  };
-
-  const handlePreview = (targetBook: EBook = book) => {
-    setPreviewBook(targetBook);
-    setIsPreviewOpen(true);
-  };
-
   // SEO Metadata Update
   useEffect(() => {
     if (book) {
@@ -75,6 +63,18 @@ export default function EbookDetailsPage() {
       }
     }
   }, [book]);
+
+  if (!book) return null;
+
+  const handleBuyNow = (targetBook: EBook = book) => {
+    setCheckoutBook(targetBook);
+    setIsCheckoutOpen(true);
+  };
+
+  const handlePreview = (targetBook: EBook = book) => {
+    setPreviewBook(targetBook);
+    setIsPreviewOpen(true);
+  };
 
   // Product & Book JSON-LD Schema
   const schemaData = {
@@ -347,9 +347,9 @@ export default function EbookDetailsPage() {
 
               <div className="p-4 rounded-xl bg-[#151515] border border-white/5 text-xs text-neutral-300 space-y-3">
                 <span className="text-[#D4AF37] font-semibold block uppercase">
-                  {book.sampleExcerpt.chapterTitle}
+                  {book.samplePages[0].chapterTitle}
                 </span>
-                {book.sampleExcerpt.content.slice(0, 2).map((paragraph, idx) => (
+                {book.samplePages[0].paragraphs.slice(0, 2).map((paragraph, idx) => (
                   <p key={idx} className="leading-relaxed">{paragraph}</p>
                 ))}
               </div>

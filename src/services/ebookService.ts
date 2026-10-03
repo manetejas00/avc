@@ -1,3 +1,12 @@
+export interface SamplePage {
+  pageNumber: number;
+  chapterTitle: string;
+  heading: string;
+  paragraphs: string[];
+  keyTakeaway?: string;
+  bulletPoints?: string[];
+}
+
 export interface EBook {
   id: string;
   slug: string;
@@ -25,7 +34,12 @@ export interface EBook {
   coverIcon: 'trending' | 'chart' | 'book' | 'pie' | 'shield' | 'zap';
   tableOfContents: { chapter: string; title: string; summary: string }[];
   whatYouWillLearn: string[];
-  sampleExcerpt: { chapterTitle: string; content: string[] };
+  samplePages: [SamplePage, SamplePage];
+  fullBookContent?: {
+    introduction: string;
+    chapters: { number: number; title: string; sections: { heading: string; body: string }[] }[];
+    conclusion: string;
+  };
   tags: string[];
 }
 
@@ -72,13 +86,63 @@ export const EBOOKS_DATA: EBook[] = [
       { chapter: 'Chapter 5', title: 'Psychology of Successful Investors', summary: 'Managing fear, greed, FOMO, and emotional discipline in volatile markets.' },
       { chapter: 'Chapter 6', title: 'Your 30-Day Actionable Investment Blueprint', summary: 'Step-by-step checklist to start investing systematically with initial capital.' }
     ],
-    sampleExcerpt: {
-      chapterTitle: 'Chapter 1: Equities & Ownership Fundamentals',
-      content: [
-        'When you purchase a share of a publicly listed company on the National Stock Exchange (NSE) or Bombay Stock Exchange (BSE), you are acquiring genuine fractional ownership in that enterprise. Equity ownership grants you two fundamental rights: participation in the company\'s capital growth over time, and a proportional share of corporate profits distributed as cash dividends.',
-        'Many beginners approach the stock market as a high-frequency trading arena or a short-term speculation platform. However, history demonstrates that sustainable wealth is created when investors treat stock certificates as real business ownership. Over 10 to 20-year horizons, stock price performance closely mirrors corporate earnings growth.',
-        'In India, the Securities and Exchange Board of India (SEBI) enforces stringent compliance standards for listed companies, ensuring transparency, quarterly financial disclosures, and protection for retail investor funds.'
-      ]
+    samplePages: [
+      {
+        pageNumber: 1,
+        chapterTitle: 'Chapter 1: Equities & Ownership Fundamentals',
+        heading: '1.1 What Does Owning a Stock Really Mean?',
+        paragraphs: [
+          'When you purchase a share of a publicly listed company on the National Stock Exchange (NSE) or Bombay Stock Exchange (BSE), you are acquiring genuine fractional ownership in that enterprise. Equity ownership grants you two fundamental rights: participation in the company\'s long-term capital growth and a proportional share of corporate profits distributed as cash dividends.',
+          'Many beginners approach the stock market as a high-frequency trading arena or a short-term speculation platform. However, history demonstrates that sustainable wealth is created when investors treat stock certificates as real business ownership. Over 10 to 20-year horizons, stock price performance closely mirrors corporate earnings growth.',
+          'In India, the Securities and Exchange Board of India (SEBI) enforces stringent compliance standards for listed companies, ensuring transparency, quarterly financial disclosures, and protection for retail investor funds.'
+        ],
+        keyTakeaway: 'Rule #1: Stock prices follow business earnings over the long run. Never buy a stock unless you understand how the company makes money.'
+      },
+      {
+        pageNumber: 2,
+        chapterTitle: 'Chapter 1: Equities & Ownership Fundamentals',
+        heading: '1.2 Demat Accounts & Order Execution Types',
+        paragraphs: [
+          'To trade in Indian equities, you require three interconnected accounts: a Savings Bank Account (for funds), a Trading Account (with an SEBI-registered broker to place orders), and a Demat Account (held with CDSL or NSDL to electronically store your share certificates).',
+          'When executing a trade on the exchange, selecting the correct order type is critical to prevent unwanted execution prices during market volatility.'
+        ],
+        bulletPoints: [
+          'Market Order: Executes instantly at the current best available market price. Use only for highly liquid Large-Cap stocks.',
+          'Limit Order: Specifies the maximum price you are willing to pay (or minimum price to sell). Protects against slippage.',
+          'Stop-Loss Order (SL/SL-M): Automatically triggers a sell order if the price falls to a designated trigger price, capping your loss.',
+          'After Market Order (AMO): Placed outside regular trading hours (9:15 AM - 3:30 PM IST) for execution at market open.'
+        ]
+      }
+    ],
+    fullBookContent: {
+      introduction: 'Welcome to Mastering the Stock Market. This comprehensive guide is designed to transform complete beginners into confident, disciplined retail equity investors in the Indian stock market.',
+      chapters: [
+        {
+          number: 1,
+          title: 'Introduction to Indian Financial Markets',
+          sections: [
+            { heading: 'Capital Market Ecosystem', body: 'India\'s capital market infrastructure is regulated by SEBI. Primary markets handle IPOs and fresh capital raising, while secondary markets (NSE and BSE) provide liquidity for daily buying and selling.' },
+            { heading: 'Index Calculation (Nifty & Sensex)', body: 'The Nifty 50 and Sensex are free-float market capitalization weighted indices representing the top companies in India across major economic sectors.' }
+          ]
+        },
+        {
+          number: 2,
+          title: 'Demat & Brokerage Setup',
+          sections: [
+            { heading: 'Choosing a Broker', body: 'Compare Discount Brokers (Zerodha, Groww, AngelOne) for low brokerage fees versus Full-Service Brokers (Motilal Oswal, ICICI Direct) for research reports and dedicated advisors.' },
+            { heading: 'Understanding STT, GST, and SEBI Charges', body: 'Every trade incurs Securities Transaction Tax (STT), Stamp Duty, Exchange Turnover Charges, and 18% GST on brokerage.' }
+          ]
+        },
+        {
+          number: 3,
+          title: 'Core Valuation Ratios',
+          sections: [
+            { heading: 'Price to Earnings (P/E)', body: 'Calculated as Market Price divided by Earnings Per Share (EPS). Compare P/E against historical 5-year averages and sector peers.' },
+            { heading: 'Return on Capital Employed (ROCE)', body: 'Measures how efficiently a company generates operating profit from total capital employed. Target ROCE > 15%.' }
+          ]
+        }
+      ],
+      conclusion: 'Invest systematically, maintain a long-term perspective, and never invest money you require within the next 3 years.'
     }
   },
   {
@@ -123,13 +187,54 @@ export const EBOOKS_DATA: EBook[] = [
       { chapter: 'Chapter 5', title: 'Valuation Methodologies Explained', summary: 'Mastering DCF, P/E vs Growth (PEG ratio), and Sum of the Parts (SOTP).' },
       { chapter: 'Chapter 6', title: 'Real-World Case Studies of Indian Multi-baggers', summary: 'Dissecting past 100x wealth creators in the Indian stock market.' }
     ],
-    sampleExcerpt: {
-      chapterTitle: 'Chapter 2: The Primacy of Operating Cash Flow',
-      content: [
-        'Net Profit reported on an Income Statement is an accounting construct governed by accrual rules. Revenue can be booked before cash is collected, and expenses can be capitalized. However, Operating Cash Flow (OCF) represents actual bank balance inflows generated from core business operations.',
-        'A company reporting rising net profits alongside stagnant or negative operating cash flow for consecutive years is a classic financial red flag. In Indian corporate history, numerous companies presented booming earnings on paper while burning cash in reality, eventually ending in liquidity crises.',
-        'Always calculate the OCF/PAT ratio over a 5-year rolling period. Healthy, high-moat businesses consistently display an OCF/PAT ratio greater than 0.8 to 1.0, indicating high earnings quality.'
-      ]
+    samplePages: [
+      {
+        pageNumber: 1,
+        chapterTitle: 'Chapter 2: Financial Statements Masterclass',
+        heading: '2.1 The Primacy of Operating Cash Flow',
+        paragraphs: [
+          'Net Profit reported on an Income Statement is an accounting construct governed by accrual rules. Revenue can be booked before cash is collected, and expenses can be capitalized. However, Operating Cash Flow (OCF) represents actual bank balance inflows generated from core business operations.',
+          'A company reporting rising net profits alongside stagnant or negative operating cash flow for consecutive years is a classic financial red flag. In Indian corporate history, numerous companies presented booming earnings on paper while burning cash in reality, eventually ending in liquidity crises.',
+          'Always calculate the OCF/PAT ratio over a 5-year rolling period. Healthy, high-moat businesses consistently display an OCF/PAT ratio greater than 0.8 to 1.0, indicating high earnings quality.'
+        ],
+        keyTakeaway: 'Golden Rule of Fundamental Analysis: Profit is an opinion; Cash Flow is a fact. Always verify OCF > PAT.'
+      },
+      {
+        pageNumber: 2,
+        chapterTitle: 'Chapter 2: Financial Statements Masterclass',
+        heading: '2.2 Identifying Corporate Accounting Red Flags',
+        paragraphs: [
+          'Before calculating intrinsic value, every investor must perform a forensic audit of annual report footnotes and auditor disclosures. Look for the following red flags:'
+        ],
+        bulletPoints: [
+          'Promoter Share Pledging: High percentage of promoter holding pledged to NBFCs indicates debt stress.',
+          'Frequent Changes in Auditors: Resignation of reputable auditing firms mid-term is a major warning signal.',
+          'High Related-Party Transactions: Transferring cash to unlisted promoter-owned entities at inflated valuations.',
+          'Divergence Between Revenue Growth & Receivables: Accounts receivable growing 3x faster than sales indicates fake billings.'
+        ]
+      }
+    ],
+    fullBookContent: {
+      introduction: 'The Ultimate Fundamental Analysis Blueprint provides institutional-grade evaluation tools to analyze balance sheets, calculate moats, and compute intrinsic value.',
+      chapters: [
+        {
+          number: 1,
+          title: 'Financial Statement Analysis',
+          sections: [
+            { heading: 'Balance Sheet Strength', body: 'Analyze Working Capital, Debt-to-Equity (< 0.5 preferred), and Fixed Asset Turnover ratios.' },
+            { heading: 'Free Cash Flow (FCF) Calculation', body: 'FCF = Operating Cash Flow minus Capital Expenditures (CapEx). FCF represents true discretionary cash available to shareholders.' }
+          ]
+        },
+        {
+          number: 2,
+          title: 'Intrinsic Valuation Models',
+          sections: [
+            { heading: 'Discounted Cash Flow (DCF)', body: 'Project 10-year FCF, apply a discount rate (WACC ~11-12%), and calculate terminal value to derive fair stock price.' },
+            { heading: 'Relative Valuation', body: 'Use EV/EBITDA for asset-heavy capital goods and P/B ratio for banks and financial institutions.' }
+          ]
+        }
+      ],
+      conclusion: 'Fundamental analysis provides a safety margin. Buy great businesses with strong moats at reasonable prices.'
     }
   },
   {
@@ -174,13 +279,54 @@ export const EBOOKS_DATA: EBook[] = [
       { chapter: 'Chapter 5', title: 'Breakout & Pullback Trading Strategies', summary: 'Filtering false breakouts and entering high-probability retests.' },
       { chapter: 'Chapter 6', title: 'Position Sizing & Risk Management System', summary: 'Calculating exact lot sizes to protect equity capital.' }
     ],
-    sampleExcerpt: {
-      chapterTitle: 'Chapter 1: The Core Premise of Technical Analysis',
-      content: [
-        'Technical analysis rests on three fundamental assumptions: market action discounts everything, price moves in trends, and history tends to repeat itself. Every known fundamental fact, macroeconomic report, corporate result, and investor sentiment is instantly reflected in price action.',
-        'Instead of attempting to predict news headlines, technical traders analyze price charts to identify institutional accumulation and distribution. When large institutional buyers (FIIs and DIIs) build positions in a stock, their footsteps leave distinct volume and price footprints.',
-        'The primary goal of price action trading is not to predict the future with 100% certainty, but to execute trades where the potential reward significantly outweighs the quantified risk.'
-      ]
+    samplePages: [
+      {
+        pageNumber: 1,
+        chapterTitle: 'Chapter 1: The Core Premise of Technical Analysis',
+        heading: '1.1 Price Action & Institutional Footprints',
+        paragraphs: [
+          'Technical analysis rests on three fundamental assumptions: market action discounts everything, price moves in trends, and history tends to repeat itself. Every known fundamental fact, macroeconomic report, corporate result, and investor sentiment is instantly reflected in price action.',
+          'Instead of attempting to predict news headlines, technical traders analyze price charts to identify institutional accumulation and distribution. When large institutional buyers (FIIs and DIIs) build positions in a stock, their footsteps leave distinct volume and price footprints.',
+          'The primary goal of price action trading is not to predict the future with 100% certainty, but to execute trades where the potential reward significantly outweighs the quantified risk.'
+        ],
+        keyTakeaway: 'Trade what you see, not what you think. Let price action confirm your technical bias before placing trades.'
+      },
+      {
+        pageNumber: 2,
+        chapterTitle: 'Chapter 1: The Core Premise of Technical Analysis',
+        heading: '1.2 High-Probability Candlestick Patterns',
+        paragraphs: [
+          'Candlestick charts depict open, high, low, and close (OHLC) prices. Combining specific candlestick formations at key support/resistance zones produces high-probability trade setups:'
+        ],
+        bulletPoints: [
+          'Bullish Engulfing: A large green candle completely engulfs the previous red candle body at major support, signalling aggressive buying.',
+          'Hammer: Long lower shadow (2x body) showing rejection of lower prices by buyers. High reliability at 50-day EMA support.',
+          'Morning Star: A 3-candle reversal pattern marking the bottom of a downtrend with volume expansion.',
+          'Volume Confluence Rule: A candlestick signal accompanied by 2x average 20-day volume increases win probability by over 40%.'
+        ]
+      }
+    ],
+    fullBookContent: {
+      introduction: 'Technical Analysis & Price Action Trading Secrets gives you a mechanical, rule-based approach to trade Nifty, Bank Nifty, and Indian equities with quantitative precision.',
+      chapters: [
+        {
+          number: 1,
+          title: 'Candlesticks & Support/Resistance',
+          sections: [
+            { heading: 'Mapping Key Levels', body: 'Identify major multi-week horizontal swing highs and lows. Support becomes resistance once broken.' },
+            { heading: 'Moving Average Alignment', body: 'Use 20 EMA for short-term swing momentum, 50 EMA for medium-term trends, and 200 EMA for long-term institutional trend direction.' }
+          ]
+        },
+        {
+          number: 2,
+          title: 'Risk-Reward & Trade Management',
+          sections: [
+            { heading: '1:2 Minimum Risk-Reward', body: 'Never risk ₹10 to make ₹10. Ensure your target price offers at least 2x your stop-loss distance.' },
+            { heading: 'Trailing Stop-Loss with ATR', body: 'Use Average True Range (ATR) multipliers to dynamically trail stop-losses and lock in profits during strong market trends.' }
+          ]
+        }
+      ],
+      conclusion: 'Trading is a game of risk management. Preserve capital, manage risk per trade (< 2% portfolio equity), and follow your system consistently.'
     }
   },
   {
@@ -225,13 +371,52 @@ export const EBOOKS_DATA: EBook[] = [
       { chapter: 'Chapter 5', title: 'Rebalancing & Tax Optimization', summary: 'Periodic portfolio rebalancing without incurring unnecessary LTCG taxes.' },
       { chapter: 'Chapter 6', title: 'The 20-Year Multi-Crore Blueprint', summary: 'Practical step-by-step model for compounding wealth across life stages.' }
     ],
-    sampleExcerpt: {
-      chapterTitle: 'Chapter 1: The Exponential Curve of Wealth',
-      content: [
-        'Albert Einstein famously called compounding the eighth wonder of the world. In equity investing, compounding is non-linear. During the first 5 to 7 years of a systematic investment plan, portfolio growth may appear slow or modest because capital returns dominate interest earned.',
-        'However, as you enter years 10, 15, and 20, accumulated compounding gains dwarf total principal invested. A monthly SIP of ₹15,000 compounding at 14% CAGR grows to approximately ₹20 Lakhs in 7 years, but balloons to over ₹1 Crore in 17 years.',
-        'The greatest barrier to long-term wealth creation is not poor stock selection—it is the inability of investors to sit quietly during temporary 15-20% market corrections.'
-      ]
+    samplePages: [
+      {
+        pageNumber: 1,
+        chapterTitle: 'Chapter 1: The Exponential Curve of Wealth',
+        heading: '1.1 The Eighth Wonder of the World',
+        paragraphs: [
+          'Albert Einstein famously called compounding the eighth wonder of the world. In equity investing, compounding is non-linear. During the first 5 to 7 years of a systematic investment plan, portfolio growth may appear slow or modest because capital returns dominate interest earned.',
+          'However, as you enter years 10, 15, and 20, accumulated compounding gains dwarf total principal invested. A monthly SIP of ₹15,000 compounding at 14% CAGR grows to approximately ₹20 Lakhs in 7 years, but balloons to over ₹1 Crore in 17 years.',
+          'The greatest barrier to long-term wealth creation is not poor stock selection—it is the inability of investors to sit quietly during temporary 15-20% market corrections.'
+        ],
+        keyTakeaway: 'Time in the market beats timing the market. Start early, stay disciplined, and let compounding perform its magic.'
+      },
+      {
+        pageNumber: 2,
+        chapterTitle: 'Chapter 1: The Exponential Curve of Wealth',
+        heading: '1.2 Core-Satellite Portfolio Allocation Model',
+        paragraphs: [
+          'To achieve consistent long-term compounding while managing risk, institutional wealth managers utilize the Core-Satellite portfolio structure:'
+        ],
+        bulletPoints: [
+          'Core Portfolio (60-70%): Allocated to diversified Large-Cap Mutual Funds, Index Funds (Nifty 50), and blue-chip market leaders. Provides stability and steady 12-14% CAGR compounding.',
+          'Satellite Portfolio (30-40%): Allocated to high-conviction Mid-Cap & Small-Cap stocks, sector thematic funds, and emerging multi-bagger opportunities. Drives alpha generation.',
+          'Rebalancing Rule: Review your Core-Satellite weightings annually to lock in profits from satellite winners and rebalance into core holdings.'
+        ]
+      }
+    ],
+    fullBookContent: {
+      introduction: 'Long-Term Wealth Creation & Compounding Secrets provides the exact strategic blueprint used by high-net-worth investors to compound wealth over decades.',
+      chapters: [
+        {
+          number: 1,
+          title: 'The Compounding Math',
+          sections: [
+            { heading: 'Rule of 72 & Rule of 114', body: '72 divided by your return rate equals years required to double money. 114 divided by return rate equals years to triple money.' },
+            { heading: 'Step-Up SIP Strategy', body: 'Increasing your monthly SIP amount by 10% each year doubles your total accumulated corpus over 15 years.' }
+          ]
+        },
+        {
+          number: 2,
+          title: 'Behavioral Mastery',
+          sections: [
+            { heading: 'Navigating Volatility', body: 'Market corrections are normal. Over 30 years, Nifty has experienced 15-20% pullbacks almost every 2 years while rising from 1,000 to 24,000+.' }
+          ]
+        }
+      ],
+      conclusion: 'Wealth is what you save and compound, not what you spend. Stick to your plan and create generational wealth.'
     }
   },
   {
@@ -275,13 +460,52 @@ export const EBOOKS_DATA: EBook[] = [
       { chapter: 'Chapter 5', title: 'Tax-Smart Portfolio Rebalancing', summary: 'Maintaining optimal asset weightings efficiently.' },
       { chapter: 'Chapter 6', title: 'Institutional Portfolio Audit Checklist', summary: 'Step-by-step template to audit stock holding quality quarterly.' }
     ],
-    sampleExcerpt: {
-      chapterTitle: 'Chapter 1: Defining True Investment Risk',
-      content: [
-        'In corporate finance textbooks, risk is frequently defined as standard deviation or price volatility. However, for a long-term investor, short-term stock price fluctuations are not real risk. True investment risk is the permanent loss of capital or the failure to achieve critical life financial goals.',
-        'A single stock holding that constitutes 25% or 30% of your portfolio presents catastrophic concentration risk. If that company faces fraud, technological disruption, or regulatory penalties, your total wealth sustains irreparable damage.',
-        'Enforcing maximum position limits (typically no single stock exceeding 5% to 8% of total portfolio value) guarantees that even if a stock goes to zero, your portfolio survives to compound another day.'
-      ]
+    samplePages: [
+      {
+        pageNumber: 1,
+        chapterTitle: 'Chapter 1: Defining True Investment Risk',
+        heading: '1.1 Volatility vs Permanent Loss of Capital',
+        paragraphs: [
+          'In corporate finance textbooks, risk is frequently defined as standard deviation or price volatility. However, for a long-term investor, short-term stock price fluctuations are not real risk. True investment risk is the permanent loss of capital or the failure to achieve critical life financial goals.',
+          'A single stock holding that constitutes 25% or 30% of your portfolio presents catastrophic concentration risk. If that company faces fraud, technological disruption, or regulatory penalties, your total wealth sustains irreparable damage.',
+          'Enforcing maximum position limits (typically no single stock exceeding 5% to 8% of total portfolio value) guarantees that even if a stock goes to zero, your portfolio survives to compound another day.'
+        ],
+        keyTakeaway: 'Capital Preservation First: Avoid catastrophic losses. Protecting capital in down markets is more important than chasing maximum returns.'
+      },
+      {
+        pageNumber: 2,
+        chapterTitle: 'Chapter 1: Defining True Investment Risk',
+        heading: '1.2 Multi-Asset Allocation Framework',
+        paragraphs: [
+          'Asset allocation accounts for over 90% of long-term portfolio return variation. Spreading capital across uncorrelated asset classes builds resilient wealth:'
+        ],
+        bulletPoints: [
+          'Equity (60-70%): Drives long-term inflation-beating capital appreciation.',
+          'Debt / Fixed Income (20-25%): Provides stability, liquidity, and regular cash income.',
+          'Gold & Commodities (10-15%): Acts as a macroeconomic hedge against currency devaluation and inflation spikes.',
+          'Liquid Cash Buffer (5%): Kept in overnight liquid funds to deploy during market crash opportunities.'
+        ]
+      }
+    ],
+    fullBookContent: {
+      introduction: 'Portfolio & Risk Management Playbook delivers professional asset allocation frameworks to insulate portfolios from severe market drawdowns.',
+      chapters: [
+        {
+          number: 1,
+          title: 'Asset Allocation Strategies',
+          sections: [
+            { heading: 'Strategic vs Tactical Asset Allocation', body: 'Strategic allocation maintains long-term target percentages. Tactical allocation adjusts weightings by +/- 10% based on market valuation metrics (Nifty P/E < 18 or > 25).' }
+          ]
+        },
+        {
+          number: 2,
+          title: 'Position Sizing Rules',
+          sections: [
+            { heading: 'Fixed Fractional Sizing', body: 'Limit single stock risk to a maximum 2% portfolio equity loss per trade setup.' }
+          ]
+        }
+      ],
+      conclusion: 'Manage risk first, and profits will take care of themselves.'
     }
   },
   {
@@ -324,13 +548,45 @@ export const EBOOKS_DATA: EBook[] = [
       { chapter: 'Chapter 4', title: 'Hedging Cash Portfolios Against Market Downside', summary: 'Calculating exact Put contract requirements to protect equity portfolios.' },
       { chapter: 'Chapter 5', title: 'Capital Protection & Risk Discipline', summary: 'Position sizing guardrails and eliminating leverage risks.' }
     ],
-    sampleExcerpt: {
-      chapterTitle: 'Chapter 1: Options as Insurance Policies',
-      content: [
-        'At its core, an option is a financial derivative contract that grants the buyer the right, but not the obligation, to buy or sell an underlying asset at a specified strike price before a specified expiration date.',
-        'Purchasing a Put option on Nifty 50 acts identically to purchasing comprehensive insurance on your car. If the market crashes by 15%, the surge in your Put option value offsets the paper losses in your cash equity portfolio.',
-        'When used strategically for risk hedging rather than unhedged speculative gambling, options provide unprecedented portfolio stability during volatile market regimes.'
-      ]
+    samplePages: [
+      {
+        pageNumber: 1,
+        chapterTitle: 'Chapter 1: Options as Hedging Contracts',
+        heading: '1.1 Understanding Options Insurance Contracts',
+        paragraphs: [
+          'At its core, an option is a financial derivative contract that grants the buyer the right, but not the obligation, to buy or sell an underlying asset at a specified strike price before a specified expiration date.',
+          'Purchasing a Put option on Nifty 50 acts identically to purchasing comprehensive insurance on your car. If the market crashes by 15%, the surge in your Put option value offsets the paper losses in your cash equity portfolio.',
+          'When used strategically for risk hedging rather than unhedged speculative gambling, options provide unprecedented portfolio stability during volatile market regimes.'
+        ],
+        keyTakeaway: 'Options exist to hedge risk. Use defined-risk credit spreads and index put protection to protect your capital.'
+      },
+      {
+        pageNumber: 2,
+        chapterTitle: 'Chapter 1: Options as Hedging Contracts',
+        heading: '1.2 Demystifying Option Greeks',
+        paragraphs: [
+          'Option prices are governed by mathematical models (Black-Scholes Model). The Option Greeks quantify how option prices react to changes in market variables:'
+        ],
+        bulletPoints: [
+          'Delta (Δ): Measures option price movement relative to a ₹1 move in the underlying stock index.',
+          'Theta (Θ): Quantifies time decay—the dollar amount an option premium loses each day as expiration approaches.',
+          'Vega (ν): Measures price sensitivity to changes in Implied Volatility (IV).',
+          'Gamma (Γ): Rates the change in Delta for every 1-point shift in the underlying asset price.'
+        ]
+      }
+    ],
+    fullBookContent: {
+      introduction: 'Option Trading & Risk Hedging Handbook details advanced derivative strategies and portfolio protection mechanics.',
+      chapters: [
+        {
+          number: 1,
+          title: 'Option Greek Dynamics',
+          sections: [
+            { heading: 'Theta Decay Arbitrage', body: 'Option sellers collect time decay (Theta). Selling out-of-the-money credit spreads 30-45 days before expiry captures optimal Theta decay acceleration.' }
+          ]
+        }
+      ],
+      conclusion: 'Never trade unhedged naked options. Always maintain defined-risk spreads.'
     }
   }
 ];
