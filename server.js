@@ -109,6 +109,10 @@ const initDB = () => {
 initDB();
 
 const app = express();
+app.use((req, res, next) => {
+  if (/^\/(admin(?:\/|$)|ebook-admin-vault(?:\/|$)|v2(?:\/|$))/.test(req.path) || /^test1\./i.test(req.hostname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
 
 app.disable('x-powered-by');
 app.use(express.json({ limit: '32kb' }));
@@ -260,8 +264,11 @@ app.use(express.static(distPath));
 
 // Fallback to index.html for React Router
 app.use((req, res) => {
+  if (!['GET', 'HEAD'].includes(req.method)) return res.status(405).json({ error: 'Method not allowed.' });
+  if (req.path.startsWith('/assets/')) return res.status(404).send('Asset not found.');
+  const knownRoute = /^(?:\/(?:v2|screener|ipo|ipos|ebooks|admin|ebook-admin-vault)?|\/admin\/dashboard|\/(?:company|ipo|ebooks)\/[^/]+)\/?$/.test(req.path);
   if (fs.existsSync(path.join(distPath, 'index.html'))) {
-    res.sendFile(path.join(distPath, 'index.html'));
+    res.status(knownRoute ? 200 : 404).sendFile(path.join(distPath, 'index.html'));
   } else {
     res.status(404).send('Not Found. Build the app first.');
   }

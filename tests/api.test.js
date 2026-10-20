@@ -78,6 +78,10 @@ test('isolated API regression: persistence, authorization, validation and privat
     const missing = await request(base + '/api/does-not-exist');
     assert.equal(missing.status, 404);
     assert.match(missing.headers.get('content-type'), /application\/json/);
+    assert.equal((await request(base + '/not-a-page')).status, 404);
+    assert.equal((await request(base + '/assets/missing.js')).status, 404);
+    assert.equal((await request(base + '/screener')).status, 200);
+    assert.match((await request(base + '/admin')).headers.get('x-robots-tag'), /noindex/);
     assert.equal((await request(base + '/api/submit-form', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{broken' })).status, 400);
     await stop();
     await start('Different-bootstrap-value-123!');

@@ -110,6 +110,7 @@ const FAQ = () => {
     if (!showAll) {
       setShowAll(true);
       setTimeout(() => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const extraCards = containerRef.current?.querySelectorAll('.faq-item-more');
         if (extraCards && extraCards.length) {
           gsap.fromTo(extraCards, 
@@ -122,7 +123,7 @@ const FAQ = () => {
       setShowAll(false);
       const section = containerRef.current;
       if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        section.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
       }
     }
   };
@@ -134,7 +135,7 @@ const FAQ = () => {
       const closingEl = contentRefs.current[openIndex];
       gsap.to(closingEl, { 
         height: 0, 
-        duration: 0.4, 
+        duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.4,
         ease: 'power3.inOut' 
       });
     }
@@ -145,14 +146,14 @@ const FAQ = () => {
         { height: 0 }, 
         { 
           height: 'auto', 
-          duration: 0.45, 
+          duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.45,
           ease: 'power3.out',
           onComplete: () => {
             const cardEl = itemRefs.current[index];
             if (cardEl) {
               const rect = cardEl.getBoundingClientRect();
               if (rect.top < 100 || rect.bottom > window.innerHeight - 50) {
-                cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                cardEl.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'nearest' });
               }
             }
           }

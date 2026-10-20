@@ -81,9 +81,11 @@ export default function V1Landing() {
           const details = String(item.description ?? item.snippet ?? '').replace(/<[^>]*>?/gm, '').trim();
           const image = typeof item.image_url === 'string' ? item.image_url.trim() : '';
           const title = String(item.title ?? '').trim();
+          let link = '';
+          try { const url = new URL(String(item.url ?? '')); if (['http:', 'https:'].includes(url.protocol)) link = url.href; } catch { /* Invalid provider links are not actionable stories. */ }
           const stockTerms = /stock|share|equity|market|nifty|sensex|nasdaq|dow|earnings|ipo|trading|index/i;
-          if (!title || !image || !stockTerms.test(`${title} ${details}`)) return null;
-          return { category: typeof item.source === 'string' ? item.source : 'Market update', image, title, text: details.slice(0, 120) || 'Latest market reporting and perspective.', details: details || 'The source did not provide a full description for this update.', link: typeof item.url === 'string' ? item.url : '#', source: typeof item.source === 'string' ? item.source : 'Marketaux' };
+          if (!title || !image || !link || !stockTerms.test(`${title} ${details}`)) return null;
+          return { category: typeof item.source === 'string' ? item.source : 'Market update', image, title, text: details.slice(0, 120) || 'Latest market reporting and perspective.', details: details || 'The source did not provide a full description for this update.', link, source: typeof item.source === 'string' ? item.source : 'Marketaux' };
         }).filter((item): item is NewsItem => item !== null).slice(0, 3);
         setNewsItems(items);
         setNewsStatus('ready');

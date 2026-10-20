@@ -155,9 +155,9 @@ export default function EbookDetailsPage() {
                       <BookOpen size={48} />
                     </div>
                   )}
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
+                  <p className="text-2xl md:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
                     {book.title}
-                  </h1>
+                  </p>
                   <p className="text-xs md:text-sm text-neutral-200 drop-shadow">{book.subtitle}</p>
                 </div>
 

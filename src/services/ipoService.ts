@@ -79,7 +79,21 @@ export interface IPOStats {
   total: number;
 }
 
-export function enrichIpoDetails(ipo: IPO): IPO { return ipo; }
+function safeHttpUrl(value?: string): string | undefined {
+  try {
+    const url = new URL(value || '');
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : undefined;
+  } catch { return undefined; }
+}
+
+export function enrichIpoDetails(ipo: IPO): IPO {
+  return {
+    ...ipo,
+    ...(ipo.logoUrl ? { logoUrl: safeHttpUrl(ipo.logoUrl) } : {}),
+    ...(ipo.registrar ? { registrar: { ...ipo.registrar, website: safeHttpUrl(ipo.registrar.website) } } : {}),
+    ...(ipo.documents ? { documents: Object.fromEntries(Object.entries(ipo.documents).map(([key, value]) => [key, safeHttpUrl(value)])) } : {})
+  };
+}
 
 // Client-side Normalizer for Indian API
 function normalizeIndianApiIpo(item: any): IPO {

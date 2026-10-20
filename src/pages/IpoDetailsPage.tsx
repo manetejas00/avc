@@ -57,7 +57,10 @@ export default function IpoDetailsPage() {
           setIpo(data);
           // Set sensible default lot limits
           if (data.lotSize) {
-            setSelectedLots(1);
+            const capitalPerLot = data.lotSize * (data.maxPrice || data.minPrice);
+            const needsHni = capitalPerLot > 200000;
+            setInvestorCategory(needsHni ? 'snii' : 'retail');
+            setSelectedLots(needsHni && capitalPerLot > 0 ? Math.floor(200000 / capitalPerLot) + 1 : 1);
           }
         }
       } catch (err: any) {
@@ -141,7 +144,7 @@ export default function IpoDetailsPage() {
         <main className="container-custom pt-[var(--nav-offset)] pb-20 flex flex-col items-center justify-center min-h-[60vh]">
           <div className="rounded-3xl border border-red-500/30 bg-surface/80 p-10 text-center max-w-md shadow-2xl backdrop-blur-xl">
             <XCircle size={40} className="mx-auto text-red-400 mb-4" />
-            <h2 className="text-xl font-bold text-white">IPO Profile Not Found</h2>
+            <h1 className="text-xl font-bold text-white">IPO Profile Not Found</h1>
             <p className="mt-2 text-xs text-text-secondary">{error || 'The requested IPO does not exist or has been removed.'}</p>
             <Link
               to="/ipo"
@@ -158,13 +161,19 @@ export default function IpoDetailsPage() {
 
   // Derived Calculations
   const cutOffPrice = ipo.maxPrice || ipo.minPrice;
-  const sharesPerLot = ipo.lotSize || 1;
+  const sharesPerLot = ipo.lotSize || 0;
+  const capitalPerLot = sharesPerLot * cutOffPrice;
+  const calculatorAvailable = Number.isFinite(capitalPerLot) && capitalPerLot > 0 && capitalPerLot <= 1000000 && Number.isInteger(sharesPerLot);
   const totalShares = selectedLots * sharesPerLot;
   const totalInvestmentAmount = totalShares * cutOffPrice;
   const estimatedGainAmount = (totalInvestmentAmount * estimatedGainPercent) / 100;
   const estimatedTotalValue = totalInvestmentAmount + estimatedGainAmount;
 
-  const maxRetailLots = Math.max(1, Math.floor(200000 / (sharesPerLot * cutOffPrice)));
+  const maxRetailLots = calculatorAvailable ? Math.floor(200000 / capitalPerLot) : 0;
+  const minHniLots = calculatorAvailable ? Math.floor(200000 / capitalPerLot) + 1 : 1;
+  const maxHniLots = calculatorAvailable ? Math.floor(1000000 / capitalPerLot) : 0;
+  const minLots = investorCategory === 'retail' ? 1 : minHniLots;
+  const maxLots = investorCategory === 'retail' ? maxRetailLots : maxHniLots;
 
   // Timeline items
   const timelineEvents = [
@@ -386,7 +395,8 @@ export default function IpoDetailsPage() {
                 <span className="text-[11px] font-semibold text-gold-secondary">Calculated at Cut-Off Price ₹{cutOffPrice}</span>
               </div>
 
-              <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              {!calculatorAvailable && <p role="status" className="mt-4 text-text-muted">The source price and lot size do not support a calculation for the displayed investor categories.</p>}
+              {calculatorAvailable && <div className="mt-6 grid gap-6 sm:grid-cols-2">
                 {/* Inputs */}
                 <div className="space-y-4">
                   <div>
@@ -394,6 +404,7 @@ export default function IpoDetailsPage() {
                     <div className="mt-2 flex rounded-xl border border-white/10 bg-background/60 p-1">
                       <button
                         type="button"
+                        disabled={maxRetailLots < 1}
                         onClick={() => { setInvestorCategory('retail'); setSelectedLots(1); }}
                         className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-all ${investorCategory === 'retail' ? 'bg-gold-primary text-black' : 'text-text-muted hover:text-white'}`}
                       >
@@ -401,7 +412,7 @@ export default function IpoDetailsPage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => { setInvestorCategory('snii'); setSelectedLots(Math.ceil(200000 / (sharesPerLot * cutOffPrice))); }}
+                        onClick={() => { setInvestorCategory('snii'); setSelectedLots(minHniLots); }}
                         className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-all ${investorCategory === 'snii' ? 'bg-gold-primary text-black' : 'text-text-muted hover:text-white'}`}
                       >
                         sHNI (₹2L - ₹10L)
@@ -417,22 +428,27 @@ export default function IpoDetailsPage() {
                     <div className="mt-2 flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => setSelectedLots(Math.max(1, selectedLots - 1))}
+                        aria-label="Decrease lots"
+                        disabled={selectedLots <= minLots}
+                        onClick={() => setSelectedLots(Math.max(minLots, selectedLots - 1))}
                         className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-surface-elevated text-white hover:border-gold-primary"
                       >
                         <Minus size={14} />
                       </button>
                       <input
                         type="range"
-                        min="1"
-                        max={investorCategory === 'retail' ? maxRetailLots : 50}
+                        aria-label="Number of lots"
+                        min={minLots}
+                        max={maxLots}
                         value={selectedLots}
-                        onChange={(e) => setSelectedLots(Number(e.target.value))}
+                        onChange={(e) => setSelectedLots(Math.max(minLots, Math.min(maxLots, Number(e.target.value))))}
                         className="h-2 flex-1 accent-gold-primary bg-white/10 rounded-lg cursor-pointer"
                       />
                       <button
                         type="button"
-                        onClick={() => setSelectedLots(selectedLots + 1)}
+                        aria-label="Increase lots"
+                        disabled={selectedLots >= maxLots}
+                        onClick={() => setSelectedLots(Math.min(maxLots, selectedLots + 1))}
                         className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-surface-elevated text-white hover:border-gold-primary"
                       >
                         <Plus size={14} />
@@ -479,7 +495,7 @@ export default function IpoDetailsPage() {
                     <p className="mt-0.5 text-xl font-black text-emerald-400">{formatCurrency(estimatedTotalValue)}</p>
                   </div>
                 </div>
-              </div>
+              </div>}
             </section>
 
             {/* 4. Issue Size & Structure */}

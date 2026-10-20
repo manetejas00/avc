@@ -34,7 +34,7 @@ export default function EbookAdminVaultPage() {
             This endpoint is restricted for administrative inspection only. Please sign in with your administrator account to access the full e-book repository.
           </p>
           <div className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-[11px] break-words text-[#D4AF37]">
-            Administrator authentication required
+            <a href="/admin" className="underline">Sign in to continue</a>
           </div>
         </div>
       </div>
@@ -196,16 +196,16 @@ export default function EbookAdminVaultPage() {
         {/* API Endpoint Documentation */}
         <div className="p-6 rounded-2xl bg-[#0D0D0D] border border-white/10 space-y-3 text-xs">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <FileText size={16} className="text-[#D4AF37]" /> Secret API Endpoints Summary
+            <FileText size={16} className="text-[#D4AF37]" /> Authenticated API
           </h3>
-          <p className="text-neutral-400">Use these direct endpoints to query e-book content programmatically:</p>
+          <p className="text-neutral-400">The full e-book repository requires an authenticated administrator session:</p>
 
           <div className="space-y-2 font-mono text-[11px] break-words">
             <div className="p-3 rounded-lg bg-[#151515] border border-white/5 text-emerald-400">
-              GET /api/admin/ebook-download?id={selectedBook.slug}&key=avc_secret_2026
+              GET /api/admin/ebooks
             </div>
             <div className="p-3 rounded-lg bg-[#151515] border border-white/5 text-amber-400">
-              GET /api/admin/ebooks-vault?key=avc_secret_2026
+              Sign in at /admin. Full content is excluded from public responses and browser bundles.
             </div>
           </div>
         </div>

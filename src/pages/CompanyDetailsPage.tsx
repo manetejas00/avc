@@ -119,10 +119,13 @@ function DividendCalendar({ symbol }: { symbol: string }) {
 }
 
 export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticker?: string; exchange?: 'NSE' | 'BSE' }) {
-  const cleanTicker = ticker.replace(/[^a-z0-9._-]/gi, '').toUpperCase();
+  const cleanTicker = /^[a-z0-9._&-]+$/i.test(ticker.trim()) ? ticker.trim().toUpperCase() : '';
   const safeExchange = exchange === 'NSE' ? 'NSE' : 'BSE';
   const symbol = `${safeExchange}:${cleanTicker || 'RELIANCE'}`;
   const pageRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    document.title = cleanTicker ? `${cleanTicker} Company Research | AVC Dhanam` : 'Company not found | AVC Dhanam';
+  }, [cleanTicker]);
   useGSAP(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const scope = pageRef.current;
@@ -130,6 +133,8 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
     gsap.timeline().fromTo('.company-premium__back, .company-premium__eyebrow, .company-premium__title, .company-premium__copy', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .08, duration: .72, ease: 'power3.out' })
       .fromTo('.company-premium__panel', { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .1, duration: .8, ease: 'power3.out' }, '-=.32');
   }, { scope: pageRef });
+
+  if (!cleanTicker) return <main className="min-h-screen grid place-content-center gap-4 p-8 text-center"><h1>Company not found</h1><Link to="/screener">Back to screener</Link></main>;
 
   return (
     <div ref={pageRef} className="company-premium">

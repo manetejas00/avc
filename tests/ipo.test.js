@@ -21,6 +21,7 @@ test('IPO frontend preserves empty results, unknown records and missing provider
     const service = await import(pathToFileURL(path.join(directory, 'ipoService.mjs')));
     const record = { id: 'fixture', name: 'Isolated fixture' };
     assert.deepEqual(service.enrichIpoDetails(record), record);
+    assert.equal(service.enrichIpoDetails({ ...record, documents: { drhpUrl: 'javascript:alert(1)' } }).documents.drhpUrl, undefined);
     globalThis.fetch = async () => { calls++; return Response.json([]); };
     assert.deepEqual(await service.fetchIpoList({ tab: 'open' }), []);
     assert.equal(calls, 1);

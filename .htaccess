@@ -1,3 +1,9 @@
+Options -Indexes
+<IfModule mod_headers.c>
+  SetEnvIf Request_URI "^/(admin|ebook-admin-vault|v2)(/|\?|$)" private_page
+  SetEnvIf Host "^test1\." private_page
+  Header set X-Robots-Tag "noindex, nofollow" env=private_page
+</IfModule>
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
