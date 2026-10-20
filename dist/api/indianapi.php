@@ -12,7 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$apiKey = $_SERVER['HTTP_X_API_KEY'] ?? $_GET['api_key'] ?? 'sk-live-LBoaUhnmhsSPCe3J6kof1SQGTGJgWqQoYq87VL3l';
+$apiKey = getenv('INDIAN_API_KEY') ?: '';
+if ($apiKey === '') { http_response_code(503); echo json_encode(['error' => 'IPO provider is not configured']); exit; }
 $endpoint = $_GET['endpoint'] ?? 'ipo';
 
 // Allowed endpoints for Indian API proxy

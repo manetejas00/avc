@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, LogOut, CheckCircle, Clock, XCircle, MoreVertical, Database } from 'lucide-react';
+import { Search, LogOut, CheckCircle, Clock, XCircle, Database } from 'lucide-react';
 
 interface Submission {
   id: number;
@@ -28,28 +28,34 @@ const AdminDashboard = () => {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [activeTab, setActiveTab] = useState<'submissions' | 'api'>('submissions');
   const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [updating, setUpdating] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchSubmissions();
-  }, []);
-
-  const fetchSubmissions = async () => {
+const fetchSubmissions = useCallback(async () => {
+    setError('');
+    setLoading(true);
     try {
       const res = await fetch('/api/admin/submissions');
       if (res.status === 401) {
         navigate('/admin');
         return;
       }
+      if (!res.ok) throw new Error('Unable to load admin data. Please retry.');
       const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Admin data service unavailable.');
       setSubmissions(data);
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : 'The request failed. Please retry.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  const fetchApiLogs = async () => {
+  useEffect(() => { void fetchSubmissions(); }, [fetchSubmissions]);
+
+  const fetchApiLogs = useCallback(async () => {
+    setError('');
     setLoadingLogs(true);
     try {
       const res = await fetch('/api/admin/sync-logs');
@@ -57,37 +63,46 @@ const AdminDashboard = () => {
         navigate('/admin');
         return;
       }
+      if (!res.ok) throw new Error('Unable to load admin data. Please retry.');
       const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Admin data service unavailable.');
       setApiLogs(data);
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : 'The request failed. Please retry.');
     } finally {
       setLoadingLogs(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
     if (activeTab === 'api') {
       fetchApiLogs();
     }
-  }, [activeTab]);
+  }, [activeTab, fetchApiLogs]);
 
   const handleLogout = async () => {
-    await fetch('/api/admin/logout', { method: 'POST' });
-    navigate('/admin');
+    try {
+      const response = await fetch('/api/admin/logout', { method: 'POST' });
+      if (!response.ok) throw new Error('Sign out failed. Please retry.');
+      navigate('/admin');
+    } catch (error) { setError(error instanceof Error ? error.message : 'Sign out failed.'); }
   };
 
   const updateStatus = async (id: number, status: string) => {
+    if (updating !== null) return;
+    setUpdating(id);
+    setError('');
     try {
-      await fetch(`/api/admin/submissions/${id}/status`, {
+      const response = await fetch(`/api/admin/submissions/${id}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       });
-      fetchSubmissions();
+      if (!response.ok) throw new Error('Unable to update status. Please retry.');
+      await fetchSubmissions();
     } catch (err) {
-      console.error(err);
-    }
+      setError(err instanceof Error ? err.message : 'The request failed. Please retry.');
+    } finally { setUpdating(null); }
   };
 
   const getStatusBadge = (status: string) => {
@@ -103,9 +118,9 @@ const AdminDashboard = () => {
       {/* Header */}
       <header className="bg-surface border-b border-white/5 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex flex-wrap justify-between items-center gap-3 min-h-16 py-3">
             <h1 className="text-xl font-bold text-text">AVC Admin Panel</h1>
-            <button 
+            <button
               onClick={handleLogout}
               className="flex items-center gap-2 text-text-muted hover:text-text transition-colors text-sm font-medium"
             >
@@ -118,9 +133,10 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
+        {error && <div role="alert" className="mb-4 text-red-400">{error} <button className="underline" onClick={() => activeTab === 'api' ? fetchApiLogs() : fetchSubmissions()}>Retry</button></div>}
         {/* Tabs */}
-        <div className="flex space-x-4 mb-8 border-b border-white/5">
+        <div className="flex flex-wrap gap-3 mb-8 border-b border-white/5">
           <button
             onClick={() => setActiveTab('submissions')}
             className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 ${activeTab === 'submissions' ? 'border-gold-primary text-gold-primary' : 'border-transparent text-text-muted hover:text-text'}`}
@@ -144,13 +160,13 @@ const AdminDashboard = () => {
                 <h2 className="text-2xl font-semibold text-text">Consultation Requests</h2>
                 <p className="text-text-muted text-sm mt-1">Manage and track your leads</p>
               </div>
-          
+
           <div className="flex gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-              <input 
-                type="text" 
-                placeholder="Search..." 
+              <input
+                type="text"
+                aria-label="Search consultation requests" placeholder="Search..." value={search} onChange={event => setSearch(event.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-surface border border-white/5 rounded-lg text-text text-sm focus:outline-none focus:border-gold-primary"
               />
             </div>
@@ -159,8 +175,8 @@ const AdminDashboard = () => {
 
         {/* Table */}
         <div className="bg-surface border border-white/5 rounded-xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+          <div tabIndex={0} role="region" aria-label="Scrollable admin data table" className="overflow-x-auto max-w-full">
+            <table className="min-w-[640px] w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-background/50 text-text-muted border-b border-white/5">
                 <tr>
                   <th className="px-6 py-4 font-medium">Name</th>
@@ -181,7 +197,7 @@ const AdminDashboard = () => {
                     <td colSpan={6} className="px-6 py-12 text-center text-text-muted">No consultation requests found.</td>
                   </tr>
                 ) : (
-                  submissions.map((sub) => (
+                  submissions.filter(sub => [sub.name, sub.email, sub.phone, sub.interest, sub.message].some(value => value?.toLowerCase().includes(search.toLowerCase()))).map((sub) => (
                     <tr key={sub.id} className="hover:bg-background/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="font-medium text-text">{sub.name}</div>
@@ -203,8 +219,8 @@ const AdminDashboard = () => {
                         {getStatusBadge(sub.status)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <select 
-                          value={sub.status}
+                        <select
+                          aria-label={`Status for ${sub.name}`} disabled={updating !== null} value={sub.status}
                           onChange={(e) => updateStatus(sub.id, e.target.value)}
                           className="text-xs bg-background border border-white/5 rounded px-2 py-1 focus:outline-none text-text ml-auto"
                         >
@@ -230,7 +246,7 @@ const AdminDashboard = () => {
                 <h2 className="text-2xl font-semibold text-text">API Sync Logs</h2>
                 <p className="text-text-muted text-sm mt-1">Monitor external API connections and cache updates</p>
               </div>
-              <button 
+              <button
                 onClick={fetchApiLogs}
                 className="px-4 py-2 bg-surface border border-white/5 rounded-lg text-sm font-medium hover:bg-surface-elevated transition-colors"
               >
@@ -239,8 +255,8 @@ const AdminDashboard = () => {
             </div>
 
             <div className="bg-surface border border-white/5 rounded-xl overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm whitespace-nowrap">
+              <div className="overflow-x-auto max-w-full">
+                <table className="min-w-[640px] w-full text-left text-sm whitespace-nowrap">
                   <thead className="bg-background/50 text-text-muted border-b border-white/5">
                     <tr>
                       <th className="px-6 py-4 font-medium">Provider</th>
@@ -282,7 +298,7 @@ const AdminDashboard = () => {
             </div>
           </>
         )}
-        
+
       </main>
     </div>
   );

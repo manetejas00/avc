@@ -64,6 +64,7 @@ export default function ScreenerGateway() {
   };
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const section = sectionRef.current;
     if (!section) return;
     gsap.timeline({ scrollTrigger: { trigger: section, start: 'top 76%', once: true } })

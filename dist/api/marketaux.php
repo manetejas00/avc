@@ -4,9 +4,9 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=300');
 
-$token = $_GET['api_token'] ?? '';
+$token = getenv('MARKETAUX_API_KEY') ?: '';
 if ($token === '') {
-  http_response_code(400);
+  http_response_code(503);
   echo json_encode(['error' => 'News provider token missing']);
   exit;
 }

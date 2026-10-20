@@ -9,6 +9,7 @@ export default function SiteLoader() {
   useGSAP(() => {
     const loader = loaderRef.current;
     if (!loader) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setVisible(false); return; }
     const timeline = gsap.timeline({ onComplete: () => setVisible(false) });
     timeline.fromTo('.site-loader__mark', { autoAlpha: 0, y: 18, scale: .9 }, { autoAlpha: 1, y: 0, scale: 1, duration: .7, ease: 'power3.out' })
       .fromTo('.site-loader__line', { scaleX: 0 }, { scaleX: 1, duration: .7, ease: 'power2.inOut' }, '-=.35')

@@ -1,4 +1,7 @@
-import { forwardRef, useEffect, useState } from 'react';
+import type React from 'react';
+import Modal from './ui/Modal';
+import type { MouseEvent } from 'react';
+import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Award, BookOpen, Clock, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
 import RegulatoryDisclaimer from './RegulatoryDisclaimer';
@@ -9,25 +12,29 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
   const toHomeSection = (id: string) => home ? `#${id}` : `/#${id}`;
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navElement = useRef<HTMLElement | null>(null);
+
+  useLayoutEffect(() => {
+    const nav = navElement.current;
+    if (!nav) return;
+    const measure = () => document.documentElement.style.setProperty('--nav-offset', `${Math.ceil(nav.offsetHeight + parseFloat(getComputedStyle(nav).top || '0') + 24)}px`);
+    const observer = new ResizeObserver(measure);
+    observer.observe(nav);
+    measure();
+    return () => { observer.disconnect(); document.documentElement.style.removeProperty('--nav-offset'); };
+  }, []);
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.classList.add('mobile-nav-open');
-    } else {
-      document.body.style.overflow = '';
-      document.documentElement.classList.remove('mobile-nav-open');
-    }
-    return () => {
-      document.body.style.overflow = '';
-      document.documentElement.classList.remove('mobile-nav-open');
-    };
-  }, [isMobileMenuOpen]);
+    const media = window.matchMedia('(min-width: 1280px)');
+    const closeOnDesktop = () => { if (media.matches) setIsMobileMenuOpen(false); };
+    media.addEventListener('change', closeOnDesktop);
+    return () => media.removeEventListener('change', closeOnDesktop);
+  }, []);
 
   const closeMobile = () => setIsMobileMenuOpen(false);
 
   return <>
-    <nav ref={ref} className="v1-nav">
+    <nav ref={node => { navElement.current = node; if (typeof ref === 'function') ref(node); else if (ref) ref.current = node; }} className="v1-nav" aria-label="Main navigation">
       <a href="/" onClick={closeMobile} className="v1-logo" aria-label="AVC Dhanam Solutions Home">
         <img src="/logo_gold_transparent.svg" alt="AVC Dhanam Solutions Pvt. Ltd." />
       </a>
@@ -45,7 +52,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
       </div>
 
       <div className="v1-nav__right">
-        <div className="v1-mobile-nav-chips flex lg:hidden items-center gap-1.5 mr-1">
+        <div className="v1-mobile-nav-chips">
           <a
             href="/ipo"
             onClick={closeMobile}
@@ -66,6 +73,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
           type="button" 
           onClick={() => { closeMobile(); setIsContactOpen(true); }} 
           className="v1-action v1-nav__cta"
+          aria-label="Start your financial journey"
         >
           <span className="v1-nav__cta-text">Start Journey</span>
           <span className="v1-nav__cta-icon"><ArrowUpRight size={17} /></span>
@@ -75,6 +83,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
           type="button" 
           className="v1-mobile-toggle"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-expanded={isMobileMenuOpen} aria-controls="mobile-navigation"
           aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
         >
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -83,9 +92,10 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
     </nav>
 
     {isMobileMenuOpen && (
-      <div className="v1-mobile-menu" role="dialog" aria-modal="true">
+      <Modal onClose={closeMobile} className="v1-mobile-menu" aria-label="Navigation menu" id="mobile-navigation">
         <div className="v1-mobile-menu__backdrop" onClick={closeMobile} />
         <div className="v1-mobile-menu__panel">
+          <button type="button" className="v1-mobile-menu__close" aria-label="Close navigation menu" onClick={closeMobile}><X size={22} /></button>
           <div className="v1-mobile-menu__links">
             <a href={toHomeSection('markets')} onClick={closeMobile}>Live Markets</a>
             <a href={toHomeSection('system')} onClick={closeMobile}>Financial Services</a>
@@ -113,7 +123,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
             </button>
           </div>
         </div>
-      </div>
+      </Modal>
     )}
 
     <ContactFormModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
@@ -128,7 +138,7 @@ export function V1Footer() {
     terms: { title: 'Terms of Service', text: 'All information provided on this website by AVC Dhanam Solutions Pvt. Ltd. is for educational and consultancy guidance purposes. Website content does not constitute binding investment advice or guaranteed financial returns. Financial products including mutual funds, stocks, and insurance are subject to market and underwriting risks. Clients are advised to read all scheme documents and loan terms carefully before entering into any transaction.' },
     disclosures: { title: 'Regulatory & Operational Disclosures', text: 'AVC Dhanam Solutions Pvt. Ltd. operates as a financial consultancy firm. We are an AMFI-registered Mutual Fund Distributor (ARN-184920) and have operated an authorized sub-broker franchise associated with Motilal Oswal Financial Services for approximately 8 years. Financing solutions are facilitated through relationships across 210+ partner Banks and NBFCs based on client eligibility. Corporate tax and accounting services are provided in coordination with a network of 10+ qualified Chartered Accountants. Merchant banking services are facilitated via experienced partner channels. AVC Dhanam Solutions Pvt. Ltd. does not issue fixed or guaranteed return schemes.' }
   };
-  const openLegal = (item: 'privacy' | 'terms' | 'disclosures') => (event: React.MouseEvent<HTMLAnchorElement>) => { event.preventDefault(); setLegalItem(item); };
+  const openLegal = (item: 'privacy' | 'terms' | 'disclosures') => (event: MouseEvent<HTMLAnchorElement>) => { event.preventDefault(); setLegalItem(item); };
   return <footer className="v1-footer">
     <div className="v1-footer__masthead"><div><p>A Complete Financial Journey Under One Roof</p><h2>Ready to build your<br /><em>financial future?</em></h2></div><a href="tel:+917030247878">Talk to a Financial Consultant <ArrowUpRight size={17} /></a></div>
     <div className="v1-footer__grid">
@@ -139,7 +149,7 @@ export function V1Footer() {
     </div>
     <RegulatoryDisclaimer variant="compact" />
     <div className="v1-footer__bottom"><span>© {year} AVC Dhanam Solutions Pvt. Ltd. All rights reserved. Directors: Chandresh Pandey & Ajay Pandey.</span><div><a href="#privacy" onClick={openLegal('privacy')}>Privacy Policy</a><a href="#terms" onClick={openLegal('terms')}>Terms of Service</a><a href="#disclosures" onClick={openLegal('disclosures')}>Disclosures</a><a href="/sitemap.xml">Sitemap</a></div></div>
-    {legalItem && <div className="v1-legal-modal" role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" onMouseDown={() => setLegalItem(null)}><div className="v1-legal-modal__panel" onMouseDown={event => event.stopPropagation()}><button type="button" aria-label="Close" onClick={() => setLegalItem(null)}><X size={18} /></button><p>AVC DHANAM SOLUTIONS · LEGAL NOTICE</p><h2 id="legal-modal-title">{legalContent[legalItem].title}</h2><div /><span>{legalContent[legalItem].text}</span><a href="mailto:support@avcdhanam.com">Questions? Contact support@avcdhanam.com <ArrowUpRight size={15} /></a></div></div>}
+    {legalItem && <Modal onClose={() => setLegalItem(null)} className="v1-legal-modal" aria-labelledby="legal-modal-title" onMouseDown={() => setLegalItem(null)}><div className="v1-legal-modal__panel" onMouseDown={event => event.stopPropagation()}><button type="button" aria-label="Close" onClick={() => setLegalItem(null)}><X size={18} /></button><p>AVC DHANAM SOLUTIONS · LEGAL NOTICE</p><h2 id="legal-modal-title">{legalContent[legalItem].title}</h2><div /><span>{legalContent[legalItem].text}</span><a href="mailto:support@avcdhanam.com">Questions? Contact support@avcdhanam.com <ArrowUpRight size={15} /></a></div></Modal>}
   </footer>;
 }
 

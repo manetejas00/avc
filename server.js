@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'node:crypto';
+import ebookContent from './services/ebookContent.js';
 import { fileURLToPath } from 'url';
 import { createMarketRouter } from './services/market.js';
 import { createCryptoRouter } from './services/crypto.js';
@@ -19,7 +21,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev';
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)) throw new Error('Set JWT_SECRET to at least 32 characters in production.');
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(48).toString('hex');
 const DB_PATH = process.env.DATABASE_URL || path.join(__dirname, 'data', 'avc.sqlite');
 
 // Ensure data directory exists
@@ -90,8 +93,8 @@ const initDB = () => {
   `);
 
   // Bootstrap Admin if environment variables are set and no admin exists
-  const bootstrapEmail = process.env.BOOTSTRAP_ADMIN_EMAIL || 'admin@gmail.com';
-  const bootstrapPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD || 'Admin@1230';
+  const bootstrapEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
+  const bootstrapPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD;
 
   if (bootstrapEmail && bootstrapPassword) {
     const hash = bcrypt.hashSync(bootstrapPassword, 10);
@@ -99,9 +102,6 @@ const initDB = () => {
     if (!adminExists) {
       db.prepare('INSERT INTO admin_users (email, password_hash) VALUES (?, ?)').run(bootstrapEmail, hash);
       console.log(`Bootstrapped admin user: ${bootstrapEmail}`);
-    } else {
-      db.prepare('UPDATE admin_users SET password_hash = ? WHERE email = ?').run(hash, bootstrapEmail);
-      console.log(`Updated admin credentials for: ${bootstrapEmail}`);
     }
   }
 };
@@ -110,9 +110,34 @@ initDB();
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.disable('x-powered-by');
+app.use(express.json({ limit: '32kb' }));
+app.use(express.urlencoded({ extended: false, limit: '32kb' }));
 app.use(cookieParser());
+app.use('/api', (req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cache-Control', 'no-store');
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    if (req.get('sec-fetch-site') === 'cross-site') return res.status(403).json({ error: 'Cross-site request rejected.' });
+    if (req.get('origin')) {
+      try {
+        if (new URL(req.get('origin')).host !== req.get('host')) return res.status(403).json({ error: 'Cross-site request rejected.' });
+      } catch { return res.status(403).json({ error: 'Invalid origin.' }); }
+    }
+  }
+  next();
+});
+const loginAttempts = new Map();
+const loginWindow = 15 * 60 * 1000;
+const loginLimit = (req, res, next) => {
+  const now = Date.now();
+  for (const [key, entry] of loginAttempts) if (entry.expires <= now) loginAttempts.delete(key);
+  const entry = loginAttempts.get(req.ip) || { count: 0, expires: now + loginWindow };
+  if (entry.count >= 10) return res.status(429).json({ error: 'Too many login attempts. Try again in 15 minutes.' });
+  entry.count++;
+  loginAttempts.set(req.ip, entry);
+  next();
+};
 
 // Authentication Middleware
 const authenticateAdmin = (req, res, next) => {
@@ -121,6 +146,7 @@ const authenticateAdmin = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    if (!db.prepare('SELECT id FROM admin_users WHERE id = ?').get(decoded.id)) return res.status(401).json({ error: 'Unauthorized' });
     req.admin = decoded;
     next();
   } catch (err) {
@@ -135,11 +161,14 @@ app.use('/api/news', createNewsRouter(db));
 app.use('/api/ipo', createIpoRouter(db));
 
 app.post('/api/submit-form', (req, res) => {
-  const { name, email, phone, interest, message } = req.body;
+  const fields = ['name', 'email', 'phone', 'interest', 'message'];
+  if (!req.body || fields.some(key => req.body[key] !== undefined && typeof req.body[key] !== 'string')) return res.status(400).json({ error: 'Form fields must be text.' });
+  const { name = '', email = '', phone = '', interest = '', message = '' } = Object.fromEntries(fields.map(key => [key, (req.body[key] || '').trim()]));
   
   if (!name || !email || !phone) {
     return res.status(400).json({ error: 'Name, email, and phone are required.' });
   }
+  if (name.length > 120 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\+?[\d\s()-]{7,25}$/.test(phone) || phone.replace(/\D/g, '').length < 7 || interest.length > 150 || message.length > 5000) return res.status(400).json({ error: 'Enter a valid name, email and phone; message limit is 5000 characters.' });
 
   try {
     const stmt = db.prepare('INSERT INTO form_submissions (name, email, phone, interest, message) VALUES (?, ?, ?, ?, ?)');
@@ -153,8 +182,9 @@ app.post('/api/submit-form', (req, res) => {
 
 // --- Admin API ---
 
-app.post('/api/admin/login', (req, res) => {
-  const { email, password } = req.body;
+app.post('/api/admin/login', loginLimit, (req, res) => {
+  const { email, password } = req.body || {};
+  if (typeof email !== 'string' || typeof password !== 'string' || email.length > 254 || password.length > 200 || !email.trim() || !password) return res.status(400).json({ error: 'Email and password are required.' });
 
   try {
     const admin = db.prepare('SELECT * FROM admin_users WHERE email = ?').get(email);
@@ -184,6 +214,7 @@ app.post('/api/admin/logout', (req, res) => {
 app.get('/api/admin/check-auth', authenticateAdmin, (req, res) => {
   res.json({ authenticated: true });
 });
+app.get('/api/admin/ebooks', authenticateAdmin, (req, res) => res.json(ebookContent));
 
 app.get('/api/admin/submissions', authenticateAdmin, (req, res) => {
   try {
@@ -207,10 +238,11 @@ app.post('/api/admin/submissions/:id/status', authenticateAdmin, (req, res) => {
   const { status } = req.body;
   const { id } = req.params;
   
-  if (!status) return res.status(400).json({ error: 'Status is required.' });
+  if (!['pending', 'completed', 'rejected'].includes(status) || !/^\d+$/.test(id)) return res.status(400).json({ error: 'Invalid submission or status.' });
 
   try {
-    db.prepare('UPDATE form_submissions SET status = ? WHERE id = ?').run(status, id);
+    const result = db.prepare('UPDATE form_submissions SET status = ? WHERE id = ?').run(status, id);
+    if (!result.changes) return res.status(404).json({ error: 'Submission not found.' });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Internal server error.' });
@@ -218,6 +250,11 @@ app.post('/api/admin/submissions/:id/status', authenticateAdmin, (req, res) => {
 });
 
 // --- Static Serve ---
+app.use('/api', (req, res) => res.status(404).json({ error: 'API endpoint not found.' }));
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  res.status(error.status === 413 ? 413 : error.status === 400 ? 400 : 500).json({ error: error.status === 413 ? 'Request too large.' : error.status === 400 ? 'Invalid request body.' : 'Internal server error.' });
+});
 const distPath = path.join(__dirname, 'dist');
 app.use(express.static(distPath));
 
@@ -232,5 +269,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  startNewsScheduler(db);
+  if (process.env.DISABLE_NEWS_SCHEDULER !== 'true') startNewsScheduler(db);
 });

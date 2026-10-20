@@ -35,7 +35,8 @@ const readCache = (db, allowStale = false) => {
   const row = db.prepare('SELECT data, expires_at, updated_at FROM market_cache WHERE key = ?').get(CACHE_KEY);
   if (!row || (!allowStale && new Date(row.expires_at) <= new Date())) return null;
   try {
-    const coins = normalizeCoins(JSON.parse(row.data));
+    const parsed = JSON.parse(row.data);
+    const coins = Array.isArray(parsed) ? parsed.filter(coin => coin && typeof coin.id === 'string' && typeof coin.name === 'string' && isFiniteNumber(coin.priceUsd)).slice(0, COIN_IDS.length) : [];
     return coins.length ? { coins, updatedAt: row.updated_at, stale: new Date(row.expires_at) <= new Date() } : null;
   } catch {
     return null;

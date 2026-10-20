@@ -18,7 +18,7 @@ const Features = () => {
     // Bento item stagger and image scale
     const items = gsap.utils.toArray('.bento-item');
     
-    items.forEach((item: any, i) => {
+    items.forEach((item: any) => {
       const img = item.querySelector('img');
       
       gsap.fromTo(item, 

@@ -124,6 +124,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
   const symbol = `${safeExchange}:${cleanTicker || 'RELIANCE'}`;
   const pageRef = useRef<HTMLDivElement>(null);
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const scope = pageRef.current;
     if (!scope) return;
     gsap.timeline().fromTo('.company-premium__back, .company-premium__eyebrow, .company-premium__title, .company-premium__copy', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .08, duration: .72, ease: 'power3.out' })

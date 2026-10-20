@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Eye, Layers, ShieldCheck, Sparkles, Star, TrendingUp, Zap } from 'lucide-react';
+import { BookOpen, Eye, Layers, ShieldCheck, Star, TrendingUp, Zap } from 'lucide-react';
 import { EBook } from '../services/ebookService';
 
 interface EbookCardProps {

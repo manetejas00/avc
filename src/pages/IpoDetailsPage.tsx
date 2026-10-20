@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
@@ -10,21 +10,15 @@ import {
   Calendar,
   CheckCircle2,
   ChevronRight,
-  Clock,
   Download,
   ExternalLink,
   FileText,
-  HelpCircle,
-  Info,
   Layers,
   Minus,
   PieChart,
   Plus,
-  RefreshCw,
   ShieldCheck,
   Sparkles,
-  TrendingUp,
-  User,
   Users,
   XCircle
 } from 'lucide-react';
@@ -34,7 +28,6 @@ import { fetchIpoDetail, IPO } from '../services/ipoService';
 
 export default function IpoDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const pageRef = useRef<HTMLDivElement>(null);
 
   const [ipo, setIpo] = useState<IPO | null>(null);
@@ -97,6 +90,7 @@ export default function IpoDetailsPage() {
 
   // GSAP Animations
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (!pageRef.current || loading || !ipo) return;
     gsap.fromTo(
       '.ipo-detail-anim',
@@ -125,7 +119,7 @@ export default function IpoDetailsPage() {
     return (
       <div className="min-h-screen bg-background font-sans text-text">
         <V1Nav />
-        <main className="container-custom pt-28 pb-20">
+        <main className="container-custom pt-[var(--nav-offset)] pb-20">
           <div className="mx-auto max-w-4xl space-y-6 animate-pulse">
             <div className="h-6 w-32 rounded bg-white/10" />
             <div className="h-48 rounded-3xl bg-surface/40 border border-white/10" />
@@ -144,7 +138,7 @@ export default function IpoDetailsPage() {
     return (
       <div className="min-h-screen bg-background font-sans text-text">
         <V1Nav />
-        <main className="container-custom pt-28 pb-20 flex flex-col items-center justify-center min-h-[60vh]">
+        <main className="container-custom pt-[var(--nav-offset)] pb-20 flex flex-col items-center justify-center min-h-[60vh]">
           <div className="rounded-3xl border border-red-500/30 bg-surface/80 p-10 text-center max-w-md shadow-2xl backdrop-blur-xl">
             <XCircle size={40} className="mx-auto text-red-400 mb-4" />
             <h2 className="text-xl font-bold text-white">IPO Profile Not Found</h2>
@@ -186,9 +180,9 @@ export default function IpoDetailsPage() {
     <div ref={pageRef} className="min-h-screen bg-background font-sans text-text">
       <V1Nav />
 
-      <main className="container-custom pt-24 pb-20 sm:pt-28">
+      <main className="container-custom pt-[var(--nav-offset)] pb-20">
         {/* Breadcrumb navigation */}
-        <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs text-text-muted">
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-xs text-text-muted">
           <Link to="/" className="transition-colors hover:text-gold-primary">Home</Link>
           <ChevronRight size={12} />
           <Link to="/ipo" className="transition-colors hover:text-gold-primary">IPOs</Link>
@@ -324,7 +318,7 @@ export default function IpoDetailsPage() {
                 <h2>IPO Timeline & Key Dates</h2>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="mt-6 grid grid-cols-1 min-[390px]:grid-cols-2 gap-4 sm:grid-cols-3">
                 {timelineEvents.map((ev, i) => (
                   <div
                     key={i}
@@ -495,7 +489,7 @@ export default function IpoDetailsPage() {
                 <h2>Issue Size & Shareholding Structure</h2>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="mt-6 grid grid-cols-1 min-[390px]:grid-cols-2 gap-4 sm:grid-cols-3">
                 <div className="rounded-xl border border-white/5 bg-background/50 p-4">
                   <span className="text-[11px] text-text-muted">Total Issue Size</span>
                   <p className="mt-1 text-base font-bold text-white">
@@ -558,7 +552,7 @@ export default function IpoDetailsPage() {
               {ipo.financials && ipo.financials.length > 0 && (
                 <div className="mt-6">
                   <h3 className="text-xs font-bold text-white mb-3">Key Financial Overview (₹ in Crores)</h3>
-                  <div className="overflow-x-auto rounded-2xl border border-white/5">
+                  <div tabIndex={0} role="region" aria-label="IPO financial data, scroll horizontally for more columns" className="overflow-x-auto rounded-2xl border border-white/5">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-surface-elevated text-text-muted font-semibold border-b border-white/5">
                         <tr>
@@ -612,7 +606,7 @@ export default function IpoDetailsPage() {
                 {ipo.registrar?.email && (
                   <div>
                     <span className="text-[11px] text-text-muted">Email</span>
-                    <p className="mt-0.5 font-medium text-gold-secondary truncate">{ipo.registrar.email}</p>
+                    <p className="mt-0.5 font-medium text-gold-secondary break-all">{ipo.registrar.email}</p>
                   </div>
                 )}
                 {ipo.registrar?.website && (

@@ -26,6 +26,7 @@ export default function ScreenerPage() {
   }, [companyReference, requestedSearch]);
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const scope = pageRef.current;
     if (!scope) return;
     gsap.timeline().fromTo('.screener-premium__eyebrow, .screener-premium__title, .screener-premium__copy', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .09, duration: .75, ease: 'power3.out' })
@@ -44,7 +45,7 @@ export default function ScreenerPage() {
     return () => controller.abort();
   }, []);
 
-  useEffect(() => { if (requestedSearch) { setQuery(requestedSearch); setShowSuggestions(true); } }, [requestedSearch]);
+  useEffect(() => { setQuery(requestedSearch); setShowSuggestions(Boolean(requestedSearch)); }, [requestedSearch]);
 
   useEffect(() => {
     const container = widgetRef.current;
@@ -67,7 +68,7 @@ export default function ScreenerPage() {
     <V1Nav />
     <main className="screener-premium__main">
       <header className="screener-premium__hero"><p className="screener-premium__eyebrow">06 — MARKET RESEARCH & EQUITY SCREENER</p><h1 className="screener-premium__title">BSE Market Research & <em>Equity Discovery.</em></h1><p className="screener-premium__copy">Focused equity workspace for BSE-listed companies in India.</p></header>
-      <form onSubmit={submit} className="screener-premium__search"><Search size={18} /><label htmlFor="stock-search" className="sr-only">Search BSE listed companies</label><input id="stock-search" value={query} onChange={event => { setQuery(event.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} placeholder="Search a BSE company or ticker (e.g. RELIANCE, TCS)" autoComplete="off" /><button type="submit">Open company <ArrowUpRight size={17} /></button>{showSuggestions && query.trim() && <div className="screener-premium__suggestions">{suggestions.length ? suggestions.map(company => <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={event => event.preventDefault()} onClick={() => select(company)}><span>{company.name}<small>{company.ticker}</small></span><b>{company.exchange}</b></button>) : <p>{directoryLoading ? 'Loading the BSE company directory…' : 'No company found. Try a ticker such as TCS.'}</p>}</div>}</form>
+      <form onKeyDown={event => { if (event.key === 'Escape') setShowSuggestions(false); }} onSubmit={submit} className="screener-premium__search"><Search size={18} /><label htmlFor="stock-search" className="sr-only">Search BSE listed companies</label><input id="stock-search" value={query} onChange={event => { setQuery(event.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} placeholder="Search a BSE company or ticker (e.g. RELIANCE, TCS)" autoComplete="off" /><button type="submit" aria-label="Open company">Open company <ArrowUpRight size={17} /></button>{showSuggestions && query.trim() && <div className="screener-premium__suggestions">{suggestions.length ? suggestions.map(company => <button key={`${company.exchange}:${company.ticker}`} type="button" onMouseDown={event => event.preventDefault()} onClick={() => select(company)}><span>{company.name}<small>{company.ticker}</small></span><b>{company.exchange}</b></button>) : <p>{directoryLoading ? 'Loading the BSE company directory…' : 'No company found. Try a ticker such as TCS.'}</p>}</div>}</form>
       <div className="screener-premium__metrics"><div><small>UNIVERSE</small><strong>BSE-listed equities</strong></div><div><small>DATA MODE</small><strong>Live market scan</strong></div><div><small>WORKSPACE</small><strong>Filter · compare · investigate</strong></div></div>
       <section className="screener-premium__workspace" aria-label="Live BSE stock screener"><div className="screener-premium__workspace-bar"><span><i /> LIVE DISCOVERY</span><span>India · INR · BSE</span></div><div ref={widgetRef} className="tradingview-widget-container screener-premium__widget" /></section>
       <RegulatoryDisclaimer />

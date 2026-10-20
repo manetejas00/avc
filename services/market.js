@@ -63,9 +63,10 @@ export const createMarketRouter = (db) => {
           changePercent: quote.regularMarketChangePercent,
           currency: quote.currency,
           marketState: quote.marketState,
-          lastUpdated: new Date(quote.regularMarketTime * 1000).toISOString()
+          lastUpdated: quote.regularMarketTime ? new Date(quote.regularMarketTime).toISOString() : null
         }));
 
+      if (!data.length) return res.status(502).json({ error: 'Market provider unavailable.' });
       setCachedData(cacheKey, data, 15 * 60); // 15 mins cache
       logApiSync('yahoo_finance', 'success', 'Fetched dashboard indices');
       res.json(data);
@@ -78,6 +79,7 @@ export const createMarketRouter = (db) => {
   // 2. Mutual Fund Search (using mfapi.in)
   router.get('/mutual-funds/search', async (req, res) => {
     const { q } = req.query;
+    if (q !== undefined && (typeof q !== 'string' || q.length > 120)) return res.status(400).json({ error: 'Invalid search query.' });
     if (!q) return res.json([]);
 
     const cacheKey = `mf_search_${q.toLowerCase()}`;
@@ -87,7 +89,7 @@ export const createMarketRouter = (db) => {
     try {
       let allSchemes = getCachedData('mf_all_schemes');
       if (!allSchemes) {
-        const response = await axios.get('https://api.mfapi.in/mf');
+        const response = await axios.get('https://api.mfapi.in/mf', { timeout: 10000 });
         allSchemes = response.data;
         setCachedData('mf_all_schemes', allSchemes, 24 * 60 * 60); // 24 hours
         logApiSync('mfapi', 'success', 'Fetched all MF schemes');
@@ -105,12 +107,13 @@ export const createMarketRouter = (db) => {
   // 3. Mutual Fund Details & NAV history
   router.get('/mutual-funds/:id', async (req, res) => {
     const { id } = req.params;
+    if (!/^\d{1,12}$/.test(id)) return res.status(400).json({ error: 'Invalid scheme identifier.' });
     const cacheKey = `mf_detail_${id}`;
     const cached = getCachedData(cacheKey);
     if (cached) return res.json(cached);
 
     try {
-      const response = await axios.get(`https://api.mfapi.in/mf/${id}`);
+      const response = await axios.get(`https://api.mfapi.in/mf/${id}`, { timeout: 10000 });
       const data = response.data;
       setCachedData(cacheKey, data, 12 * 60 * 60); // 12 hours cache
       logApiSync('mfapi', 'success', `Fetched MF details for ${id}`);
@@ -124,6 +127,7 @@ export const createMarketRouter = (db) => {
   // 4. Stock Search
   router.get('/search', async (req, res) => {
     const { q } = req.query;
+    if (q !== undefined && (typeof q !== 'string' || q.length > 120)) return res.status(400).json({ error: 'Invalid search query.' });
     if (!q) return res.json([]);
 
     const cacheKey = `stock_search_${q.toLowerCase()}`;
@@ -200,9 +204,11 @@ export const createMarketRouter = (db) => {
   // 7. Get multiple quotes (for watchlist / explicit lookup)
   router.get('/quotes', async (req, res) => {
     const { symbols } = req.query;
+    if (symbols !== undefined && (typeof symbols !== 'string' || symbols.length > 1000)) return res.status(400).json({ error: 'Invalid symbols.' });
     if (!symbols) return res.json([]);
     
     const symbolArray = symbols.split(',').filter(Boolean);
+    if (symbolArray.length > 30) return res.status(400).json({ error: 'Request at most 30 symbols.' });
     if (symbolArray.length === 0) return res.json([]);
 
     const cacheKey = `quotes_${symbolArray.sort().join(',')}`;
@@ -224,7 +230,7 @@ export const createMarketRouter = (db) => {
   // 8. Closing-price history for the live market overview chart.
   router.get('/chart', async (req, res) => {
     const symbol = typeof req.query.symbol === 'string' ? req.query.symbol : '^NSEI';
-    const supportedSymbols = new Set(['^NSEI', '^BSESN', '^GSPC', '^IXIC', 'GC=F', 'CL=F']);
+    const supportedSymbols = new Set(['^NSEI', '^BSESN', '^GSPC', '^IXIC', 'GC=F', 'CL=F', 'INR=X']);
     if (!supportedSymbols.has(symbol)) return res.status(400).json({ error: 'Unsupported market symbol' });
 
     const cacheKey = `chart_${symbol}`;

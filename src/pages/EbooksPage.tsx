@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { BookOpen, CheckCircle, Filter, HelpCircle, Layers, Search, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
+import { BookOpen, CheckCircle, Filter, Search, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
 import EbookCard from '../components/EbookCard';
@@ -27,9 +27,7 @@ export default function EbooksPage() {
   }, []);
 
   useEffect(() => {
-    if (categoryParam !== selectedCategory) {
-      setSelectedCategory(categoryParam);
-    }
+    setSelectedCategory(categoryParam);
   }, [categoryParam]);
 
   const handleCategorySelect = (cat: FilterCategory) => {
@@ -105,7 +103,7 @@ export default function EbooksPage() {
       <V1Nav />
 
       {/* Main Container */}
-      <main className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 pt-[var(--nav-offset)] pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-6 text-xs text-neutral-400 flex items-center gap-2">
           <a href="/" className="hover:text-[#D4AF37] transition-colors">Home</a>
@@ -174,7 +172,7 @@ export default function EbooksPage() {
           </div>
 
           {/* Difficulty Dropdown Filter */}
-          <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs text-neutral-400">
+          <div className="flex flex-wrap gap-3 items-center justify-between pt-2 border-t border-white/5 text-xs text-neutral-400">
             <span>Showing <b className="text-white">{books.length}</b> E-Book{books.length !== 1 ? 's' : ''}</span>
 
             <div className="flex items-center gap-2">

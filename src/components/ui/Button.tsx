@@ -7,5 +7,5 @@ export default function Button({ variant = 'primary', className, ...props }: Pro
   const styles = variant === 'text'
     ? 'inline-flex items-center gap-2 text-gold-secondary hover:text-gold-primary font-semibold underline-offset-4 hover:underline'
     : variant === 'secondary' ? 'btn-secondary' : 'btn-primary';
-  return <button className={twMerge(styles, className)} {...props} />;
+  return <button className={twMerge('min-h-11 max-w-full whitespace-normal justify-center', styles, className)} {...props} />;
 }

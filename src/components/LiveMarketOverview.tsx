@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ArrowDownRight, ArrowUpRight, RefreshCw } from 'lucide-react';
@@ -64,7 +64,7 @@ export default function LiveMarketOverview() {
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [selectedSymbol, setSelectedSymbol] = useState('^NSEI');
 
-  const loadChart = async (symbol: string, signal?: AbortSignal) => {
+  const loadChart = useCallback(async (symbol: string, signal?: AbortSignal) => {
     const parsePoints = (payload: { chart?: { result?: Array<{ timestamp?: number[]; indicators?: { quote?: Array<{ close?: Array<number | null> }> } }> } }) => {
       const result = payload.chart?.result?.[0]; const closes = result?.indicators?.quote?.[0]?.close ?? []; const timestamps = result?.timestamp ?? [];
       return closes.map((value, index) => value === null ? null : { value, timestamp: new Date((timestamps[index] ?? 0) * 1000).toISOString() }).filter((point): point is Point => point !== null);
@@ -77,9 +77,9 @@ export default function LiveMarketOverview() {
     const fallback = await fetch(import.meta.env.DEV ? `/api/yahoo/v8/finance/chart/${encodeURIComponent(symbol)}?range=3mo&interval=1d` : `/api/yahoo.php?symbol=${encodeURIComponent(symbol)}&range=3mo&interval=1d`, { signal });
     if (!fallback.ok) throw new Error('Price history unavailable');
     setPoints(parsePoints(await fallback.json()));
-  };
+  }, []);
 
-  const loadMarket = async (signal?: AbortSignal) => {
+  const loadMarket = useCallback(async (signal?: AbortSignal) => {
     setStatus(current => current === 'ready' ? current : 'loading');
     try {
       const dashboard = await fetch('/api/market/dashboard', { signal });
@@ -100,27 +100,28 @@ export default function LiveMarketOverview() {
           const previous = Number(meta.chartPreviousClose ?? meta.previousClose); if (!Number.isFinite(price) || !Number.isFinite(previous)) return null;
           const change = price - previous; return { symbol: marketSymbols[index], name: String(meta.shortName ?? labels[marketSymbols[index]]), price, change, changePercent: previous ? (change / previous) * 100 : 0, currency: String(meta.currency ?? 'INR'), lastUpdated: new Date().toISOString() };
         }).filter((quote): quote is Quote => quote !== null);
-        const nifty = payloads[0].chart?.result?.[0]; const closes = nifty?.indicators?.quote?.[0]?.close ?? []; const timestamps = nifty?.timestamp ?? [];
+        const nifty = payloads[marketSymbols.indexOf(selectedSymbol)].chart?.result?.[0]; const closes = nifty?.indicators?.quote?.[0]?.close ?? []; const timestamps = nifty?.timestamp ?? [];
         setQuotes(liveQuotes); setPoints(closes.map((value, index) => value === null ? null : { value, timestamp: new Date((timestamps[index] ?? 0) * 1000).toISOString() }).filter((point): point is Point => point !== null)); setUpdatedAt(new Date()); setStatus('ready');
       } catch (fallbackError) {
         if ((fallbackError as Error).name !== 'AbortError') setStatus('unavailable');
       }
     }
-  };
+  }, [loadChart, selectedSymbol]);
 
   useEffect(() => {
     const controller = new AbortController();
     void loadMarket(controller.signal);
-    const interval = window.setInterval(() => void loadMarket(), 15 * 60 * 1000);
+    const interval = window.setInterval(() => void loadMarket(controller.signal), 15 * 60 * 1000);
     return () => { controller.abort(); window.clearInterval(interval); };
-  }, []);
+  }, [loadMarket]);
 
   const selectMarket = (symbol: string) => {
     setSelectedSymbol(symbol);
-    void loadChart(symbol).catch(() => setStatus('unavailable'));
+    setPoints([]);
   };
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const scope = sectionRef.current;
     if (!scope) return;
     const timeline = gsap.timeline({ scrollTrigger: { trigger: scope, start: 'top 78%', once: true } });

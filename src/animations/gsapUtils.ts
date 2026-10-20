@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export const revealUp = (elements: string | Element | NodeList, trigger: Element | string, delay = 0) => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return gsap.set(elements, { opacity: 1, y: 0 });
   return gsap.from(elements, {
     y: 40,
     opacity: 0,
@@ -20,6 +21,7 @@ export const revealUp = (elements: string | Element | NodeList, trigger: Element
 };
 
 export const revealScale = (elements: string | Element | NodeList, trigger: Element | string) => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return gsap.set(elements, { opacity: 1, scale: 1 });
   return gsap.from(elements, {
     scale: 0.95,
     opacity: 0,
@@ -33,6 +35,7 @@ export const revealScale = (elements: string | Element | NodeList, trigger: Elem
 };
 
 export const staggerCards = (elements: string | Element | NodeList, trigger: Element | string) => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return gsap.set(elements, { opacity: 1, y: 0 });
   return gsap.from(elements, {
     y: 50,
     opacity: 0,
@@ -47,6 +50,7 @@ export const staggerCards = (elements: string | Element | NodeList, trigger: Ele
 };
 
 export const sectionReveal = (section: Element | string) => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return gsap.set(section, { opacity: 1, y: 0 });
   return gsap.fromTo(section, 
     { opacity: 0, y: 30 },
     {

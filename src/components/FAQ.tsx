@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const faqs = [
+const faqs = [
   {
     question: "What is AVC Dhanam Solutions Pvt. Ltd.?",
     answer: "AVC Dhanam Solutions Pvt. Ltd. is a premier financial consultancy firm based in Virar West, Mumbai Metropolitan Region. Operating for over 8 years under Directors Chandresh Pandey and Ajay Pandey, AVC Dhanam provides a complete financial journey under one roof, offering investments, mutual funds, loans, insurance, tax planning, and corporate business funding."
@@ -91,6 +91,7 @@ const FAQ = () => {
   const displayedFaqs = showAll ? faqs : faqs.slice(0, 4);
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const scope = containerRef.current;
     if (!scope) return;
     const timeline = gsap.timeline({

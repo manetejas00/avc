@@ -1,3 +1,4 @@
+import Modal from './ui/Modal';
 import React, { useState } from 'react';
 import { X, CheckCircle, Loader2 } from 'lucide-react';
 
@@ -26,29 +27,43 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'submitting') return;
     setStatus('submitting');
-    setTimeout(() => {
+    setErrorMessage('');
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        signal: AbortSignal.timeout(15000)
+      });
+      if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('The consultation service is unavailable. Please call +91 7030247878 or try again later.');
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Unable to submit your request. Please try again.');
       setStatus('success');
-    }, 600);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Unable to submit your request. Please try again.');
+      setStatus('error');
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-gold-primary/80 backdrop-blur-sm">
-      <div className="bg-surface border border-white/5 w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden animate-in fade-in zoom-in duration-300">
+    <Modal aria-labelledby="contact-modal-title" onClose={onClose} className="responsive-modal fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-gold-primary/80 backdrop-blur-sm">
+      <div className="bg-surface border border-white/5 w-full max-w-lg rounded-2xl shadow-2xl relative max-h-[calc(100dvh-2rem)] overflow-y-auto animate-in fade-in zoom-in duration-300">
         
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-text-muted hover:text-text transition-colors z-10"
+          className="absolute top-3 right-3 min-h-11 min-w-11 grid place-items-center text-text-muted hover:text-text transition-colors z-10"
           aria-label="Close consultation modal"
         >
           <X size={24} />
         </button>
 
-        <div className="p-8">
+        <div className="p-5 pt-16 sm:p-8 sm:pt-16">
           {status === 'success' ? (
             <div className="text-center py-12">
               <CheckCircle className="w-16 h-16 text-gold-primary mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold text-text mb-2">Thank You!</h3>
+              <h3 id="contact-modal-title" className="text-2xl font-semibold text-text mb-2">Thank You!</h3>
               <p className="text-text-muted">
                 Your request has been received. A Senior Financial Consultant from AVC Dhanam Solutions Pvt. Ltd. will contact you shortly.
               </p>
@@ -58,19 +73,20 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-semibold text-text mb-1">Talk to a Financial Consultant</h2>
+              <h2 id="contact-modal-title" className="text-2xl font-semibold text-text mb-1">Talk to a Financial Consultant</h2>
               <p className="text-text-muted text-sm mb-6">AVC Dhanam Solutions Pvt. Ltd. • Virar West & Mumbai Metropolitan Region</p>
               
               {status === 'error' && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-lg mb-6 text-sm">
+                <div role="alert" className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-lg mb-6 text-sm">
                   {errorMessage}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-text mb-1">Full Name *</label>
-                  <input
+                  <label htmlFor="ContactFormModal-name" className="block text-sm font-medium text-text mb-1">Full Name *</label>
+                  <input id="ContactFormModal-name"
+                    maxLength={120}
                     required
                     type="text"
                     name="name"
@@ -83,8 +99,9 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text mb-1">Email Address *</label>
-                    <input
+                    <label htmlFor="ContactFormModal-email" className="block text-sm font-medium text-text mb-1">Email Address *</label>
+                  <input id="ContactFormModal-email"
+                      maxLength={254}
                       required
                       type="email"
                       name="email"
@@ -95,8 +112,10 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text mb-1">Phone Number *</label>
-                    <input
+                    <label htmlFor="ContactFormModal-phone" className="block text-sm font-medium text-text mb-1">Phone Number *</label>
+                  <input id="ContactFormModal-phone"
+                      maxLength={25}
+                      pattern="\+?[0-9 ()-]{7,25}"
                       required
                       type="tel"
                       name="phone"
@@ -109,8 +128,8 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text mb-1">Financial Requirement *</label>
-                  <select
+                  <label htmlFor="ContactFormModal-interest" className="block text-sm font-medium text-text mb-1">Financial Requirement *</label>
+                  <select id="ContactFormModal-interest"
                     name="interest"
                     value={formData.interest}
                     onChange={handleChange}
@@ -127,8 +146,9 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text mb-1">How Can We Help You? (Optional)</label>
-                  <textarea
+                  <label htmlFor="ContactFormModal-message" className="block text-sm font-medium text-text mb-1">How Can We Help You? (Optional)</label>
+                  <textarea id="ContactFormModal-message"
+                    maxLength={5000}
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
@@ -154,7 +174,7 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

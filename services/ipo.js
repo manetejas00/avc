@@ -131,7 +131,8 @@ export const createIpoRouter = (db) => {
       return cachedData;
     }
 
-    const apiKey = process.env.INDIAN_API_KEY || 'sk-live-LBoaUhnmhsSPCe3J6kof1SQGTGJgWqQoYq87VL3l';
+    const apiKey = process.env.INDIAN_API_KEY;
+    if (!apiKey) throw new Error('IPO provider is not configured.');
     const endpoints = ['https://stock.indianapi.in/ipo', 'https://dev.indianapi.in/ipo'];
 
     for (const endpoint of endpoints) {
@@ -152,7 +153,14 @@ export const createIpoRouter = (db) => {
           const rawListed = response.data.listed || [];
           const rawPreApply = response.data.pre_apply || [];
 
-          const combined = [...rawActive, ...rawUpcoming, ...rawClosed, ...rawListed, ...rawPreApply];
+          if (!['active', 'upcoming', 'closed', 'listed', 'pre_apply'].some(key => Array.isArray(response.data[key]))) throw new Error('Invalid IPO provider response.');
+          const combined = [
+            ...rawActive.map(item => ({ ...item, status: item.status || 'open' })),
+            ...rawUpcoming.map(item => ({ ...item, status: item.status || 'upcoming' })),
+            ...rawClosed.map(item => ({ ...item, status: item.status || 'closed' })),
+            ...rawListed.map(item => ({ ...item, status: item.status || 'listed' })),
+            ...rawPreApply.map(item => ({ ...item, status: item.status || 'upcoming' }))
+          ];
           const normalized = combined.map(normalizeIndianApiIpo);
 
           // Strictly cache for 24 hours (86,400 seconds = 1 day)
@@ -167,57 +175,8 @@ export const createIpoRouter = (db) => {
     return null;
   };
 
-  // Fallback dataset in case of complete offline / failure
-  const getFallbackDataset = () => {
-    const today = new Date();
-    const formatDate = (d) => d.toISOString().split('T')[0];
-
-    const dMinus2 = formatDate(new Date(today.getTime() - 2 * 86400000));
-    const dMinus5 = formatDate(new Date(today.getTime() - 5 * 86400000));
-
-    return [
-      {
-        id: 'waaree-energies',
-        symbol: 'WAAREE.NS',
-        name: 'Waaree Energies Limited',
-        logoUrl: 'https://ui-avatars.com/api/?name=Waaree+Energies&background=0D111A&color=C5A059',
-        status: 'listed',
-        issueType: 'Mainboard',
-        exchanges: ['NSE', 'BSE'],
-        openDate: '2026-09-20',
-        closeDate: '2026-09-23',
-        listingDate: dMinus2,
-        minPrice: 1427,
-        maxPrice: 1503,
-        issuePrice: 1503,
-        lotSize: 9,
-        minInvestment: 13527,
-        listingPrice: 2550,
-        listingGainPercent: 69.66,
-        companyDescription: 'Waaree Energies Limited is India’s largest manufacturer of solar PV modules.'
-      },
-      {
-        id: 'everestims',
-        symbol: 'EIMS',
-        name: 'EverestIMS Technologies',
-        logoUrl: 'https://ui-avatars.com/api/?name=EverestIMS&background=0D111A&color=C5A059',
-        status: 'open',
-        issueType: 'SME',
-        exchanges: ['NSE', 'BSE'],
-        openDate: '2026-09-29',
-        closeDate: '2026-10-05',
-        minPrice: 80,
-        maxPrice: 85,
-        issuePrice: 85,
-        lotSize: 1600,
-        minInvestment: 136000,
-        subscription: { total: 1.66 }
-      }
-    ];
-  };
-
   // Master aggregator
-  const getAllIpos = async () => {
+  const loadAllIpos = async () => {
     const cacheKey = 'all_ipos_master';
     const cached = getCachedData(cacheKey);
     if (cached) return cached;
@@ -246,8 +205,8 @@ export const createIpoRouter = (db) => {
         });
 
         ipos = ipos.map(ipo => {
-          if (ipo.symbol && quoteMap.has(ipo.symbol.toUpperCase())) {
-            const cmp = quoteMap.get(ipo.symbol.toUpperCase());
+          if (ipo.symbol && quoteMap.has(ipo.symbol.replace(/\.NS$/, '').toUpperCase())) {
+            const cmp = quoteMap.get(ipo.symbol.replace(/\.NS$/, '').toUpperCase());
             return { ...ipo, currentPrice: cmp };
           }
           return ipo;
@@ -262,11 +221,18 @@ export const createIpoRouter = (db) => {
     return ipos;
   };
 
+  let pendingIpos;
+  const getAllIpos = () => {
+    if (!pendingIpos) pendingIpos = loadAllIpos().finally(() => { pendingIpos = null; });
+    return pendingIpos;
+  };
+
   // --- Routes ---
 
   // 1. Get List of IPOs
   router.get('/list', async (req, res) => {
     const { tab = 'all', segment = 'all', exchange = 'all', search = '' } = req.query;
+    if (![tab, segment, exchange, search].every(value => typeof value === 'string')) return res.status(400).json({ error: 'Invalid IPO filters.' });
 
     try {
       const masterList = await getAllIpos();

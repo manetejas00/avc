@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { BookOpen, CheckCircle, Download, FileText, Lock, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react';
+
+import { Download, FileText, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 import { EBOOKS_DATA, EBook } from '../services/ebookService';
 
 export default function EbookAdminVaultPage() {
-  const [searchParams] = useSearchParams();
-  const secretKey = searchParams.get('key');
+  const [books, setBooks] = useState<EBook[]>(EBOOKS_DATA);
   const [selectedBook, setSelectedBook] = useState<EBook>(EBOOKS_DATA[0]);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    // Secret access validation key
-    if (secretKey === 'avc_secret_2026' || secretKey === 'admin' || secretKey === '7030247878') {
+    const controller = new AbortController();
+    fetch('/api/admin/ebooks', { signal: controller.signal }).then(async response => {
+      if (!response.ok) throw new Error('Authentication required');
+      const content = await response.json();
+      const entries = EBOOKS_DATA.map((book, index) => ({ ...book, fullBookContent: content[index] }));
+      setBooks(entries);
+      setSelectedBook(entries[0]);
       setIsAuthorized(true);
-    }
-  }, [secretKey]);
+    }).catch(() => setIsAuthorized(false));
+    return () => controller.abort();
+  }, []);
 
   if (!isAuthorized) {
     return (
@@ -26,10 +31,10 @@ export default function EbookAdminVaultPage() {
           </div>
           <h1 className="text-xl font-bold text-white">Restricted Admin Access</h1>
           <p className="text-xs text-neutral-400 leading-relaxed">
-            This endpoint is restricted for administrative inspection only. Please append your secret key parameter to access the full e-book repository.
+            This endpoint is restricted for administrative inspection only. Please sign in with your administrator account to access the full e-book repository.
           </p>
-          <div className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-[11px] text-[#D4AF37]">
-            /ebook-admin-vault?key=avc_secret_2026
+          <div className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-[11px] break-words text-[#D4AF37]">
+            Administrator authentication required
           </div>
         </div>
       </div>
@@ -110,7 +115,7 @@ export default function EbookAdminVaultPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans p-6 md:p-12">
+    <div className="min-h-screen bg-[#050505] text-white font-sans p-4 sm:p-6 md:p-12">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Admin Header */}
         <div className="p-6 rounded-2xl bg-[#0D0D0D] border border-[#D4AF37]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -131,7 +136,7 @@ export default function EbookAdminVaultPage() {
 
         {/* E-Books Selection Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {EBOOKS_DATA.map((b) => (
+          {books.map((b) => (
             <button
               key={b.id}
               type="button"
@@ -150,7 +155,7 @@ export default function EbookAdminVaultPage() {
         </div>
 
         {/* Selected Book Full Reader & Download Box */}
-        <div className="p-8 rounded-2xl bg-[#0D0D0D] border border-white/10 space-y-6">
+        <div className="p-4 sm:p-8 rounded-2xl bg-[#0D0D0D] border border-white/10 space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 border-b border-white/10 gap-4">
             <div>
               <span className="text-xs text-[#D4AF37] font-bold uppercase tracking-wider">{selectedBook.category}</span>
@@ -161,7 +166,7 @@ export default function EbookAdminVaultPage() {
             <button
               type="button"
               onClick={() => handleDownloadFullBookHtml(selectedBook)}
-              className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-xs md:text-sm hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-[#D4AF37]/20 flex-shrink-0"
+              className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-xs md:text-sm hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-[#D4AF37]/20 max-w-full justify-center"
             >
               <Download size={16} /> Download Full Edition (HTML/Printable PDF)
             </button>
@@ -195,7 +200,7 @@ export default function EbookAdminVaultPage() {
           </h3>
           <p className="text-neutral-400">Use these direct endpoints to query e-book content programmatically:</p>
 
-          <div className="space-y-2 font-mono text-[11px]">
+          <div className="space-y-2 font-mono text-[11px] break-words">
             <div className="p-3 rounded-lg bg-[#151515] border border-white/5 text-emerald-400">
               GET /api/admin/ebook-download?id={selectedBook.slug}&key=avc_secret_2026
             </div>

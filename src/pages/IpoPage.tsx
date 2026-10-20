@@ -1,16 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
   ArrowUpRight,
   Calendar,
-  CheckCircle2,
   ChevronDown,
   ChevronRight,
   Clock,
-  ExternalLink,
-  Filter,
   HelpCircle,
   Info,
   Layers,
@@ -27,7 +24,6 @@ import { fetchIpoList, fetchIpoStats, IPO, IPOStats } from '../services/ipoServi
 type TabType = 'upcoming' | 'open' | 'closed' | 'listed_7days' | 'all';
 
 export default function IpoPage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTabParam = (searchParams.get('tab') as TabType) || 'open';
   
@@ -47,9 +43,7 @@ export default function IpoPage() {
 
   // Sync state with URL params
   useEffect(() => {
-    if (activeTabParam !== activeTab) {
-      setActiveTab(activeTabParam);
-    }
+    setActiveTab(activeTabParam);
   }, [activeTabParam]);
 
   const handleTabChange = (newTab: TabType) => {
@@ -58,7 +52,7 @@ export default function IpoPage() {
   };
 
   // Fetch IPO Data from backend service
-  const loadData = async (signal?: AbortSignal) => {
+  const loadData = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setError(null);
     try {
@@ -87,13 +81,13 @@ export default function IpoPage() {
         setLoading(false);
       }
     }
-  };
+  }, [activeTab, segmentFilter, exchangeFilter, searchQuery]);
 
   useEffect(() => {
     const controller = new AbortController();
     loadData(controller.signal);
     return () => controller.abort();
-  }, [activeTab, segmentFilter, exchangeFilter, searchQuery]);
+  }, [loadData]);
 
   // Update dynamic SEO Metadata
   useEffect(() => {
@@ -113,6 +107,7 @@ export default function IpoPage() {
 
   // GSAP Animations
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const scope = pageRef.current;
     if (!scope) return;
     gsap.timeline().fromTo(
@@ -128,6 +123,7 @@ export default function IpoPage() {
   }, { scope: pageRef });
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (!listRef.current || loading) return;
     gsap.fromTo(
       '.ipo-card-item',
@@ -157,7 +153,7 @@ export default function IpoPage() {
       <V1Nav />
 
       {/* Main Page Container */}
-      <main className="container-custom pt-24 pb-20 sm:pt-28">
+      <main className="container-custom pt-[var(--nav-offset)] pb-20">
         
         {/* SEO Breadcrumbs */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs text-text-muted">
@@ -290,17 +286,18 @@ export default function IpoPage() {
             {/* Refresh button & Search / Filters */}
             <div className="flex flex-wrap items-center gap-3">
               {/* Search Bar */}
-              <div className="relative min-w-[220px] flex-1 sm:flex-initial">
+              <div className="relative min-w-0 w-full sm:w-auto flex-1 sm:flex-initial">
                 <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
                 <input
                   type="text"
                   placeholder="Search company or symbol..."
+                  aria-label="Search IPO company or symbol"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-xl border border-white/10 bg-surface/90 py-2 pl-9 pr-4 text-xs text-white placeholder-text-muted transition-colors focus:border-gold-primary focus:outline-none"
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white">
+                  <button aria-label="Clear IPO search" onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white">
                     <XCircle size={14} />
                   </button>
                 )}
@@ -310,6 +307,7 @@ export default function IpoPage() {
               <div className="relative">
                 <select
                   value={segmentFilter}
+                  aria-label="Filter IPOs by segment"
                   onChange={(e) => setSegmentFilter(e.target.value as any)}
                   className="appearance-none rounded-xl border border-white/10 bg-surface/90 py-2 pl-3.5 pr-8 text-xs font-medium text-text-secondary transition-colors focus:border-gold-primary focus:outline-none cursor-pointer"
                 >
@@ -324,6 +322,7 @@ export default function IpoPage() {
               <div className="relative">
                 <select
                   value={exchangeFilter}
+                  aria-label="Filter IPOs by exchange"
                   onChange={(e) => setExchangeFilter(e.target.value as any)}
                   className="appearance-none rounded-xl border border-white/10 bg-surface/90 py-2 pl-3.5 pr-8 text-xs font-medium text-text-secondary transition-colors focus:border-gold-primary focus:outline-none cursor-pointer"
                 >

@@ -1,6 +1,11 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  # Repository-root installs must never expose source, secrets, databases or archives.
+  RewriteRule (^|/)\. - [F,L]
+  RewriteRule ^(src|services|tests|node_modules|v2)/ - [F,L,NC]
+  RewriteRule \.(sqlite|sqlite-shm|sqlite-wal|db|zip|ts|tsx|cjs|map|md|json|lock)$ - [F,L,NC]
+  RewriteRule ^(server\.js|vite\.config\.[^/]+|.*\.config\.[^/]+)$ - [F,L,NC]
   # Hostinger's Git deployment publishes the repository root. Serve the Vite
   # production build and map its root-relative asset requests into dist/.
   RewriteRule ^$ dist/index.html [L]

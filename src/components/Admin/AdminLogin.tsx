@@ -37,7 +37,7 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md bg-surface border border-white/5 rounded-2xl p-8 shadow-xl">
+      <div className="w-full max-w-md bg-surface border border-white/5 rounded-2xl p-5 sm:p-8 shadow-xl">
         <div className="flex flex-col items-center mb-8">
           <div className="w-12 h-12 bg-gold-primary/10 rounded-full flex items-center justify-center mb-4">
             <Lock className="text-gold-primary w-6 h-6" />
@@ -46,29 +46,12 @@ const AdminLogin = () => {
           <p className="text-text-muted mt-2 text-center text-sm">Sign in to manage consultations and website settings</p>
         </div>
 
-        <div className="bg-[#141B1E] border border-[#D4AF37]/30 rounded-xl p-4 mb-6 text-xs text-gray-300 flex flex-col gap-1">
-          <div className="flex items-center justify-between text-[#D4AF37] font-semibold mb-1">
-            <span>🔑 Demo Admin Credentials</span>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('admin@gmail.com');
-                setPassword('Admin@1230');
-              }}
-              className="text-[11px] bg-[#D4AF37]/20 hover:bg-[#D4AF37]/30 text-[#F5C542] px-2 py-0.5 rounded transition-colors"
-            >
-              Auto-fill
-            </button>
-          </div>
-          <div><strong className="text-gray-400">Email:</strong> admin@gmail.com</div>
-          <div><strong className="text-gray-400">Password:</strong> Admin@1230</div>
-        </div>
-
+        {error && <p role="alert" className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300 break-words">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text mb-1">Email</label>
+            <label htmlFor="admin-email" className="block text-sm font-medium text-text mb-1">Email</label>
             <input
-              type="email"
+              id="admin-email" autoComplete="username" type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -77,9 +60,9 @@ const AdminLogin = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text mb-1">Password</label>
+            <label htmlFor="admin-password" className="block text-sm font-medium text-text mb-1">Password</label>
             <input
-              type="password"
+              id="admin-password" autoComplete="current-password" type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}

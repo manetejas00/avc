@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, TrendingUp, Info } from 'lucide-react';
 import Input from './ui/Input';
 import Card from './ui/Card';
@@ -31,7 +31,7 @@ const MutualFundExplorer = () => {
   const [loadingFund, setLoadingFund] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;

@@ -9,6 +9,7 @@ export async function getJson<T>(url: string, options: { signal?: AbortSignal; t
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), options.timeoutMs ?? 8000);
   const relayAbort = () => controller.abort();
+  if (options.signal?.aborted) controller.abort();
   options.signal?.addEventListener('abort', relayAbort, { once: true });
   try {
     const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });

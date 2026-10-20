@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  ArrowLeft,
   BookOpen,
   CheckCircle2,
   ChevronRight,
-  Clock,
   Download,
   Eye,
   FileText,
   Globe,
   Layers,
-  Lock,
   ShieldCheck,
   Sparkles,
   Star,
@@ -109,7 +106,7 @@ export default function EbookDetailsPage() {
       <V1Nav />
 
       {/* Main Container */}
-      <main className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 pt-[var(--nav-offset)] pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-8 text-xs text-neutral-400 flex items-center gap-2 flex-wrap">
           <Link to="/" className="hover:text-[#D4AF37] transition-colors">Home</Link>
@@ -123,9 +120,9 @@ export default function EbookDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16 items-start">
           {/* Left Column: Visual Cover Card */}
           <div className="lg:col-span-5">
-            <div className="sticky top-28 space-y-4">
+            <div className="lg:sticky lg:top-28 space-y-4">
               <div
-                className={`w-full h-[420px] rounded-2xl bg-gradient-to-br ${book.coverGradient} p-8 flex flex-col justify-between border border-white/10 shadow-2xl relative overflow-hidden`}
+                className={`w-full min-h-[420px] rounded-2xl bg-gradient-to-br ${book.coverGradient} p-5 sm:p-8 flex flex-col gap-6 justify-between border border-white/10 shadow-2xl relative overflow-hidden`}
               >
                 {book.coverImage && (
                   <img
@@ -181,7 +178,7 @@ export default function EbookDetailsPage() {
           {/* Right Column: Book Details & Purchase CTA */}
           <div className="lg:col-span-7 space-y-6">
             <div>
-              <div className="flex items-center gap-3 text-xs text-neutral-400 mb-2">
+              <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-400 mb-2">
                 <div className="flex items-center gap-1 text-amber-400 font-bold">
                   <Star size={16} className="fill-amber-400 text-amber-400" />
                   <span>{book.rating}</span>
@@ -209,7 +206,7 @@ export default function EbookDetailsPage() {
 
             {/* Pricing Box */}
             <div className="p-6 rounded-2xl bg-[#0D0D0D] border border-[#D4AF37]/30 space-y-4 shadow-xl">
-              <div className="flex items-baseline justify-between">
+              <div className="flex flex-wrap gap-3 items-baseline justify-between">
                 <div>
                   <span className="text-xs text-neutral-400 uppercase tracking-wider font-semibold block mb-1">
                     Special Offer Price
@@ -243,7 +240,7 @@ export default function EbookDetailsPage() {
                 </button>
               </div>
 
-              <div className="pt-2 text-[11px] text-neutral-400 flex items-center justify-between border-t border-white/5">
+              <div className="pt-2 text-[11px] text-neutral-400 flex flex-wrap gap-2 items-center justify-between border-t border-white/5">
                 <span>Format: {book.format}</span>
                 <span>Language: {book.language}</span>
                 <span>Pages: {book.pages}</span>

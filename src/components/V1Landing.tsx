@@ -1,3 +1,5 @@
+import type React from 'react';
+import Modal from './ui/Modal';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -64,16 +66,13 @@ export default function V1Landing() {
   const rangeStyle = (value: number, min: number, max: number) => ({ background: `linear-gradient(90deg, #d4af37 0 ${(value - min) / (max - min) * 100}%, #3f3f46 ${(value - min) / (max - min) * 100}% 100%)` });
 
   useEffect(() => {
-    const apiToken = import.meta.env.VITE_MARKETAUX_API_KEY;
-    if (!apiToken) { setNewsStatus('unavailable'); return; }
     const controller = new AbortController();
     const loadNews = async () => {
       try {
         setNewsStatus('loading');
-        const params = new URLSearchParams({ api_token: apiToken, language: 'en', limit: '24', search: 'stock market' });
         const isJson = (response: Response) => response.ok && response.headers.get('content-type')?.includes('application/json');
-        let response = await fetch(`/api/news/live?${params}`, { signal: controller.signal });
-        if (!isJson(response)) response = await fetch(import.meta.env.DEV ? `/api/marketaux/v1/news/all?${params}` : `/api/marketaux.php?${params}`, { signal: controller.signal });
+        let response = await fetch('/api/news/live', { signal: controller.signal });
+        if (!isJson(response) && !import.meta.env.DEV) response = await fetch('/api/marketaux.php', { signal: controller.signal });
         if (!isJson(response)) response = await fetch(import.meta.env.DEV ? '/api/yahoo/v1/finance/search?q=NIFTY&newsCount=24' : '/api/yahoo-news.php?q=NIFTY', { signal: controller.signal });
         if (!isJson(response)) throw new Error('News service unavailable');
         const payload = await response.json() as { data?: Array<Record<string, unknown>>; news?: Array<Record<string, unknown>> };
@@ -98,29 +97,34 @@ export default function V1Landing() {
   }, []);
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cards = gsap.utils.toArray<HTMLElement>('.v1-news-card');
     if (!cards.length) return;
     gsap.fromTo(cards, { y: 34, opacity: 0, rotateX: -7 }, { y: 0, opacity: 1, rotateX: 0, duration: .8, stagger: .12, ease: 'power3.out', scrollTrigger: { trigger: newsSectionRef.current, start: 'top 78%', once: true } });
   }, { scope: newsSectionRef, dependencies: [newsItems.length] });
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const nav = navRef.current;
     if (!nav) return;
     gsap.fromTo(nav, { y: -26, opacity: 0 }, { y: 0, opacity: 1, duration: .75, delay: .15, ease: 'power3.out' });
   }, []);
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const section = calculatorSectionRef.current;
     if (!section) return;
     gsap.fromTo(section.querySelectorAll('.v1-calculator__reveal'), { y: 28, opacity: 0 }, { y: 0, opacity: 1, stagger: .11, duration: .75, ease: 'power3.out', scrollTrigger: { trigger: section, start: 'top 78%', once: true } });
   }, { scope: calculatorSectionRef });
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const value = calculatorSectionRef.current?.querySelector('.v1-calculator__value');
     if (value) gsap.fromTo(value, { scale: .96, opacity: .5 }, { scale: 1, opacity: 1, duration: .42, ease: 'power3.out' });
   }, { scope: calculatorSectionRef, dependencies: [monthlyInvestment, annualReturn, investmentYears] });
 
   useGSAP(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ticker = tickerRef.current;
     if (!ticker) return;
     const line = ticker.querySelector('.v1-ticker-only__scan');
@@ -166,7 +170,7 @@ export default function V1Landing() {
 
     <section id="approach" className="v1-productivity"><div className="v1-productivity__grid" /><div className="v1-productivity__copy"><span className="v1-index">02 — ABOUT AVC DHANAM SOLUTIONS</span><h2>8+ Years of Financial Excellence.</h2><p>Founded and led by Directors <strong>Chandresh Pandey</strong> & <strong>Ajay Pandey</strong> in Virar West, Mumbai.</p><div className="v1-steps"><div><b>01</b><span><strong>Personalized Strategic Planning</strong>Goal-oriented wealth & financing plans tailored to your needs.</span></div><div><b>02</b><span><strong>End-to-End Execution & Network</strong>Direct ties with top mutual funds, 210+ banks, and 10+ CAs.</span></div></div></div><div className="v1-window"><div className="v1-window__top"><i /><i /><i /><span>avc / corporate_credentials / 2026</span></div><div className="v1-code"><p><span>01</span> company <b>=</b> "AVC Dhanam Solutions Pvt. Ltd."</p><p><span>02</span> directors <b>=</b> ["Chandresh Pandey", "Ajay Pandey"]</p><p><span>03</span> location <b>=</b> "Virar West, Mumbai Region"</p><p><span>04</span> credentials <b>=</b> "8+ Yrs | 500+ Clients | ₹15+ Cr AUM"</p><p><span>05</span> literacy_partner <b>=</b> "Avinya Care Foundation"</p></div><div className="v1-status"><i /> Financial Consultancy System Online</div></div></section>
 
-    <section id="news" ref={newsSectionRef} className="v1-access v1-news"><div className="v1-access__heading"><span className="v1-index">03 — MARKET INTELLIGENCE</span><h2>Read beyond<br />the <em>headline.</em></h2><p>Live stock-market reporting and financial updates, refreshed automatically every hour.</p></div><div className="v1-pricing">{newsItems.map((item, index) => <article key={item.title} className="v1-news-card" onMouseEnter={(event) => gsap.to(event.currentTarget, { y: -10, duration: .35, ease: 'power3.out' })} onMouseLeave={(event) => gsap.to(event.currentTarget, { y: 0, duration: .45, ease: 'power3.out' })}><div className="v1-pricing__image"><img src={item.image} alt={item.title} loading="lazy" /><span>0{index + 1}</span></div><div className="v1-pricing__body"><small className="v1-news__category">{item.category}</small><h3>{item.title}</h3><p>{item.text}</p><button type="button" onClick={() => setSelectedNews(item)}>Read insight<ArrowUpRight size={17} /></button></div></article>)}{newsStatus !== 'ready' && <div className="v1-news__status">{newsStatus === 'loading' ? 'Loading live stock-market news…' : 'Live stock-market news is unavailable right now.'}</div>}{newsStatus === 'ready' && !newsItems.length && <div className="v1-news__status">No stock-market stories are available right now. The feed will refresh automatically.</div>}</div></section>
+    <section id="news" ref={newsSectionRef} className="v1-access v1-news"><div className="v1-access__heading"><span className="v1-index">03 — MARKET INTELLIGENCE</span><h2>Read beyond<br />the <em>headline.</em></h2><p>Live stock-market reporting and financial updates, refreshed automatically every hour.</p></div><div className="v1-pricing">{newsItems.map((item, index) => <article key={item.title} className="v1-news-card" onMouseEnter={(event) => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && gsap.to(event.currentTarget, { y: -10, duration: .35, ease: 'power3.out' })} onMouseLeave={(event) => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && gsap.to(event.currentTarget, { y: 0, duration: .45, ease: 'power3.out' })}><div className="v1-pricing__image"><img src={item.image} alt={item.title} loading="lazy" /><span>0{index + 1}</span></div><div className="v1-pricing__body"><small className="v1-news__category">{item.category}</small><h3>{item.title}</h3><p>{item.text}</p><button type="button" onClick={() => setSelectedNews(item)}>Read insight<ArrowUpRight size={17} /></button></div></article>)}{newsStatus !== 'ready' && <div className="v1-news__status">{newsStatus === 'loading' ? 'Loading live stock-market news…' : 'Live stock-market news is unavailable right now.'}</div>}{newsStatus === 'ready' && !newsItems.length && <div className="v1-news__status">No stock-market stories are available right now. The feed will refresh automatically.</div>}</div></section>
 
     <section id="calculators" ref={calculatorSectionRef} className="v1-calculator">
       <div className="v1-calculator__intro v1-calculator__reveal"><span className="v1-index">04 — FINANCIAL CALCULATORS</span><h2>Plan your wealth &<br /><em>loan projections.</em></h2><p>Explore practical financial calculations for SIP investments, home loan EMIs, lumpsum growth, and retirement planning.</p><div className="v1-calculator__trust"><Calculator size={16} /><span>Educational projections. Investment products are subject to market risks.</span></div></div>
@@ -185,7 +189,7 @@ export default function V1Landing() {
     <FAQ />
     <V1Footer />
     <ContactFormModal isOpen={isConsultationOpen} onClose={() => setIsConsultationOpen(false)} />
-    {selectedService && <div className="v1-service-modal" role="dialog" aria-modal="true" aria-labelledby="service-modal-title" onMouseDown={() => setSelectedService(null)}><div className="v1-service-modal__panel" onMouseDown={event => event.stopPropagation()}><button type="button" className="v1-service-modal__close" aria-label="Close service details" onClick={() => setSelectedService(null)}><X size={19} /></button><div className="v1-service-modal__icon">{(() => { const Icon = selectedService[1]; return <Icon size={26} />; })()}</div><p>AVC DHANAM SOLUTIONS · FINANCIAL SERVICE</p><h2 id="service-modal-title">{selectedService[0]}</h2><div className="v1-service-modal__line" /><p className="v1-service-modal__description">{selectedService[2]}</p><button type="button" onClick={() => { setSelectedService(null); setIsConsultationOpen(true); }}>Discuss this service <ArrowUpRight size={17} /></button></div></div>}
-    {selectedNews && <div className="v1-modal" role="dialog" aria-modal="true" aria-labelledby="news-modal-title" onMouseDown={() => setSelectedNews(null)}><div className="v1-modal__panel" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="v1-modal__close" aria-label="Close article" onClick={() => setSelectedNews(null)}><X size={19} /></button><div className="v1-modal__image"><img src={selectedNews.image} alt={selectedNews.title} /></div><div className="v1-modal__content"><small>{selectedNews.category} · {selectedNews.source}</small><h2 id="news-modal-title">{selectedNews.title}</h2><p>{selectedNews.details}</p><div className="v1-modal__actions"><button type="button" onClick={() => setSelectedNews(null)}>Close</button>{selectedNews.link !== '#' && <a href={selectedNews.link} target="_blank" rel="noreferrer">Read original <ExternalLink size={15} /></a>}</div></div></div></div>}
+    {selectedService && <Modal onClose={() => setSelectedService(null)} className="v1-service-modal" aria-labelledby="service-modal-title" onMouseDown={() => setSelectedService(null)}><div className="v1-service-modal__panel" onMouseDown={event => event.stopPropagation()}><button type="button" className="v1-service-modal__close" aria-label="Close service details" onClick={() => setSelectedService(null)}><X size={19} /></button><div className="v1-service-modal__icon">{(() => { const Icon = selectedService[1]; return <Icon size={26} />; })()}</div><p>AVC DHANAM SOLUTIONS · FINANCIAL SERVICE</p><h2 id="service-modal-title">{selectedService[0]}</h2><div className="v1-service-modal__line" /><p className="v1-service-modal__description">{selectedService[2]}</p><button type="button" onClick={() => { setSelectedService(null); setIsConsultationOpen(true); }}>Discuss this service <ArrowUpRight size={17} /></button></div></Modal>}
+    {selectedNews && <Modal onClose={() => setSelectedNews(null)} className="v1-modal" aria-labelledby="news-modal-title" onMouseDown={() => setSelectedNews(null)}><div className="v1-modal__panel" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="v1-modal__close" aria-label="Close article" onClick={() => setSelectedNews(null)}><X size={19} /></button><div className="v1-modal__image"><img src={selectedNews.image} alt={selectedNews.title} /></div><div className="v1-modal__content"><small>{selectedNews.category} · {selectedNews.source}</small><h2 id="news-modal-title">{selectedNews.title}</h2><p>{selectedNews.details}</p><div className="v1-modal__actions"><button type="button" onClick={() => setSelectedNews(null)}>Close</button>{selectedNews.link !== '#' && <a href={selectedNews.link} target="_blank" rel="noreferrer">Read original <ExternalLink size={15} /></a>}</div></div></div></Modal>}
   </main>;
 }
