@@ -19,6 +19,6 @@ export default function SiteLoader() {
 
   if (!visible) return null;
   return <div ref={loaderRef} className="site-loader" role="status" aria-label="Loading AVC Dhanam">
-    <div className="site-loader__content"><img className="site-loader__mark" src="/logo_gold_transparent.svg" alt="AVC Dhanam" /><span className="site-loader__line" /><small>BUILDING CLARITY</small></div>
+    <div className="site-loader__content"><img className="site-loader__mark" src="/logo_gold_transparent.svg" alt="AVC Dhanam" width="160" height="48" /><span className="site-loader__line" /><small>BUILDING CLARITY</small></div>
   </div>;
 }

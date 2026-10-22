@@ -3,9 +3,13 @@ node_modules/
 data/*.sqlite
 data/*.db
 data/*.sqlite-*
+*.sqlite
+*.sqlite-*
+database.sqlite
 *.log
 .env
 .env.*
 !.env.example
 audit-results/
 dist.zip
+.skill-references/

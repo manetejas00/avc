@@ -75,3 +75,31 @@ Retrieve FTP host, username, port, and password from Hostinger or the team's pas
 2. Run `npm run build` locally to generate the `dist` folder.
 3. Open the `public_html` folder in your FTP client.
 4. Upload all the contents **inside** your local `dist` folder directly into the `public_html` folder on your server.
+
+---
+
+## Live Environment Variables (`.env.production` / `.env`)
+
+The project uses a dual environment strategy to keep your live deployment fully operational and secure:
+
+### 1. Client-Side (Vite Frontend Build)
+All variables prefixed with `VITE_` are embedded into the compiled `dist/` JavaScript assets during `npm run build`.
+- **TradingView Widgets**: `VITE_TRADINGVIEW_WIDGET_MARKET_OVERVIEW`, `VITE_TRADINGVIEW_WIDGET_TICKER_TAPE`
+- **Mutual Fund & Avatar Services**: `VITE_MFAPI_BASE_URL`, `VITE_UI_AVATARS_API_URL`
+- **Market News Provider**: `VITE_MARKETAUX_API_KEY`
+- **Backend API Base**: `VITE_API_BASE_URL` (leave blank for same-domain deployment, or set if backend runs on a custom API domain)
+
+### 2. Server-Side (Node.js & PHP Proxies)
+When running the Node.js backend (`node server.js`), `server.js` automatically loads `.env.production` (or `.env`):
+- **Twelve Data**: `TWELVE_DATA_API_KEY`
+- **Finnhub**: `FINNHUB_API_KEY`
+- **Alpha Vantage**: `ALPHA_VANTAGE_API_KEY`
+- **NewsAPI**: `NEWS_API_KEY`, `NEWS_API_KEY_SECONDARY`
+- **Indian Market / IPO API**: `INDIAN_API_KEY`
+- **Marketaux News**: `MARKETAUX_API_KEY`
+- **Auth & Database**: `JWT_SECRET`, `PORT`, `DATABASE_URL`
+
+### 3. Security
+- Both `.htaccess` in the repository root and `public/.htaccess` contain `<FilesMatch "^\.env">` blocks denying direct HTTP requests to any `.env` file on Apache/Hostinger servers.
+- `.gitignore` prevents `.env` and `.env.production` from leaking to public GitHub repositories.
+

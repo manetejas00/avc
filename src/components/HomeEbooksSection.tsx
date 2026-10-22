@@ -26,7 +26,7 @@ export default function HomeEbooksSection() {
   };
 
   return (
-    <section className="v1-ebooks-section py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+    <section id="ebooks" className="v1-ebooks-section py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div className="space-y-3">

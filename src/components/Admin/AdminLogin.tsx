@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Loader2 } from 'lucide-react';
+import { getApiUrl } from '../../services/apiClient';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch(getApiUrl('/api/admin/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

@@ -166,7 +166,7 @@ const FAQ = () => {
   };
 
   return (
-    <section id="faq" ref={containerRef} className="py-24 bg-[#f7f7f5] text-[#18181b] border-t border-[#e4e4e0] transition-colors">
+    <section id="faq" ref={containerRef} className="py-20 md:py-28 bg-[#0d0d10] text-[#f4f4f5] border-t border-white/10 transition-colors">
       <div className="container-custom max-w-4xl mx-auto px-4">
         <script type="application/ld+json">
           {JSON.stringify({
@@ -182,17 +182,17 @@ const FAQ = () => {
             }))
           })}
         </script>
-        <div className="text-center mb-16">
-          <span className="faq-eyebrow v1-index text-[#b68b10] text-xs font-mono tracking-widest uppercase mb-2 block font-bold">07 — KNOWLEDGE BASE & FAQ</span>
-          <h2 className="faq-title text-3xl md:text-5xl font-semibold mb-4 text-[#18181b] flex items-center justify-center gap-3">
-            <HelpCircle className="text-[#b68b10]" size={36} /> Frequently Asked Questions
+        <div className="text-center mb-12 md:mb-16">
+          <span className="faq-eyebrow v1-index text-[#D4AF37] text-xs font-mono tracking-widest uppercase mb-2 block font-bold">07 — KNOWLEDGE BASE & FAQ</span>
+          <h2 className="faq-title text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 text-white flex items-center justify-center gap-3">
+            <HelpCircle className="text-[#D4AF37]" size={32} /> Frequently Asked Questions
           </h2>
-          <p className="faq-copy text-[#71717a] text-base max-w-2xl mx-auto">
+          <p className="faq-copy text-[#a1a1aa] text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             Clear, compliant answers to your queries about wealth management, loans, insurance, business funding, tax planning, and our services in Virar & Mumbai.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {displayedFaqs.map((faq, index) => {
             const isOpen = openIndex === index;
             const isMoreItem = index >= 4;
@@ -201,17 +201,17 @@ const FAQ = () => {
                 key={index} 
                 ref={el => itemRefs.current[index] = el}
                 className={`faq-item ${isMoreItem ? 'faq-item-more' : ''} border rounded-2xl transition-all duration-300 overflow-hidden
-                  ${isOpen ? 'bg-[#ffffff] border-[#d4af37] shadow-lg' : 'bg-[#ffffff] border-[#e4e4e0] hover:border-[#b68b10]/60 hover:shadow-md'}
+                  ${isOpen ? 'bg-[#18181c] border-[#D4AF37] shadow-lg shadow-black/40' : 'bg-[#121215] border-white/10 hover:border-[#D4AF37]/40 hover:bg-[#16161a]'}
                 `}
               >
                 <button 
-                  className="w-full px-6 py-5 flex items-center justify-between text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37]"
+                  className="w-full px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] min-h-[44px]"
                   onClick={() => toggleAccordion(index)}
                   aria-expanded={isOpen}
                 >
-                  <span className="text-base md:text-lg font-semibold pr-6 text-[#18181b]">{faq.question}</span>
+                  <span className="text-sm sm:text-base md:text-lg font-semibold pr-4 text-white">{faq.question}</span>
                   <div className={`shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300
-                    ${isOpen ? 'bg-[#d4af37] border-[#d4af37] text-black rotate-180' : 'border-[#d4af37]/40 text-[#b68b10] bg-[#f9f9f6] rotate-0'}
+                    ${isOpen ? 'bg-[#D4AF37] border-[#D4AF37] text-black rotate-180' : 'border-[#D4AF37]/40 text-[#F4D675] bg-black/40 rotate-0'}
                   `}>
                     {isOpen ? <Minus size={16} /> : <Plus size={16} />}
                   </div>
@@ -221,7 +221,7 @@ const FAQ = () => {
                   className="h-0 overflow-hidden"
                   style={{ height: index === 0 ? 'auto' : 0 }}
                 >
-                  <p className="px-6 pb-6 text-[#52525b] text-sm md:text-base leading-relaxed border-t border-[#f0f0ed] pt-4 mt-1">
+                  <p className="px-5 sm:px-6 pb-5 sm:pb-6 text-[#a1a1aa] text-sm md:text-base leading-relaxed border-t border-white/5 pt-4 mt-1">
                     {faq.answer}
                   </p>
                 </div>
@@ -235,7 +235,7 @@ const FAQ = () => {
             <button
               type="button"
               onClick={toggleShowAll}
-              className="inline-flex items-center gap-2 border border-[#d4af37] bg-white text-[#18181b] hover:bg-[#d4af37] hover:text-black font-semibold text-sm px-7 py-3.5 rounded-full transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer"
+              className="inline-flex items-center gap-2 border border-[#D4AF37]/40 bg-[#121215] text-[#F4D675] hover:bg-[#D4AF37] hover:text-black font-semibold text-sm px-6 sm:px-7 py-3 sm:py-3.5 rounded-full transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer min-h-[44px]"
             >
               <span>{showAll ? 'Show Less Questions' : `Read More Questions (${faqs.length - 4} More)`}</span>
               <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} />

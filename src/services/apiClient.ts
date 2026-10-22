@@ -5,6 +5,15 @@ export class ApiClientError extends Error {
   }
 }
 
+/**
+ * Resolves API URLs against optional VITE_API_BASE_URL (for separate production backend hosting).
+ * Defaults to same-origin relative paths when VITE_API_BASE_URL is empty.
+ */
+export function getApiUrl(path: string): string {
+  const baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+  return path.startsWith('/') && !path.startsWith('//') && baseUrl ? `${baseUrl}${path}` : path;
+}
+
 export async function getJson<T>(url: string, options: { signal?: AbortSignal; timeoutMs?: number } = {}): Promise<T> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), options.timeoutMs ?? 8000);
@@ -12,7 +21,8 @@ export async function getJson<T>(url: string, options: { signal?: AbortSignal; t
   if (options.signal?.aborted) controller.abort();
   options.signal?.addEventListener('abort', relayAbort, { once: true });
   try {
-    const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
+    const targetUrl = getApiUrl(url);
+    const response = await fetch(targetUrl, { signal: controller.signal, headers: { Accept: 'application/json' } });
     if (!response.ok) throw new ApiClientError('Unable to load this information right now.', response.status);
     if (!response.headers.get('content-type')?.includes('application/json')) {
       throw new ApiClientError('This information is unavailable because the data service is not configured.', response.status);

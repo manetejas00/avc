@@ -23,3 +23,9 @@ Options -Indexes
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . dist/index.html [L]
 </IfModule>
+
+<FilesMatch "^\.env">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+

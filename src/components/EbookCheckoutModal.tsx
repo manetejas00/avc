@@ -1,7 +1,7 @@
-import Modal from './ui/Modal';
-import React, { useState } from 'react';
-import { ArrowRight, BookOpen, Lock, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowRight, BookOpen, CheckCircle, Lock, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { EBook } from '../services/ebookService';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 
 interface EbookCheckoutModalProps {
   isOpen: boolean;
@@ -10,19 +10,40 @@ interface EbookCheckoutModalProps {
 }
 
 export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheckoutModalProps) {
+  const isModalActive = Boolean(isOpen && book);
+  useBodyScrollLock(isModalActive);
+
   const [step, setStep] = useState<'details' | 'payment'>('details');
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
 
-  if (!isOpen || !book) return null;
+  const resetAndClose = useCallback(() => {
+    setStep('details');
+    setCustomerName('');
+    setPhone('');
+    setEmail('');
+    setErrors({});
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isModalActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') resetAndClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalActive, resetAndClose]);
+
+  if (!isModalActive || !book) return null;
 
   const validate = () => {
     const errs: { name?: string; phone?: string; email?: string } = {};
     if (!customerName.trim()) errs.name = 'Full name is required';
-    if (!phone.trim() || ! /^(?:\+91[ -]?)?[6-9]\d{9}$/.test(phone.trim())) errs.phone = 'Valid 10-digit mobile number is required';
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = 'Valid email address is required';
+    if (!phone.trim() || phone.trim().length < 10) errs.phone = 'Valid 10-digit mobile number is required';
+    if (!email.trim() || !email.includes('@')) errs.email = 'Valid email address is required';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -34,41 +55,32 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
     }
   };
 
-  const resetAndClose = () => {
-    setStep('details');
-    setCustomerName('');
-    setPhone('');
-    setEmail('');
-    setErrors({});
-    onClose();
-  };
-
   // WhatsApp Message Generation
-  const rawWhatsappMsg = `Hello, I want to purchase ${book.title} for ₹${book.sellingPrice}. My name is ${customerName.trim() || 'Customer'}. My phone is ${phone.trim()} and email is ${email.trim()}. Please help me complete my purchase.`;
+  const rawWhatsappMsg = `Hello, I want to purchase ${book.title} for ₹${book.sellingPrice}. My name is ${customerName.trim() || 'Customer'}. Please help me complete my purchase.`;
   const whatsappUrl = `https://wa.me/917030247878?text=${encodeURIComponent(rawWhatsappMsg)}`;
-  const callUrl = 'tel:+917030247878';
+  const callUrl = 'tel:7030247878';
 
   const originalPrice = book.originalPrice;
   const sellingPrice = book.sellingPrice;
   const discountAmount = originalPrice - sellingPrice;
 
   return (
-    <Modal onClose={resetAndClose}
-      className="responsive-modal fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fadeIn overscroll-contain"
       onClick={resetAndClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="checkout-modal-title"
     >
       <div
-        className="relative w-full max-w-lg bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 pt-16 md:p-8 md:pt-16 text-white transition-all transform scale-100"
+        className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto overscroll-contain bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl shadow-2xl p-5 sm:p-6 md:p-8 text-white transition-all transform scale-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           type="button"
           onClick={resetAndClose}
-          className="absolute top-3 right-3 min-h-11 min-w-11 p-2 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800/60 transition-colors"
+          className="absolute top-3 sm:top-4 right-3 sm:top-4 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800/60 transition-colors"
           aria-label="Close modal"
         >
           <X size={20} />
@@ -84,13 +96,13 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
               Complete Your Purchase
             </h2>
             <p className="text-xs text-neutral-400 mb-6">
-              Enter your contact details to request purchase assistance.
+              Enter your contact details to proceed to secure payment.
             </p>
 
             {/* Selected Book Summary Box */}
             <div className="p-4 rounded-xl bg-[#151515] border border-white/5 mb-6 flex items-start gap-4">
               <div
-                className={`w-14 h-[72px] rounded-lg bg-gradient-to-br ${book.coverGradient} flex-shrink-0 flex items-center justify-center text-[#D4AF37] font-bold text-xs p-1 shadow-md border border-[#D4AF37]/20`}
+                className={`w-14 h-18 rounded-lg bg-gradient-to-br ${book.coverGradient} flex-shrink-0 flex items-center justify-center text-[#D4AF37] font-bold text-xs p-1 shadow-md border border-[#D4AF37]/20`}
               >
                 <BookOpen size={24} />
               </div>
@@ -98,7 +110,7 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
                 <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-[#D4AF37]/10 text-[#D4AF37] mb-1">
                   {book.category}
                 </span>
-                <h3 className="text-sm font-semibold text-white break-words">{book.title}</h3>
+                <h3 className="text-sm font-semibold text-white truncate">{book.title}</h3>
                 <p className="text-xs text-neutral-400 truncate">{book.author}</p>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-base font-bold text-emerald-400">₹{book.sellingPrice}</span>
@@ -113,66 +125,69 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
             {/* Checkout Form */}
             <form onSubmit={handleProceedToPayment} className="space-y-4">
               <div>
-                <label htmlFor="EbookCheckoutModal-name" className="block text-xs font-medium text-neutral-300 mb-1">
+                <label htmlFor="checkout-name" className="block text-xs font-medium text-neutral-300 mb-1">
                   Full Name <span className="text-amber-400">*</span>
                 </label>
-                  <input id="EbookCheckoutModal-name" aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? 'checkout-name-error' : undefined}
+                <input
+                  id="checkout-name"
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className={`w-full px-4 py-3 rounded-xl bg-[#111111] border ${
+                  className={`w-full px-4 py-3 min-h-[44px] rounded-xl bg-[#111111] border ${
                     errors.name ? 'border-red-500' : 'border-white/10 focus:border-[#D4AF37]'
                   } text-white text-sm outline-none transition-colors`}
                 />
-                {errors.name && <p id="checkout-name-error" role="alert" className="text-[11px] text-red-400 mt-1">{errors.name}</p>}
+                {errors.name && <p className="text-[11px] text-red-400 mt-1">{errors.name}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="EbookCheckoutModal-phone" className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label htmlFor="checkout-phone" className="block text-xs font-medium text-neutral-300 mb-1">
                     Mobile Number <span className="text-amber-400">*</span>
                   </label>
-                  <input id="EbookCheckoutModal-phone" aria-invalid={Boolean(errors.phone)} aria-describedby={errors.phone ? 'checkout-phone-error' : undefined}
+                  <input
+                    id="checkout-phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="10-digit mobile number"
-                    className={`w-full px-4 py-3 rounded-xl bg-[#111111] border ${
+                    className={`w-full px-4 py-3 min-h-[44px] rounded-xl bg-[#111111] border ${
                       errors.phone ? 'border-red-500' : 'border-white/10 focus:border-[#D4AF37]'
                     } text-white text-sm outline-none transition-colors`}
                   />
-                  {errors.phone && <p id="checkout-phone-error" role="alert" className="text-[11px] text-red-400 mt-1">{errors.phone}</p>}
+                  {errors.phone && <p className="text-[11px] text-red-400 mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="EbookCheckoutModal-email" className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label htmlFor="checkout-email" className="block text-xs font-medium text-neutral-300 mb-1">
                     Email Address <span className="text-amber-400">*</span>
                   </label>
-                  <input id="EbookCheckoutModal-email" aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? 'checkout-email-error' : undefined}
+                  <input
+                    id="checkout-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className={`w-full px-4 py-3 rounded-xl bg-[#111111] border ${
+                    className={`w-full px-4 py-3 min-h-[44px] rounded-xl bg-[#111111] border ${
                       errors.email ? 'border-red-500' : 'border-white/10 focus:border-[#D4AF37]'
                     } text-white text-sm outline-none transition-colors`}
                   />
-                  {errors.email && <p id="checkout-email-error" role="alert" className="text-[11px] text-red-400 mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-[11px] text-red-400 mt-1">{errors.email}</p>}
                 </div>
               </div>
 
               {/* Order Summary Box */}
               <div className="p-4 rounded-xl bg-[#151515] border border-white/5 space-y-2 text-xs">
-                <div className="flex flex-wrap justify-between gap-2 text-neutral-400">
+                <div className="flex justify-between text-neutral-400">
                   <span>Book Original Price:</span>
                   <span className="line-through">₹{originalPrice}</span>
                 </div>
-                <div className="flex flex-wrap justify-between gap-2 text-emerald-400">
+                <div className="flex justify-between text-emerald-400">
                   <span>Discount Applied ({book.discountPercent}%):</span>
                   <span>-₹{discountAmount}</span>
                 </div>
-                <div className="pt-2 border-t border-white/10 flex flex-wrap justify-between gap-2 text-sm font-bold text-white">
+                <div className="pt-2 border-t border-white/10 flex justify-between text-sm font-bold text-white">
                   <span>Total Amount Payable:</span>
                   <span className="text-[#D4AF37]">₹{sellingPrice}</span>
                 </div>
@@ -180,14 +195,14 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
+                className="w-full py-3.5 px-6 min-h-[44px] rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
               >
-                Continue to Purchase Assistance <ArrowRight size={16} />
+                Proceed to Payment <ArrowRight size={16} />
               </button>
             </form>
 
             <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-neutral-500">
-              <ShieldCheck size={14} className="text-emerald-400" /> Delivery is arranged after payment confirmation.
+              <ShieldCheck size={14} className="text-emerald-400" /> Guaranteed 100% Privacy & Instant Digital Delivery
             </div>
           </div>
         ) : (
@@ -200,7 +215,7 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
               Payment Gateway Coming Soon
             </span>
 
-            <h2 id="checkout-modal-title" className="text-xl font-bold text-white mb-2">Direct Purchase Assistance</h2>
+            <h2 className="text-xl font-bold text-white mb-2">Direct Purchase Assistance</h2>
 
             <p className="text-xs md:text-sm text-neutral-300 max-w-md mx-auto mb-6 leading-relaxed">
               Online payment is currently being enabled. To purchase this e-book, please contact us directly by Call or WhatsApp.
@@ -208,15 +223,15 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
             {/* Book & Customer Summary */}
             <div className="p-4 rounded-xl bg-[#151515] border border-white/5 mb-6 text-left text-xs space-y-1.5">
-              <div className="flex flex-wrap justify-between gap-2">
+              <div className="flex justify-between">
                 <span className="text-neutral-400">Selected Book:</span>
-                <span className="text-white font-semibold break-words min-w-0">{book.title}</span>
+                <span className="text-white font-semibold truncate max-w-[200px]">{book.title}</span>
               </div>
-              <div className="flex flex-wrap justify-between gap-2">
+              <div className="flex justify-between">
                 <span className="text-neutral-400">Customer Name:</span>
                 <span className="text-white font-medium">{customerName}</span>
               </div>
-              <div className="flex flex-wrap justify-between gap-2">
+              <div className="flex justify-between">
                 <span className="text-neutral-400">Total Price:</span>
                 <span className="text-[#D4AF37] font-bold text-sm">₹{book.sellingPrice}</span>
               </div>
@@ -238,7 +253,7 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
               <a
                 href={callUrl}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#1a1a1a] hover:bg-[#252525] border border-white/10 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 min-h-[44px] rounded-xl bg-[#1a1a1a] hover:bg-[#252525] border border-white/10 text-white font-bold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <Phone size={18} className="text-[#D4AF37]" />
                 Call Now (+91 7030247878)
@@ -255,6 +270,6 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
           </div>
         )}
       </div>
-    </Modal>
+    </div>
   );
 }

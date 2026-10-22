@@ -15,7 +15,10 @@ const Footer: React.FC = () => {
             <a href="#" className="inline-block group focus:outline-none">
               <img
                 src="/logo_gold_transparent.svg"
-                alt="AVCDHANAM Solutions Logo"
+                alt="AVC Dhanam Solutions Logo"
+                width="160"
+                height="48"
+                loading="lazy"
                 className="h-10 sm:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
               />
             </a>

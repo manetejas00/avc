@@ -9,12 +9,19 @@ import fs from 'fs';
 import crypto from 'node:crypto';
 import ebookContent from './services/ebookContent.js';
 import { fileURLToPath } from 'url';
-import { createMarketRouter } from './services/market.js';
+import { FinancialService } from './services/financialService.js';
+import { createMarketRouter } from './services/routes/marketRouter.js';
+import { createStocksRouter } from './services/routes/stocksRouter.js';
+import { createNewsRouter } from './services/routes/newsRouter.js';
+import { createMutualFundsRouter } from './services/routes/mutualFundsRouter.js';
 import { createCryptoRouter } from './services/crypto.js';
-import { createNewsRouter } from './services/newsApi.js';
 import { createIpoRouter } from './services/ipo.js';
 import { startNewsScheduler } from './services/newsScheduler.js';
+import { getProviderStatus } from './services/config/env.js';
 
+if (process.env.NODE_ENV === 'production' && fs.existsSync(path.join(__dirname, '.env.production'))) {
+  dotenv.config({ path: path.join(__dirname, '.env.production') });
+}
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -158,11 +165,25 @@ const authenticateAdmin = (req, res, next) => {
   }
 };
 
-// --- Public API ---
-app.use('/api/market', createMarketRouter(db));
+// Initialize Central Financial Service
+const financialService = new FinancialService(db);
+
+// --- Public Financial APIs ---
+app.use('/api/market', createMarketRouter(db, financialService));
+app.use('/api/stocks', createStocksRouter(db, financialService));
+app.use('/api/news', createNewsRouter(db, financialService));
+app.use('/api/mutual-funds', createMutualFundsRouter(db, financialService));
 app.use('/api/crypto', createCryptoRouter(db));
-app.use('/api/news', createNewsRouter(db));
 app.use('/api/ipo', createIpoRouter(db));
+
+// Provider configuration & connectivity health check (never exposes keys)
+app.get('/api/providers/status', (_req, res) => {
+  res.json({
+    status: 'online',
+    timestamp: new Date().toISOString(),
+    providers: getProviderStatus()
+  });
+});
 
 app.post('/api/submit-form', (req, res) => {
   const fields = ['name', 'email', 'phone', 'interest', 'message'];
