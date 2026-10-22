@@ -16,7 +16,7 @@ $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? $_GET['api_key'] ?? getenv('INDIAN_API_K
 $endpoint = $_GET['endpoint'] ?? 'ipo';
 
 // Allowed endpoints for Indian API proxy
-$allowedEndpoints = ['ipo', 'stock', 'market'];
+$allowedEndpoints = ['ipo', 'stock', 'market', 'news'];
 if (!in_array($endpoint, $allowedEndpoints, true)) {
     http_response_code(400);
     echo json_encode(['error' => 'Unsupported endpoint']);

@@ -226,43 +226,37 @@ export default function LiveMarketOverview() {
     } catch (error) {
       if ((error as Error).name === 'AbortError') return;
       try {
-        const responses = await Promise.all(
-          marketSymbols.map(symbol =>
-            fetch(
-              getApiUrl(
-                import.meta.env.DEV
-                  ? `/api/yahoo/v8/finance/chart/${encodeURIComponent(symbol)}?range=3mo&interval=1d`
-                  : `/api/yahoo.php?symbol=${encodeURIComponent(symbol)}&range=3mo&interval=1d`
-              ),
-              { signal }
-            )
-          )
+        const results = await Promise.allSettled(
+          marketSymbols.map(async symbol => {
+            const url = getApiUrl(
+              import.meta.env.DEV
+                ? `/api/yahoo/v8/finance/chart/${encodeURIComponent(symbol)}?range=3mo&interval=1d`
+                : `/api/yahoo.php?symbol=${encodeURIComponent(symbol)}&range=3mo&interval=1d`
+            );
+            const response = await fetch(url, { signal });
+            if (!response.ok) throw new Error(`Market fetch failed for ${symbol}`);
+            const data = await response.json();
+            return { symbol, data };
+          })
         );
-        if (responses.some(response => !response.ok)) throw new Error('Live market data unavailable');
-        const payloads = await Promise.all(
-          responses.map(response =>
-            response.json() as Promise<{
-              chart?: {
-                result?: Array<{
-                  meta?: Record<string, unknown>;
-                  timestamp?: number[];
-                  indicators?: { quote?: Array<{ close?: Array<number | null> }> };
-                }>;
-              };
-            }>
-          )
-        );
-        const liveQuotes = payloads
-          .map((payload, index): Quote | null => {
-            const result = payload.chart?.result?.[0];
+
+        const successful = results
+          .filter((res): res is PromiseFulfilledResult<{ symbol: string; data: any }> => res.status === 'fulfilled')
+          .map(res => res.value);
+
+        if (!successful.length) throw new Error('Live market data unavailable');
+
+        const liveQuotes = successful
+          .map(({ symbol, data }): Quote | null => {
+            const result = data.chart?.result?.[0];
             const meta = result?.meta ?? {};
             const price = Number(meta.regularMarketPrice ?? meta.previousClose);
             const previous = Number(meta.chartPreviousClose ?? meta.previousClose);
             if (!Number.isFinite(price) || !Number.isFinite(previous)) return null;
             const change = price - previous;
             return {
-              symbol: marketSymbols[index],
-              name: String(meta.shortName ?? labels[marketSymbols[index]]),
+              symbol,
+              name: String(meta.shortName ?? labels[symbol] ?? symbol),
               price,
               change,
               changePercent: previous ? (change / previous) * 100 : 0,
@@ -271,15 +265,23 @@ export default function LiveMarketOverview() {
             };
           })
           .filter((quote): quote is Quote => quote !== null);
-        const nifty = payloads[0].chart?.result?.[0];
-        const closes = nifty?.indicators?.quote?.[0]?.close ?? [];
-        const timestamps = nifty?.timestamp ?? [];
+
+        if (!liveQuotes.length) throw new Error('No valid quotes available');
+
+        // Extract 90-day closing points for the primary selected symbol or ^NSEI
+        const primaryData = successful.find(s => s.symbol === selectedSymbol) ?? successful.find(s => s.symbol === '^NSEI') ?? successful[0];
+        if (primaryData) {
+          const result = primaryData.data.chart?.result?.[0];
+          const closes = result?.indicators?.quote?.[0]?.close ?? [];
+          const timestamps = result?.timestamp ?? [];
+          setPoints(
+            closes
+              .map((value: number | null, index: number) => (value === null ? null : { value, timestamp: new Date((timestamps[index] ?? 0) * 1000).toISOString() }))
+              .filter((point): point is Point => point !== null)
+          );
+        }
+
         setQuotes(liveQuotes);
-        setPoints(
-          closes
-            .map((value, index) => (value === null ? null : { value, timestamp: new Date((timestamps[index] ?? 0) * 1000).toISOString() }))
-            .filter((point): point is Point => point !== null)
-        );
         setUpdatedAt(new Date());
         setStatus('ready');
       } catch (fallbackError) {
