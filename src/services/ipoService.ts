@@ -79,7 +79,7 @@ export interface IPOStats {
   total: number;
 }
 
-const INDIAN_API_KEY = 'sk-live-LBoaUhnmhsSPCe3J6kof1SQGTGJgWqQoYq87VL3l';
+const INDIAN_API_KEY = (import.meta as any).env?.VITE_INDIAN_API_KEY || '';
 const LOCAL_STORAGE_CACHE_KEY = 'avc_indian_api_ipo_cache_v3';
 const LOCAL_STORAGE_CACHE_TIME_KEY = 'avc_indian_api_ipo_cache_time_v3';
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;

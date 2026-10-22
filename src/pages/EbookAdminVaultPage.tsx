@@ -110,15 +110,15 @@ export default function EbookAdminVaultPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans p-6 md:p-12">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#050505] text-white font-sans p-4 sm:p-6 md:p-12">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Admin Header */}
-        <div className="p-6 rounded-2xl bg-[#0D0D0D] border border-[#D4AF37]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="p-5 sm:p-6 rounded-2xl bg-[#0D0D0D] border border-[#D4AF37]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-1">
               <ShieldCheck size={16} /> Confidential Admin Vault
             </div>
-            <h1 className="text-2xl font-extrabold text-white">Full E-Book Download & Reader API</h1>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white">Full E-Book Download & Reader API</h1>
             <p className="text-xs text-neutral-400 mt-1">
               Secret administrative repository to inspect, generate, and download complete publications.
             </p>
@@ -130,7 +130,7 @@ export default function EbookAdminVaultPage() {
         </div>
 
         {/* E-Books Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
           {EBOOKS_DATA.map((b) => (
             <button
               key={b.id}

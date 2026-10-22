@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowRight, BookOpen, CheckCircle, Lock, Phone, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { EBook } from '../services/ebookService';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 
 interface EbookCheckoutModalProps {
   isOpen: boolean;
@@ -9,13 +10,34 @@ interface EbookCheckoutModalProps {
 }
 
 export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheckoutModalProps) {
+  const isModalActive = Boolean(isOpen && book);
+  useBodyScrollLock(isModalActive);
+
   const [step, setStep] = useState<'details' | 'payment'>('details');
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
 
-  if (!isOpen || !book) return null;
+  const resetAndClose = useCallback(() => {
+    setStep('details');
+    setCustomerName('');
+    setPhone('');
+    setEmail('');
+    setErrors({});
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isModalActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') resetAndClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalActive, resetAndClose]);
+
+  if (!isModalActive || !book) return null;
 
   const validate = () => {
     const errs: { name?: string; phone?: string; email?: string } = {};
@@ -33,15 +55,6 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
     }
   };
 
-  const resetAndClose = () => {
-    setStep('details');
-    setCustomerName('');
-    setPhone('');
-    setEmail('');
-    setErrors({});
-    onClose();
-  };
-
   // WhatsApp Message Generation
   const rawWhatsappMsg = `Hello, I want to purchase ${book.title} for ₹${book.sellingPrice}. My name is ${customerName.trim() || 'Customer'}. Please help me complete my purchase.`;
   const whatsappUrl = `https://wa.me/917030247878?text=${encodeURIComponent(rawWhatsappMsg)}`;
@@ -53,21 +66,21 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fadeIn overscroll-contain"
       onClick={resetAndClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="checkout-modal-title"
     >
       <div
-        className="relative w-full max-w-lg bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl shadow-2xl overflow-hidden p-6 md:p-8 text-white transition-all transform scale-100"
+        className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto overscroll-contain bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl shadow-2xl p-5 sm:p-6 md:p-8 text-white transition-all transform scale-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           type="button"
           onClick={resetAndClose}
-          className="absolute top-4 right-4 p-2 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800/60 transition-colors"
+          className="absolute top-3 sm:top-4 right-3 sm:top-4 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800/60 transition-colors"
           aria-label="Close modal"
         >
           <X size={20} />
@@ -112,15 +125,16 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
             {/* Checkout Form */}
             <form onSubmit={handleProceedToPayment} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label htmlFor="checkout-name" className="block text-xs font-medium text-neutral-300 mb-1">
                   Full Name <span className="text-amber-400">*</span>
                 </label>
                 <input
+                  id="checkout-name"
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className={`w-full px-4 py-3 rounded-xl bg-[#111111] border ${
+                  className={`w-full px-4 py-3 min-h-[44px] rounded-xl bg-[#111111] border ${
                     errors.name ? 'border-red-500' : 'border-white/10 focus:border-[#D4AF37]'
                   } text-white text-sm outline-none transition-colors`}
                 />
@@ -129,15 +143,16 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label htmlFor="checkout-phone" className="block text-xs font-medium text-neutral-300 mb-1">
                     Mobile Number <span className="text-amber-400">*</span>
                   </label>
                   <input
+                    id="checkout-phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="10-digit mobile number"
-                    className={`w-full px-4 py-3 rounded-xl bg-[#111111] border ${
+                    className={`w-full px-4 py-3 min-h-[44px] rounded-xl bg-[#111111] border ${
                       errors.phone ? 'border-red-500' : 'border-white/10 focus:border-[#D4AF37]'
                     } text-white text-sm outline-none transition-colors`}
                   />
@@ -145,15 +160,16 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label htmlFor="checkout-email" className="block text-xs font-medium text-neutral-300 mb-1">
                     Email Address <span className="text-amber-400">*</span>
                   </label>
                   <input
+                    id="checkout-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className={`w-full px-4 py-3 rounded-xl bg-[#111111] border ${
+                    className={`w-full px-4 py-3 min-h-[44px] rounded-xl bg-[#111111] border ${
                       errors.email ? 'border-red-500' : 'border-white/10 focus:border-[#D4AF37]'
                     } text-white text-sm outline-none transition-colors`}
                   />
@@ -179,7 +195,7 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
+                className="w-full py-3.5 px-6 min-h-[44px] rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
               >
                 Proceed to Payment <ArrowRight size={16} />
               </button>
@@ -237,7 +253,7 @@ export default function EbookCheckoutModal({ isOpen, onClose, book }: EbookCheck
 
               <a
                 href={callUrl}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#1a1a1a] hover:bg-[#252525] border border-white/10 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 min-h-[44px] rounded-xl bg-[#1a1a1a] hover:bg-[#252525] border border-white/10 text-white font-bold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <Phone size={18} className="text-[#D4AF37]" />
                 Call Now (+91 7030247878)

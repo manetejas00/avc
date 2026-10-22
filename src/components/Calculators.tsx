@@ -106,14 +106,16 @@ const Calculators = () => {
           {/* Tabs */}
           <div className="flex border-b border-white/5">
             <button 
+              type="button"
               onClick={() => setActiveTab('sip')}
-              className={`flex-1 py-6 text-lg font-semibold transition-colors ${activeTab === 'sip' ? 'text-gold-primary border-b-2 border-gold-primary bg-surface-elevated' : 'text-text-muted hover:text-text hover:bg-surface-elevated'}`}
+              className={`flex-1 py-5 min-h-[44px] text-lg font-semibold transition-colors active:scale-[0.99] ${activeTab === 'sip' ? 'text-gold-primary border-b-2 border-gold-primary bg-surface-elevated' : 'text-text-muted hover:text-text hover:bg-surface-elevated'}`}
             >
               SIP Calculator
             </button>
             <button 
+              type="button"
               onClick={() => setActiveTab('loan')}
-              className={`flex-1 py-6 text-lg font-semibold transition-colors ${activeTab === 'loan' ? 'text-gold-primary border-b-2 border-gold-primary bg-surface-elevated' : 'text-text-muted hover:text-text hover:bg-surface-elevated'}`}
+              className={`flex-1 py-5 min-h-[44px] text-lg font-semibold transition-colors active:scale-[0.99] ${activeTab === 'loan' ? 'text-gold-primary border-b-2 border-gold-primary bg-surface-elevated' : 'text-text-muted hover:text-text hover:bg-surface-elevated'}`}
             >
               Home Loan EMI
             </button>
@@ -129,35 +131,41 @@ const Calculators = () => {
                   <>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-text font-medium">Monthly Investment</label>
+                        <label htmlFor="sip-monthly-amount" className="text-text font-medium">Monthly Investment</label>
                         <span className="text-gold-primary font-bold text-xl">{formatCurrency(sipAmount)}</span>
                       </div>
                       <input 
+                        id="sip-monthly-amount"
                         type="range" min="500" max="100000" step="500"
                         value={sipAmount} onChange={(e) => setSipAmount(Number(e.target.value))}
                         className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
+                        aria-valuemin={500} aria-valuemax={100000} aria-valuenow={sipAmount}
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-text font-medium">Expected Return Rate (p.a)</label>
+                        <label htmlFor="sip-return-rate" className="text-text font-medium">Expected Return Rate (p.a)</label>
                         <span className="text-gold-primary font-bold text-xl">{sipRate}%</span>
                       </div>
                       <input 
+                        id="sip-return-rate"
                         type="range" min="1" max="30" step="0.5"
                         value={sipRate} onChange={(e) => setSipRate(Number(e.target.value))}
                         className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
+                        aria-valuemin={1} aria-valuemax={30} aria-valuenow={sipRate}
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-text font-medium">Time Period</label>
+                        <label htmlFor="sip-time-period" className="text-text font-medium">Time Period</label>
                         <span className="text-gold-primary font-bold text-xl">{sipYears} Years</span>
                       </div>
                       <input 
+                        id="sip-time-period"
                         type="range" min="1" max="40" step="1"
                         value={sipYears} onChange={(e) => setSipYears(Number(e.target.value))}
                         className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
+                        aria-valuemin={1} aria-valuemax={40} aria-valuenow={sipYears}
                       />
                     </div>
                   </>
@@ -165,35 +173,41 @@ const Calculators = () => {
                   <>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-text font-medium">Loan Amount</label>
+                        <label htmlFor="loan-principal-amount" className="text-text font-medium">Loan Amount</label>
                         <span className="text-gold-primary font-bold text-xl">{formatCurrency(loanAmount)}</span>
                       </div>
                       <input 
+                        id="loan-principal-amount"
                         type="range" min="100000" max="20000000" step="100000"
                         value={loanAmount} onChange={(e) => setLoanAmount(Number(e.target.value))}
                         className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
+                        aria-valuemin={100000} aria-valuemax={20000000} aria-valuenow={loanAmount}
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-text font-medium">Interest Rate (p.a)</label>
+                        <label htmlFor="loan-interest-rate" className="text-text font-medium">Interest Rate (p.a)</label>
                         <span className="text-gold-primary font-bold text-xl">{loanRate}%</span>
                       </div>
                       <input 
+                        id="loan-interest-rate"
                         type="range" min="5" max="15" step="0.1"
                         value={loanRate} onChange={(e) => setLoanRate(Number(e.target.value))}
                         className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
+                        aria-valuemin={5} aria-valuemax={15} aria-valuenow={loanRate}
                       />
                     </div>
                     <div className="space-y-4">
                       <div className="flex justify-between items-end">
-                        <label className="text-text font-medium">Loan Tenure</label>
+                        <label htmlFor="loan-tenure-years" className="text-text font-medium">Loan Tenure</label>
                         <span className="text-gold-primary font-bold text-xl">{loanYears} Years</span>
                       </div>
                       <input 
+                        id="loan-tenure-years"
                         type="range" min="1" max="30" step="1"
                         value={loanYears} onChange={(e) => setLoanYears(Number(e.target.value))}
                         className="w-full accent-gold-primary h-2 bg-background rounded-lg appearance-none cursor-pointer"
+                        aria-valuemin={1} aria-valuemax={30} aria-valuenow={loanYears}
                       />
                     </div>
                   </>

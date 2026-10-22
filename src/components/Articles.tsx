@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ArrowRight, Calendar, ExternalLink, ImageOff, X } from 'lucide-react';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 
 interface Article {
   category: string;
@@ -20,6 +21,17 @@ const Articles = () => {
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showAll, setShowAll] = useState(false);
+
+  useBodyScrollLock(Boolean(selectedArticle));
+
+  useEffect(() => {
+    if (!selectedArticle) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedArticle(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedArticle]);
 
   useEffect(() => {
     const apiToken = import.meta.env.VITE_MARKETAUX_API_KEY;
@@ -139,8 +151,8 @@ const Articles = () => {
         </div>
       </div>
       {selectedArticle && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="article-modal-title" onMouseDown={() => setSelectedArticle(null)}>
-          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-card border border-gold-primary/30 bg-background shadow-2xl" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm overscroll-contain" role="dialog" aria-modal="true" aria-labelledby="article-modal-title" onMouseDown={() => setSelectedArticle(null)}>
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-card border border-gold-primary/30 bg-background shadow-2xl" onMouseDown={(event) => event.stopPropagation()}>
             <div className="relative h-56 bg-surface-elevated sm:h-72">{selectedArticle.image ? <img src={selectedArticle.image} onError={(event) => { event.currentTarget.remove(); }} alt={selectedArticle.title} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-text-muted"><ImageOff size={24} /></div>}<div className="absolute inset-0 bg-gradient-to-t from-background via-transparent" /><button type="button" onClick={() => setSelectedArticle(null)} aria-label="Close article details" className="absolute right-4 top-4 rounded-full bg-black/70 p-2 text-white transition hover:bg-gold-primary hover:text-black"><X size={20} /></button></div>
             <div className="p-6 pt-0 sm:p-10 sm:pt-0"><div className="mb-4 flex flex-wrap items-center gap-3 text-xs"><span className="rounded-full bg-primary px-3 py-1 font-bold text-white">{selectedArticle.category}</span><span className="flex items-center gap-1 text-text-muted"><Calendar size={14} />{selectedArticle.date}</span></div><h2 id="article-modal-title" className="text-3xl font-semibold text-text sm:text-4xl">{selectedArticle.title}</h2><div className="mt-5 whitespace-pre-line text-lg leading-8 text-text-muted">{selectedArticle.details}</div>{selectedArticle.takeaways?.length ? <div className="mt-8 rounded-2xl border border-gold-primary/20 bg-gold-primary/5 p-5"><h3 className="text-base font-semibold text-gold-secondary">Key takeaways</h3><ul className="mt-3 space-y-2 text-sm leading-6 text-text-muted">{selectedArticle.takeaways.map((takeaway) => <li key={takeaway} className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-primary" />{takeaway}</li>)}</ul></div> : null}<div className="mt-8 flex flex-wrap gap-3"><button type="button" onClick={() => setSelectedArticle(null)} className="rounded-full border border-white/10 px-5 py-3 text-sm font-medium text-text hover:bg-surface-elevated">Close</button>{selectedArticle.link !== '#' && <a href={selectedArticle.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-gold-secondary">Read source <ExternalLink size={15} /></a>}</div></div>
           </div>

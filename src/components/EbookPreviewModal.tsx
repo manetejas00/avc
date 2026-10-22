@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Lock, Sparkles, X } from 'lucide-react';
 import { EBook } from '../services/ebookService';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 
 interface EbookPreviewModalProps {
   isOpen: boolean;
@@ -10,9 +11,21 @@ interface EbookPreviewModalProps {
 }
 
 export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: EbookPreviewModalProps) {
+  const isModalActive = Boolean(isOpen && book);
+  useBodyScrollLock(isModalActive);
+
   const [activePageNum, setActivePageNum] = useState<1 | 2>(1);
 
-  if (!isOpen || !book) return null;
+  useEffect(() => {
+    if (!isModalActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalActive, onClose]);
+
+  if (!isModalActive || !book) return null;
 
   const page1 = book.samplePages[0];
   const page2 = book.samplePages[1];
@@ -20,39 +33,39 @@ export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: E
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fadeIn overscroll-contain"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="preview-modal-title"
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white"
+        className="relative w-full max-w-4xl max-h-[92vh] bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#111111]">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-[#111111]">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center shrink-0">
               <BookOpen size={18} />
             </div>
-            <div>
-              <div className="flex items-center gap-2 text-[#D4AF37] text-[11px] font-semibold uppercase tracking-wider">
-                <Sparkles size={12} /> Official 2-Page Sample Excerpt
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 text-[#D4AF37] text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
+                <Sparkles size={12} /> Sample Excerpt
               </div>
-              <h2 id="preview-modal-title" className="text-sm md:text-base font-bold text-white truncate max-w-md">
+              <h2 id="preview-modal-title" className="text-xs sm:text-sm md:text-base font-bold text-white truncate max-w-[140px] xs:max-w-[200px] sm:max-w-md">
                 {book.title}
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Page Selector Tabs */}
             <div className="flex items-center bg-[#181818] p-1 rounded-xl border border-white/10 text-xs">
               <button
                 type="button"
                 onClick={() => setActivePageNum(1)}
-                className={`px-3 py-1 rounded-lg transition-all font-semibold ${
+                className={`px-2.5 sm:px-3 py-1 rounded-lg transition-all font-semibold ${
                   activePageNum === 1
                     ? 'bg-[#D4AF37] text-black shadow-sm'
                     : 'text-neutral-400 hover:text-white'
@@ -63,7 +76,7 @@ export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: E
               <button
                 type="button"
                 onClick={() => setActivePageNum(2)}
-                className={`px-3 py-1 rounded-lg transition-all font-semibold ${
+                className={`px-2.5 sm:px-3 py-1 rounded-lg transition-all font-semibold ${
                   activePageNum === 2
                     ? 'bg-[#D4AF37] text-black shadow-sm'
                     : 'text-neutral-400 hover:text-white'
@@ -76,7 +89,7 @@ export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: E
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800/60 transition-colors"
+              className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800/60 transition-colors"
               aria-label="Close sample preview"
             >
               <X size={20} />
@@ -85,7 +98,7 @@ export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: E
         </div>
 
         {/* Book Reader Viewport */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-[#080808]">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 md:p-8 custom-scrollbar bg-[#080808]">
           {/* Dual Page Layout on Large Screens / Single Page with Page Numbers */}
           <div className="max-w-3xl mx-auto space-y-6">
             {/* Authentic Digital Page Container */}
@@ -206,7 +219,7 @@ export default function EbookPreviewModal({ isOpen, onClose, onBuyNow, book }: E
               onClose();
               onBuyNow(book);
             }}
-            className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-xs md:text-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20"
+            className="py-3 px-6 min-h-[44px] rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-xs md:text-sm hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-[#D4AF37]/20"
           >
             Buy Full E-Book Now
           </button>

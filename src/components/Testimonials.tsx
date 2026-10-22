@@ -56,12 +56,12 @@ const Testimonials = () => {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden">
+    <section id="testimonials" ref={containerRef} className="py-24 bg-surface-elevated overflow-hidden scroll-mt-24" aria-labelledby="testimonials-heading">
       <div className="container-custom">
         <div className="test-title text-center mb-16">
-          <h2 className="text-4xl md:text-[52px] font-semibold mb-4">What Our Clients Say</h2>
+          <h2 id="testimonials-heading" className="text-4xl md:text-[52px] font-semibold mb-4">What Our Clients Say</h2>
           <p className="text-text-muted text-lg max-w-2xl mx-auto">
-            Don't just take our word for it. Hear from the teams that use Bemine AI every day.
+            Hear from the private wealth clients, business promoters, and corporate treasuries who partner with AVC Dhanam Solutions.
           </p>
         </div>
       </div>
@@ -85,9 +85,12 @@ const Testimonials = () => {
                 <img 
                   src={testimonial.image} 
                   alt={testimonial.name} 
-                  className="w-12 h-12 rounded-full object-cover border border-white/5"
+                  width="48"
+                  height="48"
+                  loading="lazy"
+                  className="w-12 h-12 rounded-full object-cover border border-[#D4AF37]/30 ring-2 ring-[#D4AF37]/10"
                   onError={(e) => {
-                    e.currentTarget.src = `${import.meta.env.VITE_UI_AVATARS_API_URL}?name=${testimonial.name}&background=ff661a&color=fff`;
+                    e.currentTarget.src = `${import.meta.env.VITE_UI_AVATARS_API_URL}?name=${encodeURIComponent(testimonial.name)}&background=0d0d0d&color=D4AF37&bold=true`;
                   }}
                 />
                 <div>

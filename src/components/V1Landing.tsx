@@ -2,13 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { ArrowUpRight, BarChart3, Calculator, ChevronRight, ExternalLink, Layers3, LockKeyhole, Sparkles, Target, TrendingUp, X } from 'lucide-react';
+import { ArrowUpRight, Award, BarChart3, Building2, Calculator, CheckCircle2, ChevronLeft, ChevronRight, ExternalLink, Layers3, LockKeyhole, MapPin, RefreshCw, ShieldCheck, Sparkles, Target, TrendingUp, X } from 'lucide-react';
 import TradingViewTicker from './TradingViewTicker';
 import ContactFormModal from './ContactFormModal';
 import LiveMarketOverview from './LiveMarketOverview';
+import HomeEbooksSection from './HomeEbooksSection';
 import ScreenerGateway from './ScreenerGateway';
+import Testimonials from './Testimonials';
 import FAQ from './FAQ';
 import { V1Footer, V1Nav } from './V1SiteChrome';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
+import { getApiUrl } from '../services/apiClient';
 
 type Service = readonly [string, React.ElementType, string];
 const tools: readonly Service[] = [
@@ -22,6 +26,104 @@ const tools: readonly Service[] = [
 type NewsItem = { category: string; image: string; title: string; text: string; details: string; link: string; source: string };
 type CalculatorKind = 'sip' | 'loan' | 'lumpsum' | 'retirement';
 
+type ShowcaseSlide = {
+  image: string;
+  tag: string;
+  title: string;
+  alt: string;
+  badgeLabel: string;
+  badgeStatus: string;
+  stat1Label: string;
+  stat1Width: string;
+  stat2Label: string;
+  stat2Width: string;
+  badgeFooter: string;
+};
+
+const showcaseSlides: readonly ShowcaseSlide[] = [
+  {
+    image: '/assets/v1/financial-dashboard-hd.jpg',
+    tag: 'Wealth Management & Advisory',
+    title: 'Institutional Portfolio Terminal',
+    alt: 'AVC Dhanam institutional wealth architecture and portfolio analytics terminal',
+    badgeLabel: 'Consultancy Architecture',
+    badgeStatus: 'Synchronised',
+    stat1Label: 'Investment & Portfolio Alignment',
+    stat1Width: '92%',
+    stat2Label: 'Financing & Loan Structure',
+    stat2Width: '85%',
+    badgeFooter: '210+ Bank & NBFC Relationships Active'
+  },
+  {
+    image: '/assets/v1/service-banking-syndication.jpg',
+    tag: 'Loan Syndication & Credit',
+    title: 'Commercial Lending Network Desk',
+    alt: 'AVC Dhanam commercial lending and 210+ banking partner syndicate desk in Mumbai BKC',
+    badgeLabel: 'Syndicate Liquidity',
+    badgeStatus: 'Active Capital',
+    stat1Label: 'Partner Bank & NBFC Pipeline',
+    stat1Width: '96%',
+    stat2Label: 'Credit Appraisal Velocity',
+    stat2Width: '88%',
+    badgeFooter: 'Direct Relationships with 210+ Lenders'
+  },
+  {
+    image: '/assets/v1/service-wealth-advisory.jpg',
+    tag: 'Private Wealth Consultancy',
+    title: 'Executive Advisory Boardroom',
+    alt: 'AVC Dhanam private wealth advisory boardroom and portfolio presentation in Mumbai',
+    badgeLabel: 'Private Advisory',
+    badgeStatus: 'Institutional',
+    stat1Label: 'Goal-Based Wealth Preservation',
+    stat1Width: '98%',
+    stat2Label: 'Risk-Adjusted Alpha Delivery',
+    stat2Width: '94%',
+    badgeFooter: '500+ High-Net-Worth Families Advised'
+  },
+  {
+    image: '/assets/v1/service-corporate-treasury.jpg',
+    tag: 'Corporate Treasury & Tax',
+    title: 'CA Audit & Capital Operations',
+    alt: 'AVC Dhanam corporate treasury, CA tax planning, and equity trading station overlooking Mumbai',
+    badgeLabel: 'Corporate Treasury',
+    badgeStatus: 'Optimised',
+    stat1Label: 'Tax Strategy & Compliance',
+    stat1Width: '91%',
+    stat2Label: 'Statutory CA Audit Readiness',
+    stat2Width: '95%',
+    badgeFooter: 'Network of 10+ Chartered Accountants'
+  }
+] as const;
+
+type HeroSlide = {
+  image: string;
+  alt: string;
+  title: string;
+};
+
+const heroSlides: readonly HeroSlide[] = [
+  {
+    image: '/assets/hero/hero-boardroom-skyline.jpg',
+    alt: 'AVC Dhanam Boardroom overlooking Mumbai Financial District',
+    title: 'Executive Wealth Advisory Suite'
+  },
+  {
+    image: '/assets/hero/hero-bkc-towers.jpg',
+    alt: 'Bandra Kurla Complex Financial District Towers',
+    title: 'BKC Financial Center'
+  },
+  {
+    image: '/assets/hero/hero-advisory-lounge.jpg',
+    alt: 'Private Wealth Advisory Lounge overlooking Marine Drive',
+    title: 'Private Client Suite'
+  },
+  {
+    image: '/assets/hero/hero-premium.jpg',
+    alt: 'Modern Institutional Headquarters',
+    title: 'Institutional Financial Tower'
+  }
+] as const;
+
 gsap.registerPlugin(ScrollTrigger);
 
 function ActionButton({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
@@ -31,9 +133,36 @@ function ActionButton({ children, onClick }: { children: React.ReactNode; onClic
 export default function V1Landing() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [newsStatus, setNewsStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
+  const [isRefreshingNews, setIsRefreshingNews] = useState(false);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [isSlidePaused, setIsSlidePaused] = useState(false);
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const [isHeroPaused, setIsHeroPaused] = useState(false);
+
+  useBodyScrollLock(Boolean(selectedNews || selectedService));
+
+  useEffect(() => {
+    if (isHeroPaused) return;
+    const heroTimer = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(heroTimer);
+  }, [isHeroPaused]);
+
+  useEffect(() => {
+    if (isSlidePaused) return;
+    const timer = setInterval(() => {
+      setActiveSlideIndex((prev) => (prev + 1) % showcaseSlides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isSlidePaused]);
+
+  const prevSlide = () => setActiveSlideIndex((prev) => (prev - 1 + showcaseSlides.length) % showcaseSlides.length);
+  const nextSlide = () => setActiveSlideIndex((prev) => (prev + 1) % showcaseSlides.length);
+
   const newsSectionRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const tickerRef = useRef<HTMLElement>(null);
@@ -63,38 +192,108 @@ export default function V1Landing() {
   const retirementCorpus = futureMonthlyExpense * 12 * 25;
   const rangeStyle = (value: number, min: number, max: number) => ({ background: `linear-gradient(90deg, #d4af37 0 ${(value - min) / (max - min) * 100}%, #3f3f46 ${(value - min) / (max - min) * 100}% 100%)` });
 
-  useEffect(() => {
-    const apiToken = import.meta.env.VITE_MARKETAUX_API_KEY;
-    if (!apiToken) { setNewsStatus('unavailable'); return; }
-    const controller = new AbortController();
-    const loadNews = async () => {
+  const loadLiveNews = async () => {
+    try {
+      setIsRefreshingNews(true);
+      setNewsStatus('loading');
+
+      const DEFAULT_FALLBACK_IMAGES = [
+        '/assets/news/news-indian-equities.webp',
+        '/assets/news/news-rbi-policy.webp',
+        '/assets/news/news-global-economy.webp'
+      ];
+
+      let rawArticles: any[] = [];
+
+      // Tier 1: Unified backend live market news API
       try {
-        setNewsStatus('loading');
-        const params = new URLSearchParams({ api_token: apiToken, language: 'en', limit: '24', search: 'stock market' });
-        const isJson = (response: Response) => response.ok && response.headers.get('content-type')?.includes('application/json');
-        let response = await fetch(`/api/news/live?${params}`, { signal: controller.signal });
-        if (!isJson(response)) response = await fetch(import.meta.env.DEV ? `/api/marketaux/v1/news/all?${params}` : `/api/marketaux.php?${params}`, { signal: controller.signal });
-        if (!isJson(response)) response = await fetch(import.meta.env.DEV ? '/api/yahoo/v1/finance/search?q=NIFTY&newsCount=24' : '/api/yahoo-news.php?q=NIFTY', { signal: controller.signal });
-        if (!isJson(response)) throw new Error('News service unavailable');
-        const payload = await response.json() as { data?: Array<Record<string, unknown>>; news?: Array<Record<string, unknown>> };
-        const providerItems = payload.data ?? (payload.news ?? []).map(item => ({ title: item.title, description: item.summary, image_url: (item.thumbnail as { resolutions?: Array<{ url?: string }> } | undefined)?.resolutions?.[0]?.url, url: item.link, source: item.publisher }));
-        const items = providerItems.map((item): NewsItem | null => {
-          const details = String(item.description ?? item.snippet ?? '').replace(/<[^>]*>?/gm, '').trim();
-          const image = typeof item.image_url === 'string' ? item.image_url.trim() : '';
-          const title = String(item.title ?? '').trim();
-          const stockTerms = /stock|share|equity|market|nifty|sensex|nasdaq|dow|earnings|ipo|trading|index/i;
-          if (!title || !image || !stockTerms.test(`${title} ${details}`)) return null;
-          return { category: typeof item.source === 'string' ? item.source : 'Market update', image, title, text: details.slice(0, 120) || 'Latest market reporting and perspective.', details: details || 'The source did not provide a full description for this update.', link: typeof item.url === 'string' ? item.url : '#', source: typeof item.source === 'string' ? item.source : 'Marketaux' };
-        }).filter((item): item is NewsItem => item !== null).slice(0, 3);
-        setNewsItems(items);
-        setNewsStatus('ready');
-      } catch {
-        if (!controller.signal.aborted) setNewsStatus('unavailable');
+        const response = await fetch(getApiUrl('/api/news/live'));
+        if (response.ok) {
+          const payload = await response.json();
+          if (Array.isArray(payload?.data) && payload.data.length > 0) {
+            rawArticles = payload.data;
+          } else if (Array.isArray(payload?.news) && payload.news.length > 0) {
+            rawArticles = payload.news;
+          }
+        }
+      } catch (e) {
+        console.warn('Backend live news fetch error, attempting direct proxy fallback:', e);
       }
-    };
-    void loadNews();
-    const refreshId = window.setInterval(() => void loadNews(), 60 * 60 * 1000);
-    return () => { controller.abort(); window.clearInterval(refreshId); };
+
+      // Tier 2: Direct IndianAPI proxy fallback
+      if (!rawArticles.length) {
+        try {
+          const clientApiKey = (import.meta as any).env?.VITE_INDIAN_API_KEY;
+          const headers: Record<string, string> = clientApiKey ? { 'X-Api-Key': clientApiKey } : {};
+          const response = await fetch(getApiUrl('/api/indianapi/news'), { headers });
+          if (response.ok) {
+            const data = await response.json();
+            if (Array.isArray(data) && data.length > 0) {
+              rawArticles = data;
+            }
+          }
+        } catch (e) {
+          console.warn('IndianAPI proxy fetch error:', e);
+        }
+      }
+
+      // Tier 3: Local database articles fallback
+      if (!rawArticles.length) {
+        try {
+          const response = await fetch(getApiUrl('/api/news?limit=9'));
+          if (response.ok) {
+            const data = await response.json();
+            if (Array.isArray(data?.articles) && data.articles.length > 0) {
+              rawArticles = data.articles;
+            }
+          }
+        } catch (e) {
+          console.warn('Database news fallback error:', e);
+        }
+      }
+
+      if (!rawArticles.length) {
+        throw new Error('No live news stories available');
+      }
+
+      const items: NewsItem[] = rawArticles.map((item: any, index: number): NewsItem => {
+        const title = String(item.title || item.headline || '').trim();
+        const details = String(item.summary || item.description || item.content || '').replace(/<[^>]*>?/gm, '').trim();
+        const rawImage = item.image_url || item.image || item.thumbnail;
+        const image = (typeof rawImage === 'string' && (rawImage.startsWith('http') || rawImage.startsWith('/')))
+          ? rawImage.trim()
+          : DEFAULT_FALLBACK_IMAGES[index % DEFAULT_FALLBACK_IMAGES.length];
+        const category = (Array.isArray(item.topics) && item.topics[0])
+          ? item.topics[0]
+          : (typeof item.category === 'string' ? item.category : 'Markets');
+        const source = item.source?.name || (typeof item.source === 'string' ? item.source : 'Live Market Feed');
+        const link = item.url || item.link || item.source_url || '#';
+
+        return {
+          category,
+          image,
+          title,
+          text: details.slice(0, 130) + (details.length > 130 ? '…' : '') || 'Live real-time market report and analytical perspective.',
+          details: details || title,
+          link,
+          source
+        };
+      }).filter((item): item is NewsItem => Boolean(item.title)).slice(0, 6);
+
+      setNewsItems(items);
+      setNewsStatus('ready');
+    } catch (err) {
+      console.warn('Error fetching live stock market news:', err);
+      setNewsStatus('unavailable');
+    } finally {
+      setIsRefreshingNews(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadLiveNews();
+    const refreshId = window.setInterval(() => void loadLiveNews(), 30 * 60 * 1000); // Auto-refresh every 30 minutes
+    return () => window.clearInterval(refreshId);
   }, []);
 
   useGSAP(() => {
@@ -131,15 +330,44 @@ export default function V1Landing() {
   }, []);
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setSelectedNews(null); };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedNews(null);
+        setSelectedService(null);
+      }
+    };
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, []);
 
-  return <main className="v1-site">
+  return <main id="main-content" className="v1-site">
     <V1Nav ref={navRef} home />
-    <section className="v1-hero">
-      <div className="v1-hero__image" />
+    <section 
+      className="v1-hero"
+      onMouseEnter={() => setIsHeroPaused(true)}
+      onMouseLeave={() => setIsHeroPaused(false)}
+    >
+      <div className="v1-hero__slider" aria-label="Executive financial background showcase">
+        {heroSlides.map((slide, index) => {
+          const isActive = index === activeHeroSlide;
+          return (
+            <div
+              key={slide.image}
+              className={`v1-hero__slide ${isActive ? 'v1-hero__slide--active' : ''}`}
+              aria-hidden={!isActive}
+            >
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                className="v1-hero__slide-image"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </div>
+          );
+        })}
+        <div className="v1-hero__overlay" aria-hidden="true" />
+      </div>
       <div className="v1-hero__create">DHANAM</div>
       <div className="v1-hero__body">
         <div className="v1-kicker"><i /> Financial Consultancy • Virar West, Mumbai</div>
@@ -157,16 +385,541 @@ export default function V1Landing() {
         <div><strong>210+</strong><span>bank/NBFC ties</span></div>
         <div><strong>10+ CA</strong><span>tax & audit network</span></div>
       </aside>
-      <div className="v1-scroll">SCROLL TO DISCOVER <span /></div>
+      <div className="v1-hero__bottom">
+        <div className="v1-scroll">SCROLL TO DISCOVER <span /></div>
+        <div className="v1-hero__dots" role="tablist" aria-label="Hero background slides">
+          {heroSlides.map((slide, index) => {
+            const isActive = index === activeHeroSlide;
+            return (
+              <button
+                type="button"
+                key={slide.image}
+                role="tab"
+                aria-selected={isActive}
+                aria-label={`View background image ${index + 1}: ${slide.title}`}
+                className={`v1-hero__dot ${isActive ? 'v1-hero__dot--active' : ''}`}
+                onClick={() => {
+                  setActiveHeroSlide(index);
+                  setIsHeroPaused(true);
+                }}
+              >
+                <span 
+                  key={`${slide.image}-${isActive}`} 
+                  className={`v1-hero__dot-fill ${isHeroPaused ? 'v1-hero__dot-fill--paused' : ''}`} 
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </section>
 
     <section id="markets" ref={tickerRef} className="v1-ticker-only" aria-label="Live market ticker"><div className="v1-ticker-only__label"><i />LIVE MARKETS</div><div className="v1-ticker-only__feed"><TradingViewTicker /></div><span className="v1-ticker-only__scan" aria-hidden="true" /></section>
 
-    <section id="system" className="v1-features"><div className="v1-features__intro"><span className="v1-index">01 — COMPLETE FINANCIAL SERVICES</span><h2>A Complete Financial Journey,<br /><em>Under One Roof.</em></h2><p>Integrated wealth management, loan solutions, corporate tax advisory, and risk protection under one roof.</p><div className="v1-tool-list">{tools.map(([label, Icon, description], index) => <button type="button" key={label} onClick={() => setSelectedService([label, Icon, description] as Service)} aria-label={`Learn more about ${label}`}><Icon size={17} /><span>0{index + 1}</span>{label}<ChevronRight size={15} className="v1-tool-list__arrow" /></button>)}</div></div><div className="v1-analysis"><img src="/assets/v1/financial-dashboard-hd.jpg" alt="Financial consultancy research dashboard" /><div className="v1-analysis__glass"><div><span>Consultancy Architecture</span><b>Synchronised</b></div><p>Investment & Portfolio Alignment</p><div className="v1-progress"><i style={{ width: '92%' }} /></div><p>Financing & Loan Structure</p><div className="v1-progress"><i style={{ width: '85%' }} /></div><small><span /> 210+ Bank & NBFC Relationships Active</small></div></div></section>
+    <section id="system" className="v1-features">
+      <div className="v1-features__intro">
+        <span className="v1-index">01 — COMPLETE FINANCIAL SERVICES</span>
+        <h2>A Complete Financial Journey,<br /><em>Under One Roof.</em></h2>
+        <p>Integrated wealth management, loan solutions, corporate tax advisory, and risk protection under one roof.</p>
+        <div className="v1-tool-list">
+          {tools.map(([label, Icon, description], index) => (
+            <button 
+              type="button" 
+              key={label} 
+              onClick={() => {
+                setSelectedService([label, Icon, description] as Service);
+                if (index === 0) setActiveSlideIndex(0);
+                else if (index === 1) setActiveSlideIndex(1);
+                else if (index === 2 || index === 5) setActiveSlideIndex(2);
+                else if (index === 3 || index === 4) setActiveSlideIndex(3);
+              }} 
+              aria-label={`Learn more about ${label}`}
+            >
+              <Icon size={17} />
+              <span>0{index + 1}</span>
+              {label}
+              <ChevronRight size={15} className="v1-tool-list__arrow" />
+            </button>
+          ))}
+        </div>
+      </div>
 
-    <section id="approach" className="v1-productivity"><div className="v1-productivity__grid" /><div className="v1-productivity__copy"><span className="v1-index">02 — ABOUT AVC DHANAM SOLUTIONS</span><h2>8+ Years of Financial Excellence.</h2><p>Founded and led by Directors <strong>Chandresh Pandey</strong> & <strong>Ajay Pandey</strong> in Virar West, Mumbai.</p><div className="v1-steps"><div><b>01</b><span><strong>Personalized Strategic Planning</strong>Goal-oriented wealth & financing plans tailored to your needs.</span></div><div><b>02</b><span><strong>End-to-End Execution & Network</strong>Direct ties with top mutual funds, 210+ banks, and 10+ CAs.</span></div></div></div><div className="v1-window"><div className="v1-window__top"><i /><i /><i /><span>avc / corporate_credentials / 2026</span></div><div className="v1-code"><p><span>01</span> company <b>=</b> "AVC Dhanam Solutions Pvt. Ltd."</p><p><span>02</span> directors <b>=</b> ["Chandresh Pandey", "Ajay Pandey"]</p><p><span>03</span> location <b>=</b> "Virar West, Mumbai Region"</p><p><span>04</span> credentials <b>=</b> "8+ Yrs | 500+ Clients | ₹15+ Cr AUM"</p><p><span>05</span> literacy_partner <b>=</b> "Avinya Care Foundation"</p></div><div className="v1-status"><i /> Financial Consultancy System Online</div></div></section>
+      <div 
+        className="v1-analysis"
+        onMouseEnter={() => setIsSlidePaused(true)}
+        onMouseLeave={() => setIsSlidePaused(false)}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="AVC Dhanam Financial Architecture Showcase"
+      >
+        {/* Looping Slides with Ken-Burns and Cross-fade */}
+        {showcaseSlides.map((slide, idx) => {
+          const isActive = idx === activeSlideIndex;
+          return (
+            <div
+              key={slide.image}
+              className={`v1-analysis__slide ${isActive ? 'is-active' : ''}`}
+              aria-hidden={!isActive}
+            >
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                width="1376"
+                height="768"
+                className="v1-analysis__slide-img"
+                loading={idx === 0 ? 'eager' : 'lazy'}
+              />
+              <div className="v1-analysis__overlay" />
+            </div>
+          );
+        })}
 
-    <section id="news" ref={newsSectionRef} className="v1-access v1-news"><div className="v1-access__heading"><span className="v1-index">03 — MARKET INTELLIGENCE</span><h2>Read beyond<br />the <em>headline.</em></h2><p>Live stock-market reporting and financial updates, refreshed automatically every hour.</p></div><div className="v1-pricing">{newsItems.map((item, index) => <article key={item.title} className="v1-news-card" onMouseEnter={(event) => gsap.to(event.currentTarget, { y: -10, duration: .35, ease: 'power3.out' })} onMouseLeave={(event) => gsap.to(event.currentTarget, { y: 0, duration: .45, ease: 'power3.out' })}><div className="v1-pricing__image"><img src={item.image} alt={item.title} loading="lazy" /><span>0{index + 1}</span></div><div className="v1-pricing__body"><small className="v1-news__category">{item.category}</small><h3>{item.title}</h3><p>{item.text}</p><button type="button" onClick={() => setSelectedNews(item)}>Read insight<ArrowUpRight size={17} /></button></div></article>)}{newsStatus !== 'ready' && <div className="v1-news__status">{newsStatus === 'loading' ? 'Loading live stock-market news…' : 'Live stock-market news is unavailable right now.'}</div>}{newsStatus === 'ready' && !newsItems.length && <div className="v1-news__status">No stock-market stories are available right now. The feed will refresh automatically.</div>}</div></section>
+        {/* Top Floating HUD: Slide Tag & Interactive Navigation */}
+        <div className="v1-analysis__controls">
+          <div className="v1-analysis__tag">
+            <span className="v1-analysis__tag-dot" />
+            <span>{showcaseSlides[activeSlideIndex].tag}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Segmented Progress Indicators */}
+            <div className="v1-analysis__pagination" role="tablist" aria-label="Showcase slides">
+              {showcaseSlides.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveSlideIndex(idx)}
+                  className={`v1-analysis__dot ${idx === activeSlideIndex ? 'is-active' : ''}`}
+                  aria-label={`Go to slide ${idx + 1}: ${showcaseSlides[idx].tag}`}
+                  aria-selected={idx === activeSlideIndex}
+                  role="tab"
+                />
+              ))}
+            </div>
+
+            {/* Prev / Next Controls */}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={prevSlide}
+                className="v1-analysis__nav-btn"
+                aria-label="Previous showcase slide"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={nextSlide}
+                className="v1-analysis__nav-btn"
+                aria-label="Next showcase slide"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Synchronized Glass Information Terminal Card */}
+        <div className="v1-analysis__glass" aria-live="polite">
+          <div>
+            <span>{showcaseSlides[activeSlideIndex].badgeLabel}</span>
+            <b>{showcaseSlides[activeSlideIndex].badgeStatus}</b>
+          </div>
+          <p>{showcaseSlides[activeSlideIndex].stat1Label}</p>
+          <div className="v1-progress">
+            <i 
+              style={{ 
+                width: showcaseSlides[activeSlideIndex].stat1Width,
+                transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' 
+              }} 
+            />
+          </div>
+          <p>{showcaseSlides[activeSlideIndex].stat2Label}</p>
+          <div className="v1-progress">
+            <i 
+              style={{ 
+                width: showcaseSlides[activeSlideIndex].stat2Width,
+                transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' 
+              }} 
+            />
+          </div>
+          <small>
+            <span /> {showcaseSlides[activeSlideIndex].badgeFooter}
+          </small>
+        </div>
+      </div>
+    </section>
+
+    <section id="approach" className="v1-productivity" aria-labelledby="about-section-title">
+      <div className="v1-productivity__grid" aria-hidden="true" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto w-full">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 px-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-primary/10 border border-gold-primary/30 text-gold-primary text-xs font-semibold tracking-wider uppercase mb-4">
+            <Sparkles size={13} className="text-gold-primary" />
+            <span>02 — ABOUT AVC DHANAM SOLUTIONS</span>
+          </div>
+          <h2 id="about-section-title" className="text-white font-serif tracking-tight leading-tight mb-4">
+            Visionary Leadership. <br className="hidden sm:block" />
+            <em className="italic text-gold-primary">A Trusted Financial Heritage.</em>
+          </h2>
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+            Headquartered in Virar West, Mumbai, <strong>AVC Dhanam Solutions Pvt. Ltd.</strong> was established by Directors <strong>Chandresh Pandey</strong> &amp; <strong>Ajay Pandey</strong> to democratize institutional-grade financial guidance. Over 8+ years, we have guided 500+ families, professionals, and business enterprises across wealth management, debt syndication, and corporate tax strategy.
+          </p>
+        </div>
+
+        {/* Founders Showcase Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-12 sm:mb-16">
+          {/* Founder 1: Chandresh Pandey */}
+          <div className="group relative rounded-2xl bg-gradient-to-b from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-gold-primary/40 transition-all duration-300 overflow-hidden flex flex-col shadow-2xl">
+            {/* Image Container with Top Badge Overlay */}
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
+              <img
+                src="/assets/founders/chandresh-pandey.jpg"
+                alt="Chandresh Pandey - Director & Co-Founder of AVC Dhanam Solutions"
+                width="896"
+                height="672"
+                className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+              
+              {/* Top Badges */}
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
+                <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-primary/40 text-gold-primary text-xs font-semibold tracking-wide shadow-lg">
+                  Co-Founder &amp; Director
+                </span>
+                <span className="px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-xs font-medium flex items-center gap-1.5 shadow-lg">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  AMFI ARN-184920
+                </span>
+              </div>
+            </div>
+
+            {/* Founder 1 Body */}
+            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+              <div>
+                {/* Identification Header */}
+                <div className="mb-5 pb-4 border-b border-white/10">
+                  <span className="text-gold-primary text-xs font-bold tracking-wider uppercase block mb-1">
+                    Wealth Architecture &amp; Equity Strategy
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    Chandresh Pandey
+                  </h3>
+                </div>
+
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
+                  Directs AVC Dhanam’s investment advisory practice with 8+ years of capital markets acumen. Specializes in long-term equity strategy, goal-based Mutual Fund allocation, and wealth preservation for high-net-worth individuals and families.
+                </p>
+
+                {/* Key Credentials */}
+                <div className="space-y-2.5 mb-6">
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span>8+ Years Sub-Broker Franchise Partner associated with <strong>Motilal Oswal Financial Services</strong></span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Overseeing ₹15+ Crore AUM with a disciplined, research-backed asset allocation framework</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Hands-on IPO market analysis, SIP planning, and generational wealth compounding</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Bar */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <MapPin size={14} className="text-gold-primary shrink-0" />
+                  <span>Virar West, Mumbai HQ</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsConsultationOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-primary/10 hover:bg-gold-primary text-gold-primary hover:text-black border border-gold-primary/30 transition-all text-xs sm:text-sm font-semibold min-h-[44px]"
+                >
+                  <span>Consult Chandresh</span>
+                  <ArrowUpRight size={15} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Founder 2: Ajay Pandey */}
+          <div className="group relative rounded-2xl bg-gradient-to-b from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-gold-primary/40 transition-all duration-300 overflow-hidden flex flex-col shadow-2xl">
+            {/* Image Container with Top Badge Overlay */}
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
+              <img
+                src="/assets/founders/ajay-pandey.jpg"
+                alt="Ajay Pandey - Director & Co-Founder of AVC Dhanam Solutions"
+                width="896"
+                height="672"
+                className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+              
+              {/* Top Badges */}
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
+                <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-primary/40 text-gold-primary text-xs font-semibold tracking-wide shadow-lg">
+                  Co-Founder &amp; Director
+                </span>
+                <span className="px-3 py-1 rounded-full bg-blue-500/20 backdrop-blur-md border border-blue-500/40 text-blue-400 text-xs font-medium flex items-center gap-1.5 shadow-lg">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                  210+ Banking Syndicate
+                </span>
+              </div>
+            </div>
+
+            {/* Founder 2 Body */}
+            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+              <div>
+                {/* Identification Header */}
+                <div className="mb-5 pb-4 border-b border-white/10">
+                  <span className="text-gold-primary text-xs font-bold tracking-wider uppercase block mb-1">
+                    Corporate Finance &amp; Debt Syndication
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    Ajay Pandey
+                  </h3>
+                </div>
+
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
+                  Spearheads debt structuring, corporate loans, and commercial banking relationships. Dedicated to accelerating the growth of SMEs, enterprises, and developers through customized credit vehicles and seamless financial execution.
+                </p>
+
+                {/* Key Credentials */}
+                <div className="space-y-2.5 mb-6">
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Extensive tie-ups spanning <strong>210+ leading Banks &amp; NBFCs</strong> nationwide</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Specialized execution across Business Loans, LAP, Working Capital, and Construction Finance</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Direct coordination with 10+ Chartered Accountants for end-to-end tax and audit compliance</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Bar */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <MapPin size={14} className="text-gold-primary shrink-0" />
+                  <span>Virar West, Mumbai HQ</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsConsultationOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-primary/10 hover:bg-gold-primary text-gold-primary hover:text-black border border-gold-primary/30 transition-all text-xs sm:text-sm font-semibold min-h-[44px]"
+                >
+                  <span>Consult Ajay</span>
+                  <ArrowUpRight size={15} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3 Pillars / Heritage Highlights Bar */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-8 border-t border-white/10">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.03] border border-white/5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-gold-primary/10 border border-gold-primary/20 flex items-center justify-center shrink-0 text-gold-primary">
+              <ShieldCheck size={20} />
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-sm sm:text-base mb-1">Uncompromising Fiduciary Integrity</h4>
+              <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
+                Objective, client-centric guidance. Zero product mis-selling; only structured wealth and debt solutions tailored to your risk profile.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.03] border border-white/5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400">
+              <Building2 size={20} />
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-sm sm:text-base mb-1">A Unified Financial Journey</h4>
+              <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
+                Seamless harmony between equity investments, 210+ bank loan syndications, insurance, and 10+ CA tax audit support under one roof.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.03] border border-white/5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0 text-purple-400">
+              <Award size={20} />
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-sm sm:text-base mb-1">Grassroots Financial Literacy</h4>
+              <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
+                Committed partner with <strong>Avinya Care Foundation</strong> to deliver grassroots financial education and social welfare initiatives across Maharashtra.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Civic Partnership with Avinya Care Foundation Showcase */}
+        <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-950/20 via-white/[0.02] to-transparent border border-purple-500/20 flex flex-col lg:flex-row items-center gap-6 sm:gap-8">
+          <div className="w-full lg:w-1/2 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold tracking-wider uppercase">
+              <Award size={14} />
+              <span>Civic Partnership &bull; Avinya Care Foundation</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-serif text-white font-bold tracking-tight">
+              Dignified Financial Literacy &amp; Family Welfare at the Grassroots
+            </h3>
+            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+              True wealth advisory extends beyond urban boardrooms. In strategic alliance with <strong>Avinya Care Foundation</strong>, AVC Dhanam sponsors and conducts on-ground household budgeting, small-savings awareness (बचत गट), and family healthcare security workshops across rural and semi-rural Maharashtra.
+            </p>
+            <div className="grid grid-cols-3 gap-3 pt-2">
+              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
+                <span className="block text-base sm:text-lg font-bold text-purple-300">5,200+</span>
+                <span className="text-[10px] sm:text-xs text-gray-400">Families Reached</span>
+              </div>
+              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
+                <span className="block text-base sm:text-lg font-bold text-purple-300">48+</span>
+                <span className="text-[10px] sm:text-xs text-gray-400">Rural Workshops</span>
+              </div>
+              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
+                <span className="block text-base sm:text-lg font-bold text-purple-300">100%</span>
+                <span className="text-[10px] sm:text-xs text-gray-400">Civic Mission</span>
+              </div>
+            </div>
+          </div>
+          <div className="w-full lg:w-1/2 relative overflow-hidden rounded-xl border border-white/10 group shadow-2xl">
+            <img
+              src="/assets/community/avinya-community-drive.jpg"
+              alt="Avinya Care Foundation and AVC Dhanam grassroots financial literacy workshop in Maharashtra"
+              width="1376"
+              height="768"
+              loading="lazy"
+              className="w-full h-auto aspect-video object-cover filter brightness-95 contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+              <div className="text-xs text-gray-200">
+                <span className="font-semibold text-purple-300">On-Ground Action:</span> Rural Household Financial Literacy Camp &bull; Palghar &amp; Thane Districts
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="news" ref={newsSectionRef} className="v1-access v1-news" aria-labelledby="news-section-title">
+      <div className="v1-access__heading flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold tracking-wider uppercase mb-3">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>03 — MARKET INTELLIGENCE</span>
+          </div>
+          <h2 id="news-section-title" className="font-serif">
+            Read beyond<br />the <em>headline.</em>
+          </h2>
+          <p className="text-gray-400 text-sm sm:text-base mt-2">
+            Live real-time Indian stock market &amp; economic intelligence, streaming continuously from premier financial sources.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => void loadLiveNews()}
+            disabled={isRefreshingNews}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 border border-white/10 text-xs sm:text-sm font-medium transition-all min-h-[44px] cursor-pointer disabled:opacity-50"
+            aria-label="Refresh live stock-market news"
+          >
+            <RefreshCw size={14} className={isRefreshingNews ? 'animate-spin text-gold-primary' : 'text-gold-primary'} />
+            <span>{isRefreshingNews ? 'Refreshing…' : 'Refresh Feed'}</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="v1-pricing">
+        {newsItems.map((item, index) => (
+          <article
+            key={`${item.title}-${index}`}
+            className="v1-news-card"
+            onMouseEnter={(event) => gsap.to(event.currentTarget, { y: -8, duration: .3, ease: 'power3.out' })}
+            onMouseLeave={(event) => gsap.to(event.currentTarget, { y: 0, duration: .4, ease: 'power3.out' })}
+          >
+            <div className="v1-pricing__image relative overflow-hidden bg-black/5">
+              <img
+                src={item.image}
+                alt={item.title}
+                width="480"
+                height="270"
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.src = '/assets/news/news-indian-equities.webp';
+                }}
+              />
+            </div>
+            <div className="v1-pricing__body flex flex-col justify-between p-5">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-gold-primary font-bold px-1.5 py-0.5 rounded bg-gold-primary/10 border border-gold-primary/20">
+                      0{index + 1}
+                    </span>
+                    <small className="v1-news__category px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      {item.category}
+                    </small>
+                  </div>
+                  <span className="text-[11px] text-gray-400 font-mono truncate max-w-[120px]">
+                    {item.source}
+                  </span>
+                </div>
+                <h3 className="font-bold text-base sm:text-lg text-white mb-2 line-clamp-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-300 text-xs sm:text-sm line-clamp-3 leading-relaxed mb-4">
+                  {item.text}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedNews(item)}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gold-primary hover:text-white transition-colors mt-auto pt-3 border-t border-white/5"
+              >
+                <span>Read insight</span>
+                <ArrowUpRight size={15} />
+              </button>
+            </div>
+          </article>
+        ))}
+
+        {newsStatus === 'loading' && !newsItems.length && (
+          <div className="v1-news__status col-span-full py-12 flex flex-col items-center justify-center gap-3">
+            <RefreshCw size={24} className="animate-spin text-gold-primary" />
+            <p className="text-gray-400 text-sm">Streaming live stock-market updates…</p>
+          </div>
+        )}
+
+        {newsStatus === 'unavailable' && !newsItems.length && (
+          <div className="v1-news__status col-span-full py-8 text-center">
+            <p className="text-gray-400 text-sm mb-3">Live feed is currently syncing. Click below to reconnect.</p>
+            <button
+              type="button"
+              onClick={() => void loadLiveNews()}
+              className="px-4 py-2 rounded-xl bg-gold-primary/10 text-gold-primary border border-gold-primary/30 text-xs font-semibold"
+            >
+              Retry Live Sync
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
 
     <section id="calculators" ref={calculatorSectionRef} className="v1-calculator">
       <div className="v1-calculator__intro v1-calculator__reveal"><span className="v1-index">04 — FINANCIAL CALCULATORS</span><h2>Plan your wealth &<br /><em>loan projections.</em></h2><p>Explore practical financial calculations for SIP investments, home loan EMIs, lumpsum growth, and retirement planning.</p><div className="v1-calculator__trust"><Calculator size={16} /><span>Educational projections. Investment products are subject to market risks.</span></div></div>
@@ -181,7 +934,9 @@ export default function V1Landing() {
       </div></div>
     </section>
     <LiveMarketOverview />
+    <HomeEbooksSection />
     <ScreenerGateway />
+    <Testimonials />
     <FAQ />
     <V1Footer />
     <ContactFormModal isOpen={isConsultationOpen} onClose={() => setIsConsultationOpen(false)} />

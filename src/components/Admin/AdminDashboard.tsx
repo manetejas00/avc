@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, LogOut, CheckCircle, Clock, XCircle, MoreVertical, Database } from 'lucide-react';
+import { getApiUrl } from '../../services/apiClient';
 
 interface Submission {
   id: number;
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch('/api/admin/submissions');
+      const res = await fetch(getApiUrl('/api/admin/submissions'));
       if (res.status === 401) {
         navigate('/admin');
         return;
@@ -52,7 +53,7 @@ const AdminDashboard = () => {
   const fetchApiLogs = async () => {
     setLoadingLogs(true);
     try {
-      const res = await fetch('/api/admin/sync-logs');
+      const res = await fetch(getApiUrl('/api/admin/sync-logs'));
       if (res.status === 401) {
         navigate('/admin');
         return;
@@ -73,13 +74,13 @@ const AdminDashboard = () => {
   }, [activeTab]);
 
   const handleLogout = async () => {
-    await fetch('/api/admin/logout', { method: 'POST' });
+    await fetch(getApiUrl('/api/admin/logout'), { method: 'POST' });
     navigate('/admin');
   };
 
   const updateStatus = async (id: number, status: string) => {
     try {
-      await fetch(`/api/admin/submissions/${id}/status`, {
+      await fetch(getApiUrl(`/api/admin/submissions/${id}/status`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })

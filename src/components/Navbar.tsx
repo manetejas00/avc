@@ -1,7 +1,7 @@
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const navItems = [['Home', '/'], ['Screener', '/screener'], ['IPOs', '/ipo'], ['Services', '/#services'], ['Markets', '/#markets'], ['Calculators', '/#calculators'], ['News', '/#news'], ['FAQ', '/#faq']] as const;
+const navItems = [['Home', '/'], ['Screener', '/screener'], ['IPOs', '/ipo'], ['Services', '/#services'], ['Markets', '/#markets'], ['Calculators', '/#calculators'], ['News', '/#news'], ['Testimonials', '/#testimonials'], ['FAQ', '/#faq']] as const;
 const primaryItems = navItems.slice(0, 4);
 const exploreItems = navItems.slice(4);
 
@@ -46,7 +46,7 @@ export default function Navbar() {
 
   return <nav aria-label="Main navigation" className="fixed inset-x-0 top-0 z-[100] px-3 py-3 sm:px-6">
     <div className="container-custom flex h-16 items-center justify-between rounded-2xl border border-white/10 bg-background/95 px-4 shadow-[0_12px_35px_rgba(0,0,0,0.42)] backdrop-blur-xl sm:px-6">
-      <a href="/" onClick={closeMenus} aria-label="AVC Dhanam home" className="shrink-0 rounded-lg transition-transform duration-200 hover:scale-[1.03]"><img src="/logo_gold_transparent.svg" alt="AVC Dhanam" className="h-9 w-auto sm:h-10" /></a>
+      <a href="/" onClick={closeMenus} aria-label="AVC Dhanam home" className="shrink-0 rounded-lg transition-transform duration-200 hover:scale-[1.03]"><img src="/logo_gold_transparent.svg" alt="AVC Dhanam" width="140" height="40" className="h-9 w-auto sm:h-10" /></a>
       <div className="hidden items-center gap-2 lg:flex xl:gap-3">
         {primaryItems.map(([label, href]) => <a key={label} href={href} onClick={closeMenus} aria-current={active === href ? 'page' : undefined} className={linkClass(href)}>{label}</a>)}
         <div className="relative"><button type="button" aria-expanded={exploreOpen} onClick={() => setExploreOpen(!exploreOpen)} className={`flex items-center gap-1 rounded-lg px-2 py-2 text-sm font-medium transition-colors ${exploreItems.some(([, href]) => active === href) ? 'text-gold-secondary' : 'text-text-secondary hover:text-text'}`}>Explore <ChevronDown size={15} className={`transition-transform ${exploreOpen ? 'rotate-180' : ''}`} /></button>

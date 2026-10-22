@@ -56,14 +56,21 @@ export const createMarketRouter = (db) => {
         .filter(r => r.status === 'fulfilled' && r.value)
         .map(r => r.value)
         .map(quote => ({
-          symbol: quote.symbol,
-          name: quote.shortName || quote.longName,
+          symbol: quote.symbol === 'USDINR=X' ? 'INR=X' : quote.symbol,
+          name: quote.symbol === 'USDINR=X' || quote.symbol === 'INR=X' ? 'USD/INR' : (quote.shortName || quote.longName),
           price: quote.regularMarketPrice,
           change: quote.regularMarketChange,
           changePercent: quote.regularMarketChangePercent,
           currency: quote.currency,
-          marketState: quote.marketState,
-          lastUpdated: new Date(quote.regularMarketTime * 1000).toISOString()
+          lastUpdated: (() => {
+            const time = quote.regularMarketTime;
+            if (!time) return new Date().toISOString();
+            if (time instanceof Date) return time.toISOString();
+            if (typeof time === 'number') {
+              return new Date(time > 1e11 ? time : time * 1000).toISOString();
+            }
+            return new Date(time).toISOString();
+          })()
         }));
 
       setCachedData(cacheKey, data, 15 * 60); // 15 mins cache
@@ -223,8 +230,8 @@ export const createMarketRouter = (db) => {
 
   // 8. Closing-price history for the live market overview chart.
   router.get('/chart', async (req, res) => {
-    const symbol = typeof req.query.symbol === 'string' ? req.query.symbol : '^NSEI';
-    const supportedSymbols = new Set(['^NSEI', '^BSESN', '^GSPC', '^IXIC', 'GC=F', 'CL=F']);
+    let symbol = typeof req.query.symbol === 'string' ? req.query.symbol : '^NSEI';
+    const supportedSymbols = new Set(['^NSEI', '^BSESN', '^GSPC', '^IXIC', 'INR=X', 'USDINR=X', 'GC=F', 'CL=F']);
     if (!supportedSymbols.has(symbol)) return res.status(400).json({ error: 'Unsupported market symbol' });
 
     const cacheKey = `chart_${symbol}`;

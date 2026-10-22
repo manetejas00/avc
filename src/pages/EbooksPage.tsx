@@ -105,7 +105,7 @@ export default function EbooksPage() {
       <V1Nav />
 
       {/* Main Container */}
-      <main className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <main id="main-content" className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-6 text-xs text-neutral-400 flex items-center gap-2">
           <a href="/" className="hover:text-[#D4AF37] transition-colors">Home</a>
@@ -134,18 +134,21 @@ export default function EbooksPage() {
           {/* Search Input */}
           <div className="relative max-w-xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+            <label htmlFor="ebook-search" className="sr-only">Search by title, topic, author, or keyword</label>
             <input
+              id="ebook-search"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by title, topic, author, or keyword (e.g. Fundamental, Technical)..."
-              className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-[#0D0D0D] border border-white/10 focus:border-[#D4AF37] text-white text-sm outline-none transition-colors shadow-inner"
+              className="w-full pl-11 pr-10 py-3.5 min-h-[44px] rounded-2xl bg-[#0D0D0D] border border-white/10 focus:border-[#D4AF37] text-white text-sm outline-none transition-colors shadow-inner"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                aria-label="Clear search query"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white p-1"
               >
                 <X size={16} />
               </button>
@@ -161,7 +164,7 @@ export default function EbooksPage() {
                   key={cat}
                   type="button"
                   onClick={() => handleCategorySelect(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+                  className={`px-4 py-2 min-h-[38px] rounded-xl text-xs font-medium transition-all active:scale-[0.98] ${
                     active
                       ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold shadow-md shadow-[#D4AF37]/20 scale-[1.02]'
                       : 'bg-[#0D0D0D] border border-white/10 text-neutral-300 hover:border-[#D4AF37]/40 hover:text-white'

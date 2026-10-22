@@ -157,7 +157,7 @@ export default function IpoPage() {
       <V1Nav />
 
       {/* Main Page Container */}
-      <main className="container-custom pt-24 pb-20 sm:pt-28">
+      <main id="main-content" className="container-custom pt-24 pb-20 sm:pt-28">
         
         {/* SEO Breadcrumbs */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs text-text-muted">
@@ -188,7 +188,7 @@ export default function IpoPage() {
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <button
               onClick={() => handleTabChange('open')}
-              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 ${activeTab === 'open' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
+              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 active:scale-[0.98] ${activeTab === 'open' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
             >
               <div className="flex items-center justify-between text-xs font-medium text-text-secondary">
                 <span>Open for Bidding</span>
@@ -202,7 +202,7 @@ export default function IpoPage() {
 
             <button
               onClick={() => handleTabChange('upcoming')}
-              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 ${activeTab === 'upcoming' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
+              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 active:scale-[0.98] ${activeTab === 'upcoming' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
             >
               <div className="flex items-center justify-between text-xs font-medium text-text-secondary">
                 <span>Upcoming IPOs</span>
@@ -216,7 +216,7 @@ export default function IpoPage() {
 
             <button
               onClick={() => handleTabChange('closed')}
-              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 ${activeTab === 'closed' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
+              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 active:scale-[0.98] ${activeTab === 'closed' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
             >
               <div className="flex items-center justify-between text-xs font-medium text-text-secondary">
                 <span>Recently Closed</span>
@@ -230,7 +230,7 @@ export default function IpoPage() {
 
             <button
               onClick={() => handleTabChange('listed_7days')}
-              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 ${activeTab === 'listed_7days' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
+              className={`ipo-stat-card flex flex-col rounded-2xl border p-4 text-left transition-all duration-200 active:scale-[0.98] ${activeTab === 'listed_7days' ? 'border-gold-primary bg-gold-primary/10 shadow-[0_0_20px_rgba(197,160,89,0.15)]' : 'border-white/10 bg-surface/60 hover:border-white/20'}`}
             >
               <div className="flex items-center justify-between text-xs font-medium text-text-secondary">
                 <span>Listed (Last 7 Days)</span>
@@ -253,35 +253,35 @@ export default function IpoPage() {
               <button
                 type="button"
                 onClick={() => handleTabChange('open')}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === 'open' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 min-h-[44px] text-xs font-semibold transition-all duration-200 active:scale-[0.98] whitespace-nowrap ${activeTab === 'open' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
               >
                 Open IPOs
               </button>
               <button
                 type="button"
                 onClick={() => handleTabChange('upcoming')}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === 'upcoming' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 min-h-[44px] text-xs font-semibold transition-all duration-200 active:scale-[0.98] whitespace-nowrap ${activeTab === 'upcoming' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
               >
                 Upcoming IPOs
               </button>
               <button
                 type="button"
                 onClick={() => handleTabChange('closed')}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === 'closed' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 min-h-[44px] text-xs font-semibold transition-all duration-200 active:scale-[0.98] whitespace-nowrap ${activeTab === 'closed' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
               >
                 Recently Closed
               </button>
               <button
                 type="button"
                 onClick={() => handleTabChange('listed_7days')}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === 'listed_7days' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 min-h-[44px] text-xs font-semibold transition-all duration-200 active:scale-[0.98] whitespace-nowrap ${activeTab === 'listed_7days' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
               >
                 Listed in Last 7 Days
               </button>
               <button
                 type="button"
                 onClick={() => handleTabChange('all')}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === 'all' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 min-h-[44px] text-xs font-semibold transition-all duration-200 active:scale-[0.98] whitespace-nowrap ${activeTab === 'all' ? 'bg-gold-primary text-black shadow-md' : 'text-text-secondary hover:text-white'}`}
               >
                 All Issues
               </button>
@@ -291,27 +291,31 @@ export default function IpoPage() {
             <div className="flex flex-wrap items-center gap-3">
               {/* Search Bar */}
               <div className="relative min-w-[220px] flex-1 sm:flex-initial">
-                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
+                <label htmlFor="ipo-search" className="sr-only">Search company or IPO symbol</label>
                 <input
+                  id="ipo-search"
                   type="text"
                   placeholder="Search company or symbol..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-surface/90 py-2 pl-9 pr-4 text-xs text-white placeholder-text-muted transition-colors focus:border-gold-primary focus:outline-none"
+                  className="w-full min-h-[44px] rounded-xl border border-white/10 bg-surface/90 py-2.5 pl-10 pr-9 text-xs text-white placeholder-text-muted transition-colors focus:border-gold-primary focus:outline-none"
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white">
-                    <XCircle size={14} />
+                  <button onClick={() => setSearchQuery('')} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white p-1">
+                    <XCircle size={15} />
                   </button>
                 )}
               </div>
 
               {/* Segment Filter */}
               <div className="relative">
+                <label htmlFor="ipo-segment" className="sr-only">Filter by market segment</label>
                 <select
+                  id="ipo-segment"
                   value={segmentFilter}
                   onChange={(e) => setSegmentFilter(e.target.value as any)}
-                  className="appearance-none rounded-xl border border-white/10 bg-surface/90 py-2 pl-3.5 pr-8 text-xs font-medium text-text-secondary transition-colors focus:border-gold-primary focus:outline-none cursor-pointer"
+                  className="appearance-none min-h-[44px] rounded-xl border border-white/10 bg-surface/90 py-2.5 pl-3.5 pr-8 text-xs font-medium text-text-secondary transition-colors focus:border-gold-primary focus:outline-none cursor-pointer"
                 >
                   <option value="all">All Segments</option>
                   <option value="mainboard">Mainboard</option>
@@ -322,10 +326,12 @@ export default function IpoPage() {
 
               {/* Exchange Filter */}
               <div className="relative">
+                <label htmlFor="ipo-exchange" className="sr-only">Filter by stock exchange</label>
                 <select
+                  id="ipo-exchange"
                   value={exchangeFilter}
                   onChange={(e) => setExchangeFilter(e.target.value as any)}
-                  className="appearance-none rounded-xl border border-white/10 bg-surface/90 py-2 pl-3.5 pr-8 text-xs font-medium text-text-secondary transition-colors focus:border-gold-primary focus:outline-none cursor-pointer"
+                  className="appearance-none min-h-[44px] rounded-xl border border-white/10 bg-surface/90 py-2.5 pl-3.5 pr-8 text-xs font-medium text-text-secondary transition-colors focus:border-gold-primary focus:outline-none cursor-pointer"
                 >
                   <option value="all">All Exchanges</option>
                   <option value="nse">NSE</option>
@@ -340,7 +346,8 @@ export default function IpoPage() {
                 onClick={() => loadData()}
                 disabled={loading}
                 title="Refresh Live Data"
-                className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-surface/90 px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:border-gold-primary hover:text-white disabled:opacity-50"
+                aria-label="Refresh live IPO data"
+                className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-surface/90 px-3.5 py-2.5 text-xs font-medium text-text-secondary transition-colors hover:border-gold-primary hover:text-white active:scale-[0.98] disabled:opacity-50"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin text-gold-primary' : ''} />
                 <span className="hidden sm:inline">Refresh</span>

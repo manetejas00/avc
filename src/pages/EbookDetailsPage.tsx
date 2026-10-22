@@ -109,7 +109,7 @@ export default function EbookDetailsPage() {
       <V1Nav />
 
       {/* Main Container */}
-      <main className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <main id="main-content" className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-8 text-xs text-neutral-400 flex items-center gap-2 flex-wrap">
           <Link to="/" className="hover:text-[#D4AF37] transition-colors">Home</Link>
@@ -123,9 +123,9 @@ export default function EbookDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16 items-start">
           {/* Left Column: Visual Cover Card */}
           <div className="lg:col-span-5">
-            <div className="sticky top-28 space-y-4">
+            <div className="lg:sticky lg:top-28 space-y-4">
               <div
-                className={`w-full h-[420px] rounded-2xl bg-gradient-to-br ${book.coverGradient} p-8 flex flex-col justify-between border border-white/10 shadow-2xl relative overflow-hidden`}
+                className={`w-full h-[340px] sm:h-[400px] md:h-[420px] rounded-2xl bg-gradient-to-br ${book.coverGradient} p-6 sm:p-8 flex flex-col justify-between border border-white/10 shadow-2xl relative overflow-hidden`}
               >
                 {book.coverImage && (
                   <img
@@ -158,9 +158,9 @@ export default function EbookDetailsPage() {
                       <BookOpen size={48} />
                     </div>
                   )}
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
                     {book.title}
-                  </h1>
+                  </h2>
                   <p className="text-xs md:text-sm text-neutral-200 drop-shadow">{book.subtitle}</p>
                 </div>
 
@@ -229,7 +229,7 @@ export default function EbookDetailsPage() {
                 <button
                   type="button"
                   onClick={() => handleBuyNow(book)}
-                  className="py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
+                  className="py-3.5 px-6 min-h-[44px] rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
                 >
                   Buy Now · ₹{book.sellingPrice}
                 </button>
@@ -237,7 +237,7 @@ export default function EbookDetailsPage() {
                 <button
                   type="button"
                   onClick={() => handlePreview(book)}
-                  className="py-3.5 px-6 rounded-xl bg-[#1A1A1A] hover:bg-[#252525] border border-white/10 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+                  className="py-3.5 px-6 min-h-[44px] rounded-xl bg-[#1A1A1A] hover:bg-[#252525] border border-white/10 text-white font-semibold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   <Eye size={16} className="text-[#D4AF37]" /> Read Sample Excerpt
                 </button>
@@ -385,7 +385,7 @@ export default function EbookDetailsPage() {
               <button
                 type="button"
                 onClick={() => handleBuyNow(book)}
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
+                className="w-full py-3.5 px-6 min-h-[44px] rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
               >
                 Buy Now · ₹{book.sellingPrice}
               </button>

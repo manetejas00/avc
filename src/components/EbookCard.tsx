@@ -129,14 +129,14 @@ export default function EbookCard({ book, onBuyNow, onPreview }: EbookCardProps)
               <button
                 type="button"
                 onClick={() => onPreview(book)}
-                className="py-2.5 px-3 rounded-xl bg-[#1A1A1A] hover:bg-[#252525] border border-white/10 text-neutral-200 hover:text-white font-medium text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="py-2.5 px-3 min-h-[42px] rounded-xl bg-[#1A1A1A] hover:bg-[#252525] border border-white/10 text-neutral-200 hover:text-white font-medium text-xs transition-all active:scale-[0.98] flex items-center justify-center gap-1.5"
               >
                 <Eye size={14} className="text-[#D4AF37]" /> Sample
               </button>
 
               <Link
                 to={`/ebooks/${book.slug}`}
-                className="py-2.5 px-3 rounded-xl bg-[#1A1A1A] hover:bg-[#252525] border border-white/10 text-neutral-200 hover:text-white font-medium text-xs transition-colors text-center"
+                className="py-2.5 px-3 min-h-[42px] rounded-xl bg-[#1A1A1A] hover:bg-[#252525] border border-white/10 text-neutral-200 hover:text-white font-medium text-xs transition-all active:scale-[0.98] flex items-center justify-center text-center"
               >
                 View Details
               </Link>
@@ -145,7 +145,7 @@ export default function EbookCard({ book, onBuyNow, onPreview }: EbookCardProps)
             <button
               type="button"
               onClick={() => onBuyNow(book)}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-xs hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-md shadow-[#D4AF37]/10"
+              className="w-full py-3 px-4 min-h-[44px] rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8962E] text-black font-bold text-xs hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-md shadow-[#D4AF37]/10"
             >
               Buy Now · ₹{book.sellingPrice}
             </button>

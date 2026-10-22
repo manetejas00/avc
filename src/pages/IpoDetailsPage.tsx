@@ -125,7 +125,7 @@ export default function IpoDetailsPage() {
     return (
       <div className="min-h-screen bg-background font-sans text-text">
         <V1Nav />
-        <main className="container-custom pt-28 pb-20">
+        <main id="main-content" className="container-custom pt-28 pb-20">
           <div className="mx-auto max-w-4xl space-y-6 animate-pulse">
             <div className="h-6 w-32 rounded bg-white/10" />
             <div className="h-48 rounded-3xl bg-surface/40 border border-white/10" />
@@ -144,7 +144,7 @@ export default function IpoDetailsPage() {
     return (
       <div className="min-h-screen bg-background font-sans text-text">
         <V1Nav />
-        <main className="container-custom pt-28 pb-20 flex flex-col items-center justify-center min-h-[60vh]">
+        <main id="main-content" className="container-custom pt-28 pb-20 flex flex-col items-center justify-center min-h-[60vh]">
           <div className="rounded-3xl border border-red-500/30 bg-surface/80 p-10 text-center max-w-md shadow-2xl backdrop-blur-xl">
             <XCircle size={40} className="mx-auto text-red-400 mb-4" />
             <h2 className="text-xl font-bold text-white">IPO Profile Not Found</h2>
@@ -186,7 +186,7 @@ export default function IpoDetailsPage() {
     <div ref={pageRef} className="min-h-screen bg-background font-sans text-text">
       <V1Nav />
 
-      <main className="container-custom pt-24 pb-20 sm:pt-28">
+      <main id="main-content" className="container-custom pt-24 pb-20 sm:pt-28">
         {/* Breadcrumb navigation */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs text-text-muted">
           <Link to="/" className="transition-colors hover:text-gold-primary">Home</Link>
@@ -424,11 +424,14 @@ export default function IpoDetailsPage() {
                       <button
                         type="button"
                         onClick={() => setSelectedLots(Math.max(1, selectedLots - 1))}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-surface-elevated text-white hover:border-gold-primary"
+                        aria-label="Decrease number of lots"
+                        className="flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-white/10 bg-surface-elevated text-white hover:border-gold-primary active:scale-[0.95] transition-all"
                       >
                         <Minus size={14} />
                       </button>
+                      <label htmlFor="lot-slider" className="sr-only">Number of lots</label>
                       <input
+                        id="lot-slider"
                         type="range"
                         min="1"
                         max={investorCategory === 'retail' ? maxRetailLots : 50}
@@ -439,7 +442,8 @@ export default function IpoDetailsPage() {
                       <button
                         type="button"
                         onClick={() => setSelectedLots(selectedLots + 1)}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-surface-elevated text-white hover:border-gold-primary"
+                        aria-label="Increase number of lots"
+                        className="flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-white/10 bg-surface-elevated text-white hover:border-gold-primary active:scale-[0.95] transition-all"
                       >
                         <Plus size={14} />
                       </button>
@@ -454,7 +458,7 @@ export default function IpoDetailsPage() {
                           key={gain}
                           type="button"
                           onClick={() => setEstimatedGainPercent(gain)}
-                          className={`flex-1 rounded-lg border py-1 text-xs font-semibold transition-all ${estimatedGainPercent === gain ? 'border-gold-primary bg-gold-primary/20 text-gold-secondary' : 'border-white/10 bg-background/50 text-text-muted hover:text-white'}`}
+                          className={`flex-1 rounded-lg border py-2 min-h-[38px] text-xs font-semibold transition-all active:scale-[0.96] ${estimatedGainPercent === gain ? 'border-gold-primary bg-gold-primary/20 text-gold-secondary shadow-sm' : 'border-white/10 bg-background/50 text-text-muted hover:text-white'}`}
                         >
                           +{gain}%
                         </button>

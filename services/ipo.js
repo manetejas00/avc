@@ -131,7 +131,7 @@ export const createIpoRouter = (db) => {
       return cachedData;
     }
 
-    const apiKey = process.env.INDIAN_API_KEY || 'sk-live-LBoaUhnmhsSPCe3J6kof1SQGTGJgWqQoYq87VL3l';
+    const apiKey = process.env.INDIAN_API_KEY;
     const endpoints = ['https://stock.indianapi.in/ipo', 'https://dev.indianapi.in/ipo'];
 
     for (const endpoint of endpoints) {
