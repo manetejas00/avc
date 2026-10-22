@@ -1438,52 +1438,186 @@
   }
 
   .v1-hero {
-    margin: 80px 12px 0;
+    margin: 70px 10px 0;
     border-radius: 24px;
-    min-height: auto;
-    padding-bottom: 36px;
+    min-height: calc(100svh - 85px);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Clear visual window at the top on mobile so background photography is vibrantly visible */
+  .v1-hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(9, 9, 11, 0.12) 0%,
+      rgba(9, 9, 11, 0.0) 25%,
+      rgba(9, 9, 11, 0.18) 42%,
+      rgba(9, 9, 11, 0.65) 62%,
+      rgba(9, 9, 11, 0.92) 82%,
+      #09090b 100%
+    ) !important;
+  }
+
+  /* Reposition slider indicator dots to top right floating pill */
+  .v1-hero__bottom {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 5 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .v1-hero__bottom .v1-scroll {
+    display: none !important;
+  }
+
+  .v1-hero__dots {
+    padding: 5px 10px !important;
+    background: rgba(14, 14, 18, 0.65) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+    gap: 6px !important;
+  }
+
+  .v1-hero__dot {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .v1-hero__dot--active {
+    width: 20px !important;
   }
 
   .v1-nav {
-    margin: 14px
+    margin: 14px;
   }
 
   .v1-nav__links {
-    display: none
+    display: none;
   }
 
   .v1-nav .v1-action {
-    margin-left: auto
+    margin-left: auto;
   }
 
+  /* Sleek mobile hero body anchored at the bottom */
   .v1-hero__body {
-    margin: 32px 5% 0;
+    position: relative !important;
+    z-index: 3 !important;
+    margin: 0 16px !important;
+    max-width: 100% !important;
   }
 
+  .v1-kicker {
+    font-size: 9px !important;
+    letter-spacing: 0.16em !important;
+    margin-bottom: 6px !important;
+  }
+
+  .v1-kicker i {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .v1-hero h1 {
+    margin: 6px 0 8px !important;
+    font-size: clamp(1.4rem, 5.4vw, 1.85rem) !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .v1-hero__body p {
+    font-size: 13px !important;
+    line-height: 1.48 !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    margin-bottom: 14px !important;
+    max-width: 390px !important;
+  }
+
+  .v1-hero__actions {
+    margin-top: 14px !important;
+    gap: 12px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+  }
+
+  .v1-action {
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+  }
+
+  .v1-text-link {
+    font-size: 12.5px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  /* Transform bulky vertical stats grid into a sleek horizontal-scrolling glass pill carousel */
   .v1-stats {
-    position: static;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 10px;
-    margin-top: 32px;
-    width: 100%;
-    max-width: 600px;
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: 3 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    margin: 14px 16px 0 !important;
+    padding: 2px 0 6px !important;
+    width: calc(100% - 32px) !important;
+    max-width: 100% !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .v1-stats::-webkit-scrollbar {
+    display: none !important;
   }
 
   .v1-stats div {
-    width: 100%;
-    padding: 12px 14px;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: unset !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    padding: 7px 12px !important;
+    border-radius: 999px !important;
+    background: rgba(18, 18, 24, 0.65) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
   }
 
   .v1-stats strong {
-    font-size: 1.15rem;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: #f4d675 !important;
+    letter-spacing: -0.01em !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
   }
 
   .v1-stats span {
-    font-size: 0.75rem;
+    font-size: 10.5px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    text-transform: capitalize !important;
   }
 
   .v1-features {
@@ -1526,27 +1660,11 @@
     display: none
   }
 
-  .v1-hero__bottom {
-    position: static;
-    margin-top: 24px;
-    justify-content: center;
-    left: auto;
-    bottom: auto;
-  }
 }
 
 @media(max-width:500px) {
   .v1-nav {
-    padding-left: 15px
-  }
-
-  .v1-hero h1 {
-    font-size: var(--h1-size, clamp(1.875rem, 3.5vw, 2.5rem));
-  }
-
-  .v1-stats {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    padding-left: 15px;
   }
 
   .v1-tool-list {
