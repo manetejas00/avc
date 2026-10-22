@@ -644,20 +644,7 @@
 }
 
 .v1-hero__create {
-  position: absolute;
-  z-index: 1;
-  right: -2vw;
-  bottom: -6vw;
-  font-size: 22vw;
-  line-height: .8;
-  font-weight: 700;
-  letter-spacing: -.1em;
-  opacity: .035;
-  filter: blur(2px);
-  pointer-events: none;
-  user-select: none;
-  max-width: 100vw;
-  overflow: hidden;
+  display: none !important;
 }
 
 .v1-nav {

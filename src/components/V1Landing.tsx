@@ -368,7 +368,6 @@ export default function V1Landing() {
         })}
         <div className="v1-hero__overlay" aria-hidden="true" />
       </div>
-      <div className="v1-hero__create">DHANAM</div>
       <div className="v1-hero__body">
         <div className="v1-kicker"><i /> Financial Consultancy • Virar West, Mumbai</div>
         <h1>Your Complete Financial Journey,<br /><em>Under One Roof.</em></h1>
