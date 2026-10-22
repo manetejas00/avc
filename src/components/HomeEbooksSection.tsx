@@ -33,10 +33,10 @@ export default function HomeEbooksSection() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
             <Sparkles size={14} /> Financial Education & Publishing
           </div>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-[#09090b] tracking-tight">
             Institutional <span className="text-[#D4AF37]">Stock Market E-Books</span>
           </h2>
-          <p className="text-xs md:text-sm text-neutral-400 max-w-2xl leading-relaxed">
+          <p className="text-xs md:text-sm text-[#52525b] max-w-2xl leading-relaxed">
             Master equity investing, fundamental analysis, technical charting, and portfolio risk management with our battle-tested digital publications.
           </p>
         </div>
