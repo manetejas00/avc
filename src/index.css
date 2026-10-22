@@ -1438,9 +1438,9 @@
   }
 
   .v1-hero {
-    margin: 70px 10px 0;
+    margin: 70px 10px 16px;
     border-radius: 24px;
-    min-height: calc(100svh - 85px);
+    min-height: calc(100svh - 100px);
     height: auto;
     display: flex;
     flex-direction: column;
@@ -1882,15 +1882,22 @@
 
 @media (max-width: 800px) {
   .v1-ticker-only {
-    width: 100%;
-    margin-top: 0;
-    border-right: 0;
-    border-left: 0;
-    border-radius: 0;
+    width: calc(100% - 20px) !important;
+    max-width: 1600px !important;
+    margin: 16px auto 0 !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(212, 175, 55, .6) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .35) !important;
   }
 }
 
 @media (max-width: 640px) {
+  .v1-ticker-only {
+    width: calc(100% - 20px) !important;
+    margin: 16px 10px 0 !important;
+    border-radius: 18px !important;
+  }
+
   .v1-ticker-only__label {
     padding: 0 14px;
     font-size: 8px;
