@@ -12,7 +12,6 @@ Options -Indexes
 </IfModule>
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteRule ^api/submit-form$ dist/api/submit-form.php [L]
   RewriteBase /
   # Repository-root installs must never expose source, secrets, databases or archives.
   RewriteRule (^|/)\. - [F,L]

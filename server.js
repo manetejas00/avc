@@ -1,5 +1,4 @@
 import express from 'express';
-import axios from 'axios';
 import sqlite3 from 'better-sqlite3';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -20,12 +19,13 @@ import { createIpoRouter } from './services/ipo.js';
 import { startNewsScheduler } from './services/newsScheduler.js';
 import { getProviderStatus } from './services/config/env.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 if (process.env.NODE_ENV === 'production' && fs.existsSync(path.join(__dirname, '.env.production'))) {
   dotenv.config({ path: path.join(__dirname, '.env.production') });
 }
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)) throw new Error('Set JWT_SECRET to at least 32 characters in production.');
@@ -126,7 +126,6 @@ app.use(express.json({ limit: '32kb' }));
 app.use(express.urlencoded({ extended: false, limit: '32kb' }));
 app.use(cookieParser());
 app.use('/api', (req, res, next) => {
-  if (Object.values(req.query).some(value => typeof value !== 'string')) return res.status(400).json({ error: 'Query parameters must be single text values.' });
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Cache-Control', 'no-store');
   if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
@@ -168,23 +167,6 @@ const authenticateAdmin = (req, res, next) => {
 
 // Initialize Central Financial Service
 const financialService = new FinancialService(db);
-app.get('/api/mutual-funds.php', async (req, res) => {
-  const search = req.query.action === 'search';
-  const value = search ? req.query.q : req.query.code;
-  if (typeof value !== 'string' || (search ? value.trim().length < 3 || value.length > 80 : !/^\d{4,8}$/.test(value))) return res.status(400).json({ error: 'Invalid fund query.' });
-  const suffix = search ? '/mf/search?q=' + encodeURIComponent(value.trim()) : '/mf/' + value;
-  const key = 'mf-explorer:' + suffix;
-  const cached = financialService.cache.get(key);
-  if (cached) return res.json(cached.data);
-  try {
-    const data = await financialService.cache.dedupe(key, async () => {
-      const response = await axios.get('https://api.mfapi.in' + suffix, { timeout: 15000 });
-      if (search ? !Array.isArray(response.data) : !response.data?.meta || !Array.isArray(response.data.data)) throw Error('Invalid provider response');
-      financialService.cache.set(key, response.data, 3600); return response.data;
-    });
-    res.json(data);
-  } catch { res.status(503).json({ error: 'Mutual fund data unavailable.' }); }
-});
 
 // --- Public Financial APIs ---
 app.use('/api/market', createMarketRouter(db, financialService));
@@ -204,20 +186,18 @@ app.get('/api/providers/status', (_req, res) => {
 });
 
 app.post('/api/submit-form', (req, res) => {
-  const fields = ['name', 'email', 'phone', 'interest', 'message', 'preferredTime'];
+  const fields = ['name', 'email', 'phone', 'interest', 'message'];
   if (!req.body || fields.some(key => req.body[key] !== undefined && typeof req.body[key] !== 'string')) return res.status(400).json({ error: 'Form fields must be text.' });
   const { name = '', email = '', phone = '', interest = '', message = '' } = Object.fromEntries(fields.map(key => [key, (req.body[key] || '').trim()]));
-
-  if (!name || !phone) {
-    return res.status(400).json({ error: 'Name and phone are required.' });
+  
+  if (!name || !email || !phone) {
+    return res.status(400).json({ error: 'Name, email, and phone are required.' });
   }
-  if (name.length > 120 || email.length > 254 || (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || !/^\+?[\d\s()-]{7,25}$/.test(phone) || phone.replace(/\D/g, '').length < 7 || interest.length > 150 || message.length > 5000) return res.status(400).json({ error: 'Enter a valid name, email and phone; email is optional; message limit is 5000 characters.' });
+  if (name.length > 120 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\+?[\d\s()-]{7,25}$/.test(phone) || phone.replace(/\D/g, '').length < 7 || interest.length > 150 || message.length > 5000) return res.status(400).json({ error: 'Enter a valid name, email and phone; message limit is 5000 characters.' });
 
   try {
-    const preferredTime = (req.body.preferredTime || '').trim();
-    if (preferredTime.length > 150) return res.status(400).json({ error: 'Preferred contact time is too long.' });
     const stmt = db.prepare('INSERT INTO form_submissions (name, email, phone, interest, message) VALUES (?, ?, ?, ?, ?)');
-    stmt.run(name, email, phone, interest || '', [preferredTime ? `Preferred time (IST): ${preferredTime}` : '', message].filter(Boolean).join('\n'));
+    stmt.run(name, email, phone, interest || '', message || '');
     res.json({ success: true, message: 'Submission received successfully.' });
   } catch (err) {
     console.error('Submission error:', err);
@@ -282,7 +262,7 @@ app.get('/api/admin/sync-logs', authenticateAdmin, (req, res) => {
 app.post('/api/admin/submissions/:id/status', authenticateAdmin, (req, res) => {
   const { status } = req.body;
   const { id } = req.params;
-
+  
   if (!['pending', 'completed', 'rejected'].includes(status) || !/^\d+$/.test(id)) return res.status(400).json({ error: 'Invalid submission or status.' });
 
   try {
@@ -307,7 +287,7 @@ app.use(express.static(distPath));
 app.use((req, res) => {
   if (!['GET', 'HEAD'].includes(req.method)) return res.status(405).json({ error: 'Method not allowed.' });
   if (req.path.startsWith('/assets/')) return res.status(404).send('Asset not found.');
-  const knownRoute = /^(?:\/(?:v2|screener|ipo|ipos|ebooks|admin|ebook-admin-vault|resources|mutual-funds|client-help|learn|disclosures)?|\/admin\/dashboard|\/(?:company|ipo|ebooks|services|resources)\/[^/]+)\/?$/.test(req.path);
+  const knownRoute = /^(?:\/(?:v2|screener|ipo|ipos|ebooks|admin|ebook-admin-vault)?|\/admin\/dashboard|\/(?:company|ipo|ebooks)\/[^/]+)\/?$/.test(req.path);
   if (fs.existsSync(path.join(distPath, 'index.html'))) {
     res.status(knownRoute ? 200 : 404).sendFile(path.join(distPath, 'index.html'));
   } else {

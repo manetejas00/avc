@@ -12,5 +12,5 @@ export function parseYahooQuote(symbol: string, result: any) {
   const change = reportedChange != null ? Number(reportedChange) : price - previous;
   const baseline = reportedChange != null ? price - change : previous;
   if (!Number.isFinite(change) || !Number.isFinite(baseline) || baseline <= 0) return null;
-  return { exchange: String(meta.fullExchangeName ?? meta.exchangeName ?? ''), provider: 'yahoo_finance', symbol, name: String(meta.shortName ?? symbol), price, change, changePercent: change / baseline * 100, currency: String(meta.currency ?? 'INR'), lastUpdated: new Date(time * 1000).toISOString() };
+  return { symbol, name: String(meta.shortName ?? symbol), price, change, changePercent: change / baseline * 100, currency: String(meta.currency ?? 'INR'), lastUpdated: new Date(time * 1000).toISOString() };
 }

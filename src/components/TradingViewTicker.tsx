@@ -10,33 +10,91 @@ const TradingViewTicker = () => {
     containerRef.current.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
 
     const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+    script.src = import.meta.env.VITE_TRADINGVIEW_WIDGET_TICKER_TAPE;
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = `
       {
         "symbols": [
-          { "proName": "NSE:NIFTY", "title": "NIFTY 50 · NSE" },
-          { "proName": "BSE:SENSEX", "title": "SENSEX · BSE" },
-          { "proName": "SP:SPX", "title": "S&P 500" },
-          { "proName": "NASDAQ:IXIC", "title": "NASDAQ Composite" }
+          {
+            "proName": "BSE:SENSEX",
+            "title": "Sensex"
+          },
+          {
+            "proName": "BSE:ITBEES",
+            "title": "Nifty IT"
+          },
+          {
+            "proName": "BSE:AUTOBEES",
+            "title": "Nifty Auto"
+          },
+          {
+            "proName": "BSE:HDFCBANK",
+            "title": "HDFC Bank"
+          },
+          {
+            "proName": "BSE:TCS",
+            "title": "TCS"
+          },
+          {
+            "proName": "FOREXCOM:SPXUSD",
+            "title": "S&P 500"
+          },
+          {
+            "proName": "FOREXCOM:NSXUSD",
+            "title": "NASDAQ 100"
+          },
+          {
+            "proName": "BSE:RELIANCE",
+            "title": "Reliance"
+          },
+          {
+            "proName": "BSE:INFY",
+            "title": "Infosys"
+          },
+          {
+            "proName": "BSE:ICICIBANK",
+            "title": "ICICI Bank"
+          },
+          {
+            "proName": "BSE:SBIN",
+            "title": "State Bank of India"
+          },
+          {
+            "proName": "NASDAQ:AAPL",
+            "title": "Apple"
+          },
+          {
+            "proName": "NASDAQ:GOOGL",
+            "title": "Google"
+          },
+          {
+            "proName": "NASDAQ:AMZN",
+            "title": "Amazon"
+          },
+          {
+            "proName": "NASDAQ:TSLA",
+            "title": "Tesla"
+          },
+          {
+            "proName": "NASDAQ:MSFT",
+            "title": "Microsoft"
+          }
         ],
         "showSymbolLogo": true,
         "isTransparent": true,
         "displayMode": "adaptive",
         "colorTheme": "dark",
-        "locale": "en"
+        "locale": "in"
       }
     `;
 
     containerRef.current.appendChild(script);
-    const container = containerRef.current;
-    return () => { container.replaceChildren(); };
   }, []);
 
   return (
     <div className="tradingview-widget-container" ref={containerRef}>
-      <div className="tradingview-widget-container__widget"></div><div className="tradingview-widget-copyright"><a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">Market data by TradingView</a></div>
+      <div className="tradingview-widget-container__widget"></div>
     </div>
   );
 };

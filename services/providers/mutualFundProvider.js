@@ -49,19 +49,26 @@ export class MutualFundProvider {
       const navData = Array.isArray(data.data) ? data.data : [];
       const currentNav = navData[0] ? Number.parseFloat(navData[0].nav) : null;
 
-      // Calendar-based periods; NAV-only performance is meaningful here only for Growth.
-      const dateValue = date => { const [day, month, year] = date.split('-').map(Number); return Date.UTC(year, month - 1, day); };
-      const isGrowth = /\bgrowth\b/i.test(data.meta.scheme_name) && !/idcw|dividend/i.test(data.meta.scheme_name);
-      const datedReturn = years => {
-        if (!isGrowth || !currentNav || !navData[0]?.date) return null;
-        const endTime = dateValue(navData[0].date), target = new Date(endTime);
-        target.setUTCFullYear(target.getUTCFullYear() - years);
-        const start = navData.find(point => dateValue(point.date) <= target.getTime() && Number(point.nav) > 0);
-        if (!start || target.getTime() - dateValue(start.date) > 7 * 86400000) return null;
-        const ratio = currentNav / Number(start.nav), actualYears = (endTime - dateValue(start.date)) / (365.25 * 86400000);
-        return (years === 1 ? ratio - 1 : Math.pow(ratio, 1 / actualYears) - 1) * 100;
-      };
-      const return1Y = datedReturn(1), return3Y = datedReturn(3), return5Y = datedReturn(5);
+      // Calculate performance: 1Y, 3Y, 5Y return if historical points exist
+      let return1Y = null;
+      let return3Y = null;
+      let return5Y = null;
+
+      if (currentNav && navData.length > 20) {
+        // Approximate trading days: ~250 trading days/year
+        if (navData.length >= 250) {
+          const nav1Y = Number.parseFloat(navData[249]?.nav);
+          if (nav1Y > 0) return1Y = ((currentNav - nav1Y) / nav1Y) * 100;
+        }
+        if (navData.length >= 750) {
+          const nav3Y = Number.parseFloat(navData[749]?.nav);
+          if (nav3Y > 0) return3Y = (Math.pow(currentNav / nav3Y, 1 / 3) - 1) * 100;
+        }
+        if (navData.length >= 1250) {
+          const nav5Y = Number.parseFloat(navData[1249]?.nav);
+          if (nav5Y > 0) return5Y = (Math.pow(currentNav / nav5Y, 1 / 5) - 1) * 100;
+        }
+      }
 
       return {
         schemeCode: data.meta.scheme_code,
@@ -70,8 +77,6 @@ export class MutualFundProvider {
         schemeType: data.meta.scheme_type,
         schemeCategory: data.meta.scheme_category,
         currentNav,
-        source: 'MFapi.in',
-        returnMethod: '1Y absolute; 3Y/5Y actual-day CAGR; anniversary NAV on/before target within 7 days; Growth only',
         latestNavDate: navData[0]?.date || null,
         performance: {
           return1Y: return1Y !== null ? Number(return1Y.toFixed(2)) : null,

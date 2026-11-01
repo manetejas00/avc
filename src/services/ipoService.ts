@@ -79,6 +79,7 @@ export interface IPOStats {
   total: number;
 }
 
+const INDIAN_API_KEY = (import.meta as any).env?.VITE_INDIAN_API_KEY || '';
 const LOCAL_STORAGE_CACHE_KEY = 'avc_indian_api_ipo_cache_v3';
 const LOCAL_STORAGE_CACHE_TIME_KEY = 'avc_indian_api_ipo_cache_time_v3';
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
@@ -398,13 +399,14 @@ async function fetchFromIndianApiDirect(): Promise<IPO[]> {
   // Candidates for fetching Indian API data (Production PHP Proxy, Dev Proxy, Direct API)
   const candidateUrls = [
     '/api/indianapi.php?endpoint=ipo',
-    '/api/indianapi/ipo'
+    '/api/indianapi/ipo',
+    'https://stock.indianapi.in/ipo'
   ];
 
   for (const url of candidateUrls) {
     try {
       const res = await fetch(url, {
-        headers: { Accept: 'application/json' }
+        headers: { 'x-api-key': INDIAN_API_KEY, Accept: 'application/json' }
       });
       if (res.ok) {
         const contentType = res.headers.get('content-type') || '';

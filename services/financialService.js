@@ -68,6 +68,20 @@ export class FinancialService {
           }
         });
 
+        // Supplement live USD/INR from Twelve Data if available
+        if (twelveDataProvider.isAvailable()) {
+          try {
+            const tdForex = await twelveDataProvider.getQuote('USD/INR');
+            if (tdForex && tdForex.price > 0) {
+              const inrIndex = quotes.findIndex(q => q.symbol === 'INR=X');
+              if (inrIndex >= 0) {
+                quotes[inrIndex].price = tdForex.price;
+                quotes[inrIndex].provider = 'twelve_data';
+              }
+            }
+          } catch {}
+        }
+
         const payload = {
           indices: quotes.filter(q => q.symbol.startsWith('^')),
           forex: quotes.filter(q => q.symbol.includes('INR')),

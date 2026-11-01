@@ -50,7 +50,6 @@ export interface StockTechnicals {
 }
 
 export interface StockFundamentals {
-  timestamp?: string;
   symbol: string;
   name: string;
   description?: string;
