@@ -60,7 +60,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
         <a href={toHomeSection('approach')}>About Us</a>
         <a href={toHomeSection('calculators')}>Calculators</a>
         <a href={toHomeSection('news')}>Insights</a>
-        <a href={toHomeSection('testimonials')}>Testimonials</a>
+        <a href={toHomeSection('testimonials')}>Examples</a>
         <a href={toHomeSection('faq')}>FAQ</a>
         <a className={`v1-nav__screener ${currentPath.startsWith('/screener') ? 'v1-nav__link--active' : ''}`} href="/screener">Screener <Sparkles size={13} /></a>
       </div>
@@ -122,7 +122,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
             <a href={toHomeSection('approach')} onClick={closeMobile}>About AVC Dhanam</a>
             <a href={toHomeSection('calculators')} onClick={closeMobile}>Wealth Calculators</a>
             <a href={toHomeSection('news')} onClick={closeMobile}>Insights & Articles</a>
-            <a href={toHomeSection('testimonials')} onClick={closeMobile}>Testimonials</a>
+            <a href={toHomeSection('testimonials')} onClick={closeMobile}>Examples</a>
             <a href={toHomeSection('faq')} onClick={closeMobile}>FAQ & Guidance</a>
             <a href="/screener" onClick={closeMobile} className="v1-mobile-menu__screener">
               Market Screener <Sparkles size={14} />
@@ -195,7 +195,7 @@ export function V1Footer() {
         <a href="/#approach">About AVC Dhanam</a>
         <a href="/#markets">Live Markets</a>
         <a href="/#calculators">Calculators</a>
-        <a href="/#testimonials">Testimonials</a>
+        <a href="/#testimonials">Examples</a>
         <a href="/ebooks">Stock Market E-Books</a>
         <a href="/#faq">FAQ & Guidance</a>
         <a href="/screener">Market Screener</a>

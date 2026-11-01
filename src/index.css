@@ -5728,3 +5728,18 @@ html.light .fund-explorer .fund-return-reason, html.light .fund-explorer th smal
 .client-review-controls button:focus-visible { outline: 2px solid #dfbd45; outline-offset: 4px; }
 .client-review-position { min-width: 55px; text-align: center; font-variant-numeric: tabular-nums; }
 [data-theme="light"] .client-review-quote, [data-theme="light"] .client-review-controls button { color: #202020; }
+
+/* Fictional examples keep their disclosure within every carousel slide. */
+.illustrative-story-label { font-size: 13px; line-height: 1.6; color: #e2c772; margin-bottom: 16px; font-weight: 600; }
+.illustrative-story-person { display: flex; align-items: center; gap: 14px; margin-top: 24px; }
+.illustrative-avatar { width: 64px; height: 64px; flex: 0 0 64px; }
+.illustrative-story-person .client-review-name { margin-top: 0; }
+.illustrative-person-label { font-size: 12px; line-height: 1.6; color: #c5c5c5; margin-top: 3px; }
+.illustrative-story-content { width: 100%; }
+.client-review-card { min-height: 370px; }
+html.light .client-review-quote, html.light .client-review-controls button { color: #202020; }
+html.light .illustrative-person-label { color: #4b5563; }
+html.light .illustrative-story-label, html.light .client-review-name { color: #795e0a; }
+@media (max-width: 480px) { .client-review-card { min-height: 460px; padding: 24px; } .illustrative-avatar { width: 56px; height: 56px; flex-basis: 56px; } }
+.client-review-position { color: #e5e5e5; }
+html.light .client-review-position { color: #202020; }
