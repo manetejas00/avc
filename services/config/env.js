@@ -20,13 +20,13 @@ const maskKey = (key) => {
 
 export const envConfig = {
   marketaux: {
-    apiKey: process.env.MARKETAUX_API_KEY || process.env.VITE_MARKETAUX_API_KEY || '',
-    isConfigured: Boolean(process.env.MARKETAUX_API_KEY || process.env.VITE_MARKETAUX_API_KEY)
+    apiKey: process.env.MARKETAUX_API_KEY || '',
+    isConfigured: Boolean(process.env.MARKETAUX_API_KEY)
   },
   twelveData: {
     apiKey: process.env.TWELVE_DATA_API_KEY || '',
-    isConfigured: Boolean(process.env.TWELVE_DATA_API_KEY),
-    // Twelve data free tier allows 8 requests/minute and 800/day
+    isConfigured: Boolean(process.env.TWELVE_DATA_API_KEY) && process.env.TWELVE_DATA_PUBLIC_DISPLAY_APPROVED === 'true',
+    // Public display is disabled unless the operator confirms a suitable license.
     rateLimitPerMinute: 8
   },
   finnhub: {

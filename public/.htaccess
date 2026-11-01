@@ -12,6 +12,7 @@ Options -Indexes
 </IfModule>
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteRule ^api/submit-form$ api/submit-form.php [L]
   RewriteRule (^|/)\. - [F,L]
   RewriteRule ^api/.*\.php$ - [L]
   RewriteRule ^api/ - [R=404,L]

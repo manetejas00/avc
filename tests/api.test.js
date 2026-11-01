@@ -88,6 +88,13 @@ test('isolated API regression: persistence, authorization, validation and privat
     const persisted = await (await request(base + '/api/admin/submissions', { headers: { Cookie: cookie } })).json();
     assert.equal(persisted[0].status, 'completed');
     assert.equal((await post('/api/admin/login', { email: 'audit@example.test', password: 'Isolated-test-pass-123!' })).status, 200);
+    const optionalEmail = await post('/api/submit-form', { name: 'Callback audit', phone: '9876543210', interest: 'Loans', preferredTime: 'Weekday morning', message: 'Optional email check' });
+    assert.equal(optionalEmail.status, 200);
+    const callbacks = await (await request(base + '/api/admin/submissions', { headers: { Cookie: cookie } })).json();
+    const callback = callbacks.find(row => row.name === 'Callback audit');
+    assert.equal(callback.email, '');
+    assert.match(callback.message, /Preferred time \(IST\): Weekday morning/);
+    assert.equal((await post('/api/submit-form', { name: 'Callback audit', phone: '9876543210', preferredTime: {} })).status, 400);
     for (let attempt = 0; attempt < 9; attempt++) await post('/api/admin/login', { email: 'audit@example.test', password: 'incorrect' });
     assert.equal((await post('/api/admin/login', { email: 'audit@example.test', password: 'incorrect' })).status, 429);
     const logout = await post('/api/admin/logout', {}, cookie);

@@ -45,6 +45,8 @@ export const createNewsRouter = (db, financialService) => {
         articles = await financialService.getNews({ scope: 'global', limit: 12 });
       }
 
+      if (!Array.isArray(articles) || !articles.length) return res.status(503).json({ error: 'News data unavailable.' });
+
       // Map to contract expected by V1Landing.tsx news section
       const formatted = articles.map(a => ({
         title: a.title,

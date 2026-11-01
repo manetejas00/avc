@@ -34,16 +34,9 @@ const Articles = () => {
   }, [selectedArticle]);
 
   useEffect(() => {
-    const apiToken = import.meta.env.VITE_MARKETAUX_API_KEY;
-    if (!apiToken) {
-      setLoading(false);
-      return;
-    }
-
     const loadNews = async () => {
       try {
-        const params = new URLSearchParams({ api_token: apiToken, language: 'en', limit: '9' });
-        const response = await fetch(`https://api.marketaux.com/v1/news/all?${params}`);
+        const response = await fetch('/api/marketaux.php');
         if (!response.ok) throw new Error('Unable to load news');
         const payload = await response.json() as { data?: Array<Record<string, unknown>> };
         setArticles((payload.data ?? []).map((item) => {

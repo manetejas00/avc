@@ -15,6 +15,8 @@ type Quote = {
   changePercent: number;
   currency?: string;
   lastUpdated?: string;
+  exchange?: string;
+  provider?: string;
 };
 
 type Point = { timestamp: string; value: number };
@@ -141,6 +143,12 @@ function Chart({ points, positive }: { points: Point[]; positive: boolean }) {
   );
 }
 
+function QuoteAttribution({ quote }: { quote: Quote }) {
+  const exchanges: Record<string, string> = { '^NSEI': 'NSE', '^BSESN': 'BSE', '^GSPC': 'S&P / US index', '^IXIC': 'NASDAQ', 'INR=X': 'FX reference', 'GC=F': 'COMEX futures', 'CL=F': 'NYMEX futures' };
+  const time = quote.lastUpdated ? new Date(quote.lastUpdated) : null;
+  return <small className="care-quote-source">Source: {quote.provider === 'yahoo_finance' ? 'Yahoo Finance' : quote.provider === 'twelve_data' ? 'Twelve Data' : quote.provider || 'Provider unavailable'} · {exchanges[quote.symbol] ?? quote.exchange ?? 'Exchange unavailable'}<br />{time && Number.isFinite(time.getTime()) ? time.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' IST' : 'Quote time unavailable'} · May be delayed; exact delay not supplied</small>;
+}
+
 export default function LiveMarketOverview() {
   const sectionRef = useRef<HTMLElement>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
@@ -194,7 +202,7 @@ export default function LiveMarketOverview() {
       if (!dashboard.ok) throw new Error('Dashboard unavailable');
       const payload: Array<Quote & { timestamp?: string }> = await dashboard.json();
       if (!Array.isArray(payload) || !payload.length) throw new Error('No valid quotes available');
-      const liveQuotes = payload.map(quote => ({ ...quote, lastUpdated: quote.lastUpdated ?? quote.timestamp }));
+      const liveQuotes = payload.filter(quote => Number.isFinite(quote.price) && quote.price > 0 && Number.isFinite(quote.change) && Number.isFinite(quote.changePercent)).map(quote => ({ ...quote, lastUpdated: quote.lastUpdated ?? quote.timestamp }));
       setQuotes(liveQuotes);
       await loadChart(selectedSymbol, signal);
 
@@ -204,6 +212,7 @@ export default function LiveMarketOverview() {
           getTopGainers(signal),
           getTopLosers(signal),
         ]);
+        setGainers([]); setLosers([]);
         if (gainersRes.status === 'fulfilled' && Array.isArray(gainersRes.value)) {
           setGainers(gainersRes.value);
         }
@@ -274,7 +283,7 @@ export default function LiveMarketOverview() {
         setUpdatedAt(null);
         setStatus('ready');
       } catch (fallbackError) {
-        if ((fallbackError as Error).name !== 'AbortError') setStatus('unavailable');
+        if ((fallbackError as Error).name !== 'AbortError') { setStatus('unavailable'); setQuotes([]); setPoints([]); }
       }
     }
   };
@@ -291,6 +300,7 @@ export default function LiveMarketOverview() {
 
   const selectMarket = (symbol: string) => {
     setSelectedSymbol(symbol);
+    setPoints([]);
     void loadChart(symbol).catch(() => setStatus('unavailable'));
   };
 
@@ -326,7 +336,7 @@ export default function LiveMarketOverview() {
             ? `Quote as of ${featured?.lastUpdated ? new Date(featured.lastUpdated).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' IST' : updatedAt ? updatedAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'time unavailable'}`
             : status === 'loading'
               ? 'Connecting to market data'
-              : 'Live data temporarily unavailable'}
+              : 'Data unavailable'}
           <button onClick={() => void loadMarket()} aria-label="Refresh market data">
             <RefreshCw size={14} />
           </button>
@@ -357,6 +367,7 @@ export default function LiveMarketOverview() {
                 <span>90D High: <em>{formatValueOnly(Math.max(...points.map(p => p.value)), featured.symbol)}</em></span>
               </div>
             )}
+            {featured && <QuoteAttribution quote={featured} />}
             <Chart points={points} positive={(featured?.change ?? 0) >= 0} />
           </article>
           <div className="live-market__quotes-column">
@@ -379,7 +390,7 @@ export default function LiveMarketOverview() {
                   transition: 'all 0.2s',
                 }}
               >
-                Key Indices
+                Indices & markets
               </button>
               <button
                 type="button"
@@ -442,6 +453,7 @@ export default function LiveMarketOverview() {
                 >
                   <div className="live-market__quote-info">
                     <small>{labels[quote.symbol] ?? quote.name}</small>
+                    <QuoteAttribution quote={quote} />
                     <strong>{formatMarketValue(quote)}</strong>
                   </div>
                   <div className="live-market__quote-meta">
@@ -465,7 +477,7 @@ export default function LiveMarketOverview() {
                     <small style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {stock.symbol} <ExternalLink size={10} style={{ opacity: 0.6 }} />
                     </small>
-                    <strong>₹{stock.price.toFixed(2)}</strong>
+                    <strong>₹{stock.price.toFixed(2)}</strong><QuoteAttribution quote={{ ...stock, lastUpdated: stock.timestamp }} />
                   </div>
                   <div className="live-market__quote-meta">
                     <span className="is-up">
@@ -499,6 +511,8 @@ export default function LiveMarketOverview() {
                 </Link>
               ))}
 
+              {status !== 'loading' && activeTab === 'gainers' && !gainers.length && <p>Gainers data unavailable.</p>}
+              {status !== 'loading' && activeTab === 'losers' && !losers.length && <p>Losers data unavailable.</p>}
               {status === 'loading' &&
                 Array.from({ length: 6 }, (_, index) => <div className="live-market__quote live-market__skeleton" key={index} />)}
             </div>

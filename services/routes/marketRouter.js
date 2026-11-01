@@ -56,6 +56,7 @@ export const createMarketRouter = (db, financialService) => {
   // 6. Interactive Historical Chart
   router.get('/chart', async (req, res) => {
     const symbol = req.query.symbol || '^NSEI';
+    if (!['^NSEI', '^BSESN', '^GSPC', '^IXIC', 'INR=X', 'GC=F', 'CL=F'].includes(symbol)) return res.status(400).json({ error: 'Unsupported benchmark symbol.' });
     try {
       const candles = await financialService.getStockHistory(symbol, '1day', 90);
       const points = candles.map(c => ({ timestamp: c.timestamp, value: c.close }));

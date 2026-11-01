@@ -19,7 +19,7 @@ export class AlphaVantageProvider {
    */
   async getQuote(symbol) {
     if (!this.isAvailable()) return null;
-    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute)) {
+    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute) || !rateLimiter.canExecute(this.name + ':daily', 25, 86400000)) {
       console.warn('[AlphaVantage] Rate limit reached. Skipping request.');
       return null;
     }
@@ -63,7 +63,7 @@ export class AlphaVantageProvider {
    */
   async getDailyHistory(symbol) {
     if (!this.isAvailable()) return [];
-    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute)) {
+    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute) || !rateLimiter.canExecute(this.name + ':daily', 25, 86400000)) {
       return [];
     }
 
@@ -103,7 +103,7 @@ export class AlphaVantageProvider {
    */
   async getRSI(symbol, timePeriod = 14) {
     if (!this.isAvailable()) return null;
-    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute)) {
+    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute) || !rateLimiter.canExecute(this.name + ':daily', 25, 86400000)) {
       return null;
     }
 
@@ -144,7 +144,7 @@ export class AlphaVantageProvider {
    */
   async getCompanyOverview(symbol) {
     if (!this.isAvailable()) return null;
-    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute)) {
+    if (!rateLimiter.canExecute(this.name, envConfig.alphaVantage.rateLimitPerMinute) || !rateLimiter.canExecute(this.name + ':daily', 25, 86400000)) {
       return null;
     }
 
