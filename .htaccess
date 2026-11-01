@@ -3,6 +3,12 @@ Options -Indexes
   SetEnvIf Request_URI "^/(admin|ebook-admin-vault|v2)(/|\?|$)" private_page
   SetEnvIf Host "^test1\." private_page
   Header set X-Robots-Tag "noindex, nofollow" env=private_page
+  # Revalidate the page so browsers discover new versioned bundles.
+  SetEnvIf Request_URI "^/$|\.html$" html_page
+  Header always set Cache-Control "no-cache, max-age=0, must-revalidate" env=html_page
+  <FilesMatch "\.html$">
+    Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </FilesMatch>
 </IfModule>
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -17,6 +23,8 @@ Options -Indexes
   RewriteRule ^$ dist/index.html [L]
   RewriteRule ^api/(.*)$ dist/api/$1 [L]
   RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
+  # Keep photos working for visitors with a previously cached home-page bundle.
+  RewriteRule ^images/(.*)$ dist/images/$1 [L]
   RewriteRule ^(logo_[^/]+\.svg|logo\.jpg|robots\.txt|sitemap\.xml|preview\.html)$ dist/$1 [L]
   RewriteRule ^index\.html$ dist/index.html [L]
   RewriteCond %{REQUEST_FILENAME} !-f
