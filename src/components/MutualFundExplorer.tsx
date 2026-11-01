@@ -1,171 +1,60 @@
-import React, { useState, useRef } from 'react';
-import { Search, TrendingUp, Info } from 'lucide-react';
-import Input from './ui/Input';
-import Card from './ui/Card';
+import { useEffect, useRef, useState } from 'react';
 import { getJson } from '../services/apiClient';
-
-interface MFScheme {
-  schemeCode: number;
-  schemeName: string;
+import { compareNav, NavPoint, optionType, planType, validHistory } from '../utils/fundComparison';
+type Fund = { meta: { scheme_code: number; scheme_name: string }; data: NavPoint[]; amfi?: { status: string; nav?: number; date?: string; source: string } };
+type Scheme = { schemeCode: number; schemeName: string };
+const memory = new Map<string, { expires: number; value: unknown }>();
+async function load<T,>(path: string, signal?: AbortSignal): Promise<T> {
+  const cached = memory.get(path);
+  if (cached && cached.expires > Date.now()) return cached.value as T;
+  const value = await getJson<T>(path, { signal, timeoutMs: 20000 });
+  if (memory.size >= 50) memory.delete(memory.keys().next().value!);
+  memory.set(path, { expires: Date.now()+300000, value });
+  return value;
 }
-
-interface MFDetail {
-  meta: {
-    fund_house: string;
-    scheme_type: string;
-    scheme_category: string;
-    scheme_code: number;
-    scheme_name: string;
-  };
-  data: {
-    date: string;
-    nav: string;
-  }[];
-}
-
-const MutualFundExplorer = () => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<MFScheme[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedFund, setSelectedFund] = useState<MFDetail | null>(null);
-  const [loadingFund, setLoadingFund] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setQuery(val);
-    
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    
-    if (val.length < 3) {
-      setResults([]);
-      return;
-    }
-
-    searchTimeout.current = setTimeout(async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getJson<MFScheme[]>(`/api/market/mutual-funds/search?q=${encodeURIComponent(val)}`);
-        setResults(data);
-      } catch {
-        setResults([]);
-        setError('Mutual fund search is temporarily unavailable.');
-      } finally {
-        setLoading(false);
-      }
-    }, 500);
-  };
-
-  const fetchFundDetail = async (code: number) => {
-    setLoadingFund(true);
-    setSelectedFund(null);
-    setError(null);
+const displayDate = (time: number) => new Date(time).toLocaleDateString('en-IN', { timeZone: 'UTC', day: '2-digit', month: 'short', year: 'numeric' });
+export default function MutualFundExplorer() {
+  const [query,setQuery] = useState(''), [results,setResults] = useState<Scheme[]>([]), [funds,setFunds] = useState<Fund[]>([]);
+  const [error,setError] = useState(''), [busy,setBusy] = useState(false), [searching,setSearching] = useState(false);
+  const detailRequest = useRef<AbortController | null>(null);
+  useEffect(()=>()=>detailRequest.current?.abort(),[]);
+  useEffect(()=>{
+    const controller = new AbortController();
+    setResults([]); setError('');
+    if(query.trim().length<3) { setSearching(false); return; }
+    setSearching(true);
+    const timeout = window.setTimeout(()=>{
+      void load<Scheme[]>(`/api/mutual-funds.php?q=${encodeURIComponent(query.trim())}`,controller.signal).then(data=>{
+        if(!controller.signal.aborted) { if(!Array.isArray(data)) throw new Error(); setResults(data); if(!data.length) setError('No schemes found. Try another name.'); }
+      }).catch(()=>{if(!controller.signal.aborted)setError('Data unavailable. Fund search could not be loaded.');}).finally(()=>{if(!controller.signal.aborted)setSearching(false);});
+    },500);
+    return ()=>{ clearTimeout(timeout); controller.abort(); };
+  },[query]);
+  async function select(code: number) {
+    if(busy || funds.length>=3 || funds.some(f=>f.meta.scheme_code===code)) return;
+    setBusy(true);setError('');
+    const controller = new AbortController(); detailRequest.current=controller;
     try {
-      const data = await getJson<MFDetail>(`/api/market/mutual-funds/${code}`);
-      setSelectedFund(data);
-    } catch {
-      setError('Fund details are temporarily unavailable.');
-    } finally {
-      setLoadingFund(false);
-    }
-  };
-
-  return (
-    <section id="mutual-funds" className="py-section-mobile md:py-section bg-background">
-      <div className="container-custom">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">Mutual Fund Explorer</h2>
-          <p className="text-text-muted max-w-2xl mx-auto">Discover and analyze Indian mutual funds with real-time NAV tracking.</p>
-        </div>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="relative mb-8">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="text-text-muted" size={20} />
-            </div>
-            <Input
-              type="text"
-              value={query}
-              onChange={handleSearch}
-              placeholder="Search for mutual funds (e.g. Axis Bluechip, HDFC...)"
-              className="rounded-full py-4 pl-12 pr-12"
-            />
-            {loading && (
-              <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                <div className="w-5 h-5 border-2 border-gold-primary border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-          </div>
-
-          {error && <p className="mb-6 text-center text-sm text-text-muted" role="status">{error}</p>}
-
-          {results.length > 0 && !selectedFund && (
-            <div className="card-premium mb-8 overflow-hidden">
-              <ul className="max-h-96 overflow-y-auto custom-scrollbar">
-                {results.map(fund => (
-                  <li 
-                    key={fund.schemeCode}
-                    onClick={() => fetchFundDetail(fund.schemeCode)}
-                    className="border-b border-white/5 last:border-0 p-4 hover:bg-surface-elevated cursor-pointer transition-colors flex justify-between items-center"
-                  >
-                    <span className="font-medium">{fund.schemeName}</span>
-                    <TrendingUp size={18} className="text-gold-primary opacity-50" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {loadingFund && (
-            <div className="flex justify-center py-12">
-              <div className="w-8 h-8 border-4 border-gold-primary border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
-
-          {selectedFund && (
-            <Card className="relative p-6 md:p-8">
-              <button 
-                onClick={() => setSelectedFund(null)}
-                className="absolute top-4 right-4 text-text-muted hover:text-text text-sm underline"
-              >
-                Close
-              </button>
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2 pr-12">{selectedFund.meta.scheme_name}</h3>
-                <div className="flex flex-wrap gap-2 text-sm">
-                  <span className="px-3 py-1 bg-surface-elevated rounded-full text-text-muted">{selectedFund.meta.fund_house}</span>
-                  <span className="px-3 py-1 bg-surface-elevated rounded-full text-text-muted">{selectedFund.meta.scheme_category}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-background rounded-xl p-6 border border-white/5">
-                  <div className="text-text-muted text-sm mb-1">Current NAV</div>
-                  <div className="text-4xl font-bold text-gold-primary flex items-baseline">
-                    <span className="text-lg mr-1 text-gold-primary">₹</span>
-                    {selectedFund.data[0]?.nav || 'N/A'}
-                  </div>
-                  <div className="text-xs text-text-muted mt-2 flex items-center">
-                    <Info size={12} className="mr-1" />
-                    As of {selectedFund.data[0]?.date}
-                  </div>
-                </div>
-                
-                <div className="bg-background rounded-xl p-6 border border-white/5 flex flex-col justify-center">
-                  <p className="text-sm text-text-muted">
-                    This data is sourced directly from AMFI (Association of Mutual Funds in India) via reliable open APIs.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default MutualFundExplorer;
+      const value = await load<Fund>(`/api/mutual-funds.php?code=${code}`,controller.signal);
+      if(!value.meta?.scheme_name || !Array.isArray(value.data)) throw new Error();
+      const data = validHistory(value.data); if(!data.length)throw new Error();
+      setFunds(previous=>previous.length<3 ? [...previous,{...value,data}] : previous);setResults([]);setQuery('');
+    } catch {if(!controller.signal.aborted)setError('Data unavailable. NAV history could not be loaded.');}
+    finally {if(!controller.signal.aborted)setBusy(false);}
+  }
+  const returnsAllowed = funds.every(f=>optionType(f.meta.scheme_name)==='Growth');
+  return <details className="service-learning"><summary>Explore and compare mutual funds</summary><div className="fund-explorer">
+    <p>Source: <a href="https://www.mfapi.in/docs/" target="_blank" rel="noreferrer">MFapi.in</a>. NAV is for a valuation date, not an intraday price. Compare up to three schemes. Data is cached for up to one hour on the server.</p>
+    <label htmlFor="fund-search">Search scheme name (at least 3 characters)</label><input id="fund-search" type="search" value={query} maxLength={80} onChange={e=>setQuery(e.target.value)} disabled={funds.length>=3 || busy} />
+    {(busy||searching)&&<p role="status">Loading fund data…</p>}{error&&<p role="status">{error}</p>}
+    {results.length>0&&<ul className="fund-search-results">{results.map(f=><li key={f.schemeCode}><button type="button" onClick={()=>void select(f.schemeCode)} disabled={busy||funds.some(x=>x.meta.scheme_code===f.schemeCode)}>{f.schemeName}</button></li>)}</ul>}
+    {funds.map(f=>{
+      const latest=f.data[0], check=f.amfi;
+      const sameDate=check?.date && new Date(check.date+' UTC').getTime()===new Date(latest.date.split('-').reverse().join('-')+'T00:00:00Z').getTime();
+      const checked=check?.status==='available' && sameDate && Math.abs(Number(latest.nav)-Number(check.nav))<0.0001;
+      return <article key={f.meta.scheme_code} className="fund-card"><h4>{f.meta.scheme_name}</h4><p>{planType(f.meta.scheme_name)} plan · {optionType(f.meta.scheme_name)} option · Code {f.meta.scheme_code}</p><p><strong>NAV ₹{Number(latest.nav).toLocaleString('en-IN',{maximumFractionDigits:5})}</strong> · {latest.date}</p><p>AMFI cross-check: {checked?'Matched NAV and date':sameDate?'NAV mismatch — verify before using':check?.status==='available'?'Different valuation date — not verified':'Data unavailable — not verified'}{check?.status==='available'&&<> (AMFI ₹{check.nav}, {check.date})</>}. <a href="https://portal.amfiindia.com/spages/NAVAll.txt" target="_blank" rel="noreferrer">AMFI source</a></p><button type="button" onClick={()=>setFunds(current=>current.filter(x=>x.meta.scheme_code!==f.meta.scheme_code))}>Remove {f.meta.scheme_code}</button><details><summary>Recent NAV history</summary><table><thead><tr><th>Date</th><th>NAV (₹)</th></tr></thead><tbody>{f.data.slice(0,10).map(p=><tr key={p.date}><td>{p.date}</td><td>{p.nav}</td></tr>)}</tbody></table></details></article>;
+    })}
+    {funds.length>0&&<><h4>Returns over common dates</h4><p>1 year: absolute NAV change. 3 and 5 years: annualised NAV growth using actual elapsed days. No ranking or recommendation. Growth options only; IDCW payouts require a total-return calculation.</p><div className="fund-table-wrap"><table><thead><tr><th>Period</th>{funds.map(f=><th key={f.meta.scheme_code}>{f.meta.scheme_name}</th>)}</tr></thead><tbody>{[1,3,5].map(years=>{const comparison=returnsAllowed?compareNav(funds.map(f=>f.data),years):null;return <tr key={years}><th>{years}Y {years===1?'absolute':'annualised'}{comparison&&<small>{displayDate(comparison.start)} to {displayDate(comparison.end)}</small>}</th>{funds.map((f,index)=><td key={f.meta.scheme_code}>{comparison?comparison.values[index].toFixed(2)+'%':'Data unavailable'}</td>)}</tr>;})}</tbody></table></div></>}
+    <p>Past returns do not predict future returns. NAV changes exclude investor taxes, exit loads and transaction charges. Direct and Regular plans have different expenses. Read the scheme documents and riskometer before investing.</p>
+  </div></details>;
+}

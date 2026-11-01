@@ -80,7 +80,7 @@ export default function IpoPage() {
     } catch (err: any) {
       if (!signal?.aborted) {
         console.error('Failed to load IPOs:', err);
-        setError('Unable to fetch live IPO data right now. Please verify your connection or click retry.');
+        setError('Data unavailable. No dated IPO list verified against official exchange notices and offer documents is currently published. No subscription figures are shown.');
       }
     } finally {
       if (!signal?.aborted) {
@@ -172,7 +172,7 @@ export default function IpoPage() {
           
           <div className="relative z-10 max-w-3xl">
             <div className="ipo-hero__badge inline-flex items-center gap-2 rounded-full border border-gold-primary/30 bg-gold-primary/10 px-3.5 py-1 text-xs font-semibold text-gold-secondary mb-4">
-              <Sparkles size={14} /> Live Indian IPO Dashboard
+              <Sparkles size={14} /> Indian IPO Information
             </div>
             
             <h1 className="ipo-hero__title text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl leading-tight">
@@ -180,7 +180,7 @@ export default function IpoPage() {
             </h1>
             
             <p className="ipo-hero__subtitle mt-3 text-sm text-text-secondary sm:text-base leading-relaxed">
-              Real-time tracking for Indian Mainboard & SME Initial Public Offerings. Inspect upcoming bidding dates, price bands, minimum investments, live subscription figures, and listing performance.
+              IPO information is shown only after checking official exchange notices and offer documents. No verified list is available at present. Allotment and listing gains are not guaranteed.
             </p>
           </div>
 
@@ -197,7 +197,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.open : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-emerald-400 font-medium">Currently Available</span>
+              <span className="mt-1 text-[11px] text-emerald-400 font-medium">Verification unavailable</span>
             </button>
 
             <button
@@ -211,7 +211,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.upcoming : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-amber-400 font-medium">Expected Soon</span>
+              <span className="mt-1 text-[11px] text-amber-400 font-medium">Verification unavailable</span>
             </button>
 
             <button
@@ -225,7 +225,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.closed : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-blue-400 font-medium">Allotment Awaited</span>
+              <span className="mt-1 text-[11px] text-blue-400 font-medium">Verification unavailable</span>
             </button>
 
             <button
@@ -360,7 +360,7 @@ export default function IpoPage() {
             <span>
               Showing {ipos.length} {activeTab === 'listed_7days' ? 'IPOs listed in the last 7 calendar days' : 'IPOs'}
             </span>
-            <span>Refreshed: {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>{error ? 'Official verification: unavailable' : `Refreshed: ${lastRefreshed.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST`}</span>
           </div>
         </section>
 
@@ -369,7 +369,7 @@ export default function IpoPage() {
           <div className="mb-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-5 text-red-200 sm:flex-row shadow-lg">
             <div className="flex items-center gap-3">
               <XCircle size={22} className="shrink-0 text-red-400" />
-              <p className="text-xs sm:text-sm font-medium">{error}</p>
+              <div><p className="text-xs sm:text-sm font-medium">{error}</p><a href="https://www.nseindia.com/market-data/all-upcoming-issues-ipo" target="_blank" rel="noreferrer" className="text-gold-primary underline inline-block mt-3 min-h-[44px]">Check official NSE notices</a></div>
             </div>
             <button
               onClick={() => loadData()}

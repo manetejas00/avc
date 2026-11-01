@@ -1,7 +1,9 @@
+import type React from 'react';
 import { forwardRef, useEffect, useState } from 'react';
-import { ArrowUpRight, Award, BookOpen, Clock, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
+import { ArrowUpRight, Award, BookOpen, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
 import RegulatoryDisclaimer from './RegulatoryDisclaimer';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 
 type NavProps = { home?: boolean };
@@ -12,6 +14,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useBodyScrollLock(isMobileMenuOpen);
+  useDialogFocus(isMobileMenuOpen, '.v1-mobile-menu__panel');
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -84,9 +87,9 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
           type="button" 
           onClick={() => { closeMobile(); setIsContactOpen(true); }} 
           className="v1-action v1-nav__cta min-h-[44px] active:scale-[0.98]"
-          aria-label="Start your financial journey with a consultant"
+          aria-label="Call or WhatsApp the team"
         >
-          <span className="v1-nav__cta-text">Start Journey</span>
+          <span className="v1-nav__cta-text">Contact Us</span>
           <span className="v1-nav__cta-icon"><ArrowUpRight size={17} /></span>
         </button>
 
@@ -146,11 +149,12 @@ export function V1Footer() {
   const year = new Date().getFullYear();
   const [legalItem, setLegalItem] = useState<'privacy' | 'terms' | 'disclosures' | null>(null);
   useBodyScrollLock(Boolean(legalItem));
+  useDialogFocus(Boolean(legalItem), '.v1-legal-modal');
 
   const legalContent = {
-    privacy: { title: 'Privacy Policy', text: 'AVC Dhanam Solutions Pvt. Ltd. respects your privacy. We collect personal and financial information solely to provide financial consultancy, loan facilitation, investment distribution, and regulatory compliance services. We do not sell or rent client data to third parties. All client data is handled securely in accordance with applicable Indian data protection guidelines.' },
+    privacy: { title: 'Privacy information', text: 'This website does not collect callback requests. Call and WhatsApp links open your phone or an external messaging service. Embedded market widgets and external links use their providers’ services. Do not send passwords, bank details or identity documents in an initial message. Contact support@avcdhanam.com to ask about the team’s data-handling policy before sharing documents.' },
     terms: { title: 'Terms of Service', text: 'All information provided on this website by AVC Dhanam Solutions Pvt. Ltd. is for educational and consultancy guidance purposes. Website content does not constitute binding investment advice or guaranteed financial returns. Financial products including mutual funds, stocks, and insurance are subject to market and underwriting risks. Clients are advised to read all scheme documents and loan terms carefully before entering into any transaction.' },
-    disclosures: { title: 'Regulatory & Operational Disclosures', text: 'AVC Dhanam Solutions Pvt. Ltd. operates as a financial consultancy firm. We are an AMFI-registered Mutual Fund Distributor (ARN-184920) and have operated an authorized sub-broker franchise associated with Motilal Oswal Financial Services for approximately 8 years. Financing solutions are facilitated through relationships across 210+ partner Banks and NBFCs based on client eligibility. Corporate tax and accounting services are provided in coordination with a network of 10+ qualified Chartered Accountants. Merchant banking services are facilitated via experienced partner channels. AVC Dhanam Solutions Pvt. Ltd. does not issue fixed or guaranteed return schemes.' }
+    disclosures: { title: 'Service disclosures', text: 'Before proceeding, ask the team for the current registration and role of the provider, product eligibility, charges and written terms. Registration and partner claims are not published here pending confirmation. AVC Dhanam does not promise investment returns, loan approval or insurance acceptance. Website information is educational.' }
   };
 
   useEffect(() => {
@@ -177,12 +181,12 @@ export function V1Footer() {
         <a href="/" className="v1-logo" aria-label="AVC Dhanam Solutions Home">
           <img src="/logo_gold_transparent.svg" alt="AVC Dhanam Solutions Pvt. Ltd." width="160" height="48" loading="lazy" />
         </a>
-        <p>AVC Dhanam Solutions Pvt. Ltd. is a trusted financial consultancy in Virar West, Mumbai Metropolitan Region. Operating for 8+ years under Directors Chandresh Pandey and Ajay Pandey, we provide investments, loans, insurance, tax services, and business funding under one roof.</p>
+        <p>AVC Dhanam Solutions is based in Virar West. Contact the team about investments, loans, insurance, tax support and business funding. Confirm the provider, scope and charges before proceeding.</p>
         <ul>
-          <li><MapPin size={15} className="shrink-0" /><span className="break-words">210, Second Floor, Global Plaza, Global City, Virar West, Maharashtra – 401305</span></li>
+          <li><MapPin size={15} className="shrink-0" /><span className="break-words">210, Global Plaza, Global City, Virar West</span></li>
           <li><Phone size={15} className="shrink-0" /><a href="tel:+917030247878">+91 7030247878</a></li>
           <li><Mail size={15} className="shrink-0" /><a href="mailto:support@avcdhanam.com" className="break-all">support@avcdhanam.com</a></li>
-          <li><Clock size={15} className="shrink-0" /><span>Mon – Sat · 9:30 AM – 6:30 PM (IST)</span></li>
+          <li><Phone size={15} className="shrink-0" /><a href="https://wa.me/917030247878" target="_blank" rel="noreferrer">WhatsApp the team</a></li>
         </ul>
       </div>
       <div className="v1-footer__link-group">
@@ -202,26 +206,26 @@ export function V1Footer() {
         <a href="/#system">Business & Home Loans</a>
         <a href="/#system">Life & Health Insurance</a>
         <a href="/#system">Tax Planning & CA Support</a>
-        <a href="/#system">Merchant Banking & Funding</a>
+        <a href="/#system">Business Funding</a>
         <a href="/#system">Retirement & Literacy</a>
       </div>
       <div className="v1-footer__registration">
-        <h4>Credentials & Trust</h4>
+        <h4>Before you proceed</h4>
         <div className="v1-footer__credential-list">
           <p>
             <ShieldCheck size={17} className="shrink-0" />
             <span>
-              <b>Motilal Oswal Franchise Partner</b>
-              <small>8+ Years Sub-Broker Association</small>
-              <strong>Franchise Network</strong>
+              <b>Check the provider</b>
+              <small>Ask for current registration details</small>
+              <strong>Verify independently</strong>
             </span>
           </p>
           <p>
             <Award size={17} className="shrink-0" />
             <span>
-              <b>AMFI Mutual Fund Distributor</b>
-              <small>AMFI Registration Number</small>
-              <strong>ARN-184920</strong>
+              <b>Understand the terms</b>
+              <small>Ask about risks, fees and exit conditions</small>
+              <strong>Read the documents</strong>
             </span>
           </p>
         </div>

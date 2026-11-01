@@ -8,76 +8,56 @@ gsap.registerPlugin(ScrollTrigger);
 
 const faqs = [
   {
-    question: "What is AVC Dhanam Solutions Pvt. Ltd.?",
-    answer: "AVC Dhanam Solutions Pvt. Ltd. is a premier financial consultancy firm based in Virar West, Mumbai Metropolitan Region. Operating for over 8 years under Directors Chandresh Pandey and Ajay Pandey, AVC Dhanam provides a complete financial journey under one roof, offering investments, mutual funds, loans, insurance, tax planning, and corporate business funding."
+    "question": "What is a SIP?",
+    "answer": "A Systematic Investment Plan lets you invest a chosen amount in a mutual fund at regular intervals. It is a payment method, not a separate investment or a promise of returns. You can lose money when markets fall."
   },
   {
-    question: "What services does AVC Dhanam Solutions provide?",
-    answer: "AVC Dhanam Solutions offers a complete financial suite including Mutual Funds & SIP Planning, Equity Market Guidance, IPO Advisory, Personal Loans, Business Loans, Home Loans, Loan Against Property (LAP), Working Capital, MSME/SME Funding, Startup & Construction Finance, Life & Health Insurance, Corporate Tax Planning & Business Accounting (via a network of 10+ CAs), Merchant Banking Advisory, and Retirement Planning."
+    "question": "What does NAV mean?",
+    "answer": "Net Asset Value is a mutual fund’s per-unit value for a stated valuation date. It is not an intraday share price. A lower NAV does not mean a fund is cheaper or better. Check the plan, option and NAV date."
   },
   {
-    question: "Where is AVC Dhanam Solutions located in Virar?",
-    answer: "AVC Dhanam Solutions Pvt. Ltd. is located at 210, Second Floor, Global Plaza, Global City, Virar West, Maharashtra – 401305. We serve clients across Virar, Vasai, Palghar District, and the broader Mumbai Metropolitan Region."
+    "question": "How do I get started?",
+    "answer": "Call +91 7030247878 or WhatsApp the same number. Tell us the service you need. Before proceeding, confirm the provider’s current registration, charges and written terms. The office is at 210, Global Plaza, Global City, Virar West."
   },
   {
-    question: "Who are the directors of AVC Dhanam Solutions Pvt. Ltd.?",
-    answer: "The company is led by Directors Chandresh Pandey and Ajay Pandey, who have clearly divided management responsibilities across business consultancy, investment planning, banking partnerships, and corporate advisory services."
+    "question": "Which documents might a lender ask for?",
+    "answer": "Salaried applicants: identity and address proof, salary slips, bank statements and Form 16. Self-employed applicants: KYC, income-tax returns, bank statements and proof of work. Businesses: registration, financial statements, GST returns where applicable, bank statements and a business profile. Requirements and periods differ by lender. Do not upload documents here."
   },
   {
-    question: "Does AVC Dhanam Solutions provide mutual fund services and SIP guidance?",
-    answer: "Yes. AVC Dhanam Solutions is an AMFI-registered Mutual Fund Distributor (ARN-184920) and Motilal Oswal franchise partner with 8+ years of experience and ₹15+ Crore AUM. We assist clients in designing goal-based SIP and lumpsum mutual fund portfolios matched to their risk profile and investment horizon."
+    "question": "What is the difference between Direct and Regular mutual fund plans?",
+    "answer": "They are different plans of a scheme with different expenses and NAVs. Regular plans include distribution costs. Check the exact plan name, fees and scheme documents. Growth and IDCW are different options; IDCW payments are not assured and reduce NAV when paid."
   },
   {
-    question: "Does AVC Dhanam Solutions provide loan consultancy?",
-    answer: "Yes. AVC Dhanam Solutions operates as a financial consultancy with strong relationships across 210+ Banks, NBFCs, and financial partners. We evaluate client eligibility and connect individuals and businesses with suitable Personal Loans, Business Loans, Home Loans, LAP, and Working Capital solutions."
+    "question": "Can stock, IPO or mutual fund returns be guaranteed?",
+    "answer": "No. Prices and NAVs can fall. IPO allotment and listing gains are not assured. Read the offer or scheme documents and consider your ability to bear losses. Past returns do not predict future results."
   },
   {
-    question: "Does AVC Dhanam Solutions help startups raise business funding?",
-    answer: "Yes. We offer startup funding consultation, debt structuring, expansion capital guidance, and corporate fundraising advisory by connecting growth-stage businesses with suitable financial institutions and merchant banking channels."
+    "question": "What should I ask about PMS and AIF?",
+    "answer": "Portfolio Management Services and Alternative Investment Funds have provider-specific eligibility, minimum commitments, fees and risks. They may have limited liquidity. Ask for current eligibility rules and the registered provider’s documents. Availability through AVC must be confirmed with the team."
   },
   {
-    question: "Does AVC Dhanam Solutions provide construction funding consultancy?",
-    answer: "Yes. We consult real estate developers, builders, and infrastructure enterprises on construction finance, project funding, structured property financing, and developer loan requirements."
+    "question": "What are pre-IPO and unlisted shares?",
+    "answer": "These are shares not currently traded on a recognised stock exchange. Valuation can be uncertain and selling may be difficult. A future IPO, listing date or exit is not guaranteed. Confirm ownership, transfer restrictions, eligibility and provider details before considering them."
   },
   {
-    question: "Does AVC Dhanam Solutions provide retirement planning services?",
-    answer: "Yes. We structure disciplined long-term retirement strategies utilizing SIPs, asset allocation, inflation-adjusted wealth compounding, and capital protection plans so clients can build a reliable retirement corpus."
+    "question": "Are loan or insurance approvals guaranteed?",
+    "answer": "No. Lenders assess income, credit history, documents and security. Insurers apply underwriting and policy conditions. Compare total costs, exclusions and obligations before signing."
   },
   {
-    question: "Does AVC Dhanam Solutions provide insurance services?",
-    answer: "Yes. We assist clients with Life Insurance, Health Insurance, Family Financial Security Plans, and Corporate Business Protection as a core protective component of a complete financial plan."
+    "question": "What do the calculators assume?",
+    "answer": "The SIP calculator uses payments at the start of each month and an annual assumed return divided by 12. Loan EMI uses a constant rate on a reducing balance. Estimates exclude fees and taxes. Retirement uses a simple 25-times annual expense rule, not a full retirement plan."
   },
   {
-    question: "Does AVC Dhanam Solutions provide IPO advisory services?",
-    answer: "Yes. We offer IPO application guidance and market intelligence to help investors evaluate upcoming public offerings across Mainboard and SME equity platforms through registered partner channels."
+    "question": "How is market information sourced?",
+    "answer": "TradingView provides embedded market widgets. Other market figures show their source and quote time. Exchange delays vary. A failed feed is shown as Data unavailable. Use official exchange and product documents to verify information."
   },
   {
-    question: "Does AVC Dhanam Solutions help with tax planning and business accounting?",
-    answer: "Yes. Through our professional network and team of 10+ Chartered Accountants, we support clients with tax planning, tax-saving investment strategies, business accounting, audit preparation, financial documentation, and corporate compliance."
+    "question": "Who leads AVC Dhanam Solutions?",
+    "answer": "Chandresh Pandey and Ajay Pandey are the directors shown on this website. Ask the team for current professional registrations, service roles and provider details before proceeding."
   },
   {
-    question: "How can I contact AVC Dhanam Solutions in Virar West?",
-    answer: "You can reach AVC Dhanam Solutions Pvt. Ltd. by phone at +91 7030247878, by email at support@avcdhanam.com, or visit our office at 210, Second Floor, Global Plaza, Global City, Virar West, Maharashtra – 401305."
-  },
-  {
-    question: "Where can I find a reliable financial consultant in Virar and Mumbai?",
-    answer: "AVC Dhanam Solutions Pvt. Ltd. is located in Global City, Virar West, providing one-stop financial consultancy across Palghar District, Vasai-Virar, and the Mumbai Metropolitan Region with 8+ years of proven market experience and 500+ satisfied clients."
-  },
-  {
-    question: "How do I choose a SIP or mutual fund based on my financial goals?",
-    answer: "Choosing the right SIP depends on your financial milestone, target horizon, risk tolerance, and tax status. Our consultants analyze your cash flows and recommend suitable equity, hybrid, or debt fund allocations without promising fixed or guaranteed returns."
-  },
-  {
-    question: "What documents are generally required for business funding and loan applications?",
-    answer: "Typical business loan documentation includes company registration certificates, GST returns, 2–3 years audited financial statements, bank account statements for the last 12 months, director/promoter KYC documents, and business profile/project reports."
-  },
-  {
-    question: "How does retirement planning work with AVC Dhanam Solutions?",
-    answer: "Retirement planning begins by estimating your future monthly living expenses adjusted for inflation, defining your target retirement age, calculating the required corpus, and building a disciplined monthly SIP and asset allocation strategy."
-  },
-  {
-    question: "What is AVC Dhanam Solutions' financial literacy initiative?",
-    answer: "AVC Dhanam Solutions Pvt. Ltd. collaborates with Avinya Care Foundation (www.avinyacarefoundation.org) to conduct community financial literacy and education drives focused on basic saving habits, investment risks, responsible borrowing, and insurance awareness."
+    "question": "How can I arrange a conversation?",
+    "answer": "Call or WhatsApp +91 7030247878 to discuss a suitable time. The website does not collect callback requests or confirm appointments."
   }
 ];
 
@@ -188,7 +168,7 @@ const FAQ = () => {
             <HelpCircle className="text-[#D4AF37]" size={32} /> Frequently Asked Questions
           </h2>
           <p className="faq-copy text-[#a1a1aa] text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Clear, compliant answers to your queries about wealth management, loans, insurance, business funding, tax planning, and our services in Virar & Mumbai.
+            Simple answers about investments, borrowing, insurance and getting started. This information is educational.
           </p>
         </div>
 

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const TradingViewTicker = () => {
+  const [failed, setFailed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -10,7 +11,8 @@ const TradingViewTicker = () => {
     containerRef.current.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
 
     const script = document.createElement('script');
-    script.src = import.meta.env.VITE_TRADINGVIEW_WIDGET_TICKER_TAPE;
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+    script.onerror = () => setFailed(true);
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = `
@@ -18,67 +20,63 @@ const TradingViewTicker = () => {
         "symbols": [
           {
             "proName": "BSE:SENSEX",
-            "title": "Sensex"
+            "title": "Sensex · BSE"
           },
           {
             "proName": "BSE:ITBEES",
-            "title": "Nifty IT"
-          },
-          {
-            "proName": "BSE:AUTOBEES",
-            "title": "Nifty Auto"
+            "title": "ITBEES ETF · BSE"
           },
           {
             "proName": "BSE:HDFCBANK",
-            "title": "HDFC Bank"
+            "title": "HDFC Bank · BSE"
           },
           {
             "proName": "BSE:TCS",
-            "title": "TCS"
+            "title": "TCS · BSE"
           },
           {
             "proName": "FOREXCOM:SPXUSD",
-            "title": "S&P 500"
+            "title": "S&P 500 CFD · FOREXCOM"
           },
           {
             "proName": "FOREXCOM:NSXUSD",
-            "title": "NASDAQ 100"
+            "title": "NASDAQ 100 CFD · FOREXCOM"
           },
           {
             "proName": "BSE:RELIANCE",
-            "title": "Reliance"
+            "title": "Reliance · BSE"
           },
           {
             "proName": "BSE:INFY",
-            "title": "Infosys"
+            "title": "Infosys · BSE"
           },
           {
             "proName": "BSE:ICICIBANK",
-            "title": "ICICI Bank"
+            "title": "ICICI Bank · BSE"
           },
           {
             "proName": "BSE:SBIN",
-            "title": "State Bank of India"
+            "title": "State Bank of India · BSE"
           },
           {
             "proName": "NASDAQ:AAPL",
-            "title": "Apple"
+            "title": "Apple · NASDAQ"
           },
           {
             "proName": "NASDAQ:GOOGL",
-            "title": "Google"
+            "title": "Google · NASDAQ"
           },
           {
             "proName": "NASDAQ:AMZN",
-            "title": "Amazon"
+            "title": "Amazon · NASDAQ"
           },
           {
             "proName": "NASDAQ:TSLA",
-            "title": "Tesla"
+            "title": "Tesla · NASDAQ"
           },
           {
             "proName": "NASDAQ:MSFT",
-            "title": "Microsoft"
+            "title": "Microsoft · NASDAQ"
           }
         ],
         "showSymbolLogo": true,
@@ -89,13 +87,15 @@ const TradingViewTicker = () => {
       }
     `;
 
-    containerRef.current.appendChild(script);
+    const container = containerRef.current;
+    container.appendChild(script);
+    return () => container.replaceChildren();
   }, []);
 
   return (
-    <div className="tradingview-widget-container" ref={containerRef}>
+    <div>{failed && <p role="status">Data unavailable. TradingView could not load.</p>}<div className="tradingview-widget-container" ref={containerRef}>
       <div className="tradingview-widget-container__widget"></div>
-    </div>
+    </div><p className="market-source-note">Source: TradingView widgets. Instruments and exchanges are labelled above. Quotes may be delayed or end-of-day. Quote date/time and exact delay are unavailable in this ticker; open the instrument link to verify. ETFs and CFDs are not index values.</p></div>
   );
 };
 

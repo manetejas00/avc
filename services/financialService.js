@@ -2,7 +2,6 @@ import YahooFinance from 'yahoo-finance2';
 import { FinancialCache } from './core/cache.js';
 import { twelveDataProvider } from './providers/twelveData.js';
 import { finnhubProvider } from './providers/finnhub.js';
-import { alphaVantageProvider } from './providers/alphaVantage.js';
 import { newsApiProvider } from './providers/newsApiProvider.js';
 import { mutualFundProvider } from './providers/mutualFundProvider.js';
 import { normalizeQuote, normalizeNewsArticle } from './core/normalizer.js';
@@ -67,20 +66,6 @@ export class FinancialService {
             }));
           }
         });
-
-        // Supplement live USD/INR from Twelve Data if available
-        if (twelveDataProvider.isAvailable()) {
-          try {
-            const tdForex = await twelveDataProvider.getQuote('USD/INR');
-            if (tdForex && tdForex.price > 0) {
-              const inrIndex = quotes.findIndex(q => q.symbol === 'INR=X');
-              if (inrIndex >= 0) {
-                quotes[inrIndex].price = tdForex.price;
-                quotes[inrIndex].provider = 'twelve_data';
-              }
-            }
-          } catch {}
-        }
 
         const payload = {
           indices: quotes.filter(q => q.symbol.startsWith('^')),
@@ -185,11 +170,7 @@ export class FinancialService {
       }
 
       // 3. Try Alpha Vantage
-      if (!quote && alphaVantageProvider.isAvailable()) {
-        try {
-          quote = await alphaVantageProvider.getQuote(symbol);
-        } catch {}
-      }
+
 
       // 4. Fallback: Yahoo Finance (supports Indian .NS / .BO tickers)
       if (!quote) {
@@ -246,9 +227,7 @@ export class FinancialService {
       }
 
       // Fallback to Alpha Vantage
-      if (!candles.length && alphaVantageProvider.isAvailable()) {
-        candles = await alphaVantageProvider.getDailyHistory(symbol);
-      }
+
 
       // Fallback to Yahoo Finance chart
       if (!candles.length) {
@@ -296,9 +275,7 @@ export class FinancialService {
       }
 
       // Try Alpha Vantage
-      if (!technicals && alphaVantageProvider.isAvailable()) {
-        technicals = await alphaVantageProvider.getRSI(symbol, 14);
-      }
+
 
       if (!technicals) {
         // Fallback: estimate RSI from historical candles if available
@@ -350,9 +327,7 @@ export class FinancialService {
       }
 
       // Try Alpha Vantage
-      if (!fundamentals && alphaVantageProvider.isAvailable()) {
-        fundamentals = await alphaVantageProvider.getCompanyOverview(symbol);
-      }
+
 
       // Fallback Yahoo Finance
       if (!fundamentals) {

@@ -20,12 +20,12 @@ const maskKey = (key) => {
 
 export const envConfig = {
   marketaux: {
-    apiKey: process.env.MARKETAUX_API_KEY || process.env.VITE_MARKETAUX_API_KEY || '',
-    isConfigured: Boolean(process.env.MARKETAUX_API_KEY || process.env.VITE_MARKETAUX_API_KEY)
+    apiKey: process.env.MARKETAUX_API_KEY || '',
+    isConfigured: Boolean(process.env.MARKETAUX_API_KEY)
   },
   twelveData: {
     apiKey: process.env.TWELVE_DATA_API_KEY || '',
-    isConfigured: Boolean(process.env.TWELVE_DATA_API_KEY),
+    isConfigured: process.env.TWELVE_DATA_COMMERCIAL_LICENSED === 'true' && Boolean(process.env.TWELVE_DATA_API_KEY),
     // Twelve data free tier allows 8 requests/minute and 800/day
     rateLimitPerMinute: 8
   },
@@ -37,7 +37,7 @@ export const envConfig = {
   },
   alphaVantage: {
     apiKey: process.env.ALPHA_VANTAGE_API_KEY || '',
-    isConfigured: Boolean(process.env.ALPHA_VANTAGE_API_KEY),
+    isConfigured: process.env.ALPHA_VANTAGE_ENABLED === 'true' && Boolean(process.env.ALPHA_VANTAGE_API_KEY),
     // Alpha Vantage free tier allows 5 requests/minute and 25/day (or standard free tier)
     rateLimitPerMinute: 5
   },

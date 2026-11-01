@@ -22,7 +22,7 @@ $defaultImages = [
 $articles = [];
 
 // Tier 1: Indian API Live News
-$apiKey = getenv('INDIAN_API_KEY') ?: 'sk-live-LBoaUhnmhsSPCe3J6kof1SQGTGJgWqQoYq87VL3l';
+$apiKey = getenv('INDIAN_API_KEY') ?: '';
 if ($apiKey) {
     $curl = curl_init('https://stock.indianapi.in/news');
     curl_setopt_array($curl, [
@@ -48,7 +48,7 @@ if ($apiKey) {
                         'summary' => trim((string)($item['summary'] ?? $item['title'])),
                         'url' => (string)($item['url'] ?? '#'),
                         'image_url' => (string)($item['image_url'] ?? $defaultImages[$index % count($defaultImages)]),
-                        'pub_date' => (string)($item['pub_date'] ?? date(DATE_ATOM)),
+                        'pub_date' => (string)($item['pub_date'] ?? ''),
                         'source' => (string)($item['source'] ?? 'Market Live / Indian News'),
                         'topics' => !empty($item['topics']) && is_array($item['topics']) ? $item['topics'] : ['Markets']
                     ];
@@ -60,7 +60,7 @@ if ($apiKey) {
 
 // Tier 2: Marketaux Financial News Fallback
 if (count($articles) < 3) {
-    $marketauxKey = getenv('MARKETAUX_API_KEY') ?: 'mheIRmdXEXqamizXLvOE0h3yzvXVYS0MyBZB3Ee6';
+    $marketauxKey = getenv('MARKETAUX_API_KEY') ?: '';
     if ($marketauxKey) {
         $curl = curl_init('https://api.marketaux.com/v1/news/all?language=en&limit=6&search=Indian+stock+market&api_token=' . urlencode($marketauxKey));
         curl_setopt_array($curl, [
@@ -82,7 +82,7 @@ if (count($articles) < 3) {
                             'summary' => trim((string)($item['description'] ?? $item['snippet'] ?? $item['title'])),
                             'url' => (string)($item['url'] ?? '#'),
                             'image_url' => (string)($item['image_url'] ?? $defaultImages[$index % count($defaultImages)]),
-                            'pub_date' => (string)($item['published_at'] ?? date(DATE_ATOM)),
+                            'pub_date' => (string)($item['published_at'] ?? ''),
                             'source' => (string)($item['source'] ?? 'Marketaux Global'),
                             'topics' => ['Equities']
                         ];
@@ -122,7 +122,7 @@ if (count($articles) < 3) {
                     'summary' => $title,
                     'url' => $link ?: '#',
                     'image_url' => $defaultImages[$idx % count($defaultImages)],
-                    'pub_date' => $pubDate ? date(DATE_ATOM, strtotime($pubDate)) : date(DATE_ATOM),
+                    'pub_date' => $pubDate ? date(DATE_ATOM, strtotime($pubDate)) : '',
                     'source' => $source,
                     'topics' => ['Markets']
                 ];
@@ -130,39 +130,6 @@ if (count($articles) < 3) {
             }
         }
     }
-}
-
-// Tier 4: Curated Live Market News Baseline (guarantees the section always looks professional)
-if (count($articles) === 0) {
-    $articles = [
-        [
-            'title' => 'Sensex & Nifty Consolidate Near Crucial Support Levels Amid Global Tech Rally',
-            'summary' => 'Indian benchmark indices continue to demonstrate resilience supported by strong domestic institutional inflows and positive corporate earnings momentum.',
-            'url' => '#',
-            'image_url' => '/assets/news/news-indian-equities.webp',
-            'pub_date' => date(DATE_ATOM),
-            'source' => 'Financial Market Desk',
-            'topics' => ['Equities', 'Nifty 50']
-        ],
-        [
-            'title' => 'RBI Liquidity Strategy & Policy Outlook Keeps Banking Sector Well Capitalised',
-            'summary' => 'Reserve Bank of India maintains proactive liquidity buffers, fostering steady credit expansion across private lenders and commercial banking syndicates.',
-            'url' => '#',
-            'image_url' => '/assets/news/news-rbi-policy.webp',
-            'pub_date' => date(DATE_ATOM),
-            'source' => 'RBI Insights',
-            'topics' => ['Banking', 'Credit']
-        ],
-        [
-            'title' => 'Retail Mutual Fund SIP Inflows Surge to All-Time Highs Across Tier-2 & Tier-3 Cities',
-            'summary' => 'Systematic Investment Plan contributions set historic records as disciplined wealth creation architectures gain traction among retail and HNI investors.',
-            'url' => '#',
-            'image_url' => '/assets/news/news-global-economy.webp',
-            'pub_date' => date(DATE_ATOM),
-            'source' => 'AMFI Trends',
-            'topics' => ['Mutual Funds', 'SIP']
-        ]
-    ];
 }
 
 http_response_code(200);

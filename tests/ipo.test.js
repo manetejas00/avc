@@ -6,7 +6,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
-test('IPO frontend preserves empty results, unknown records and missing provider values', async () => {
+test('IPO frontend withholds unverified data and never invents missing provider values', async () => {
   const directory = await mkdtemp(path.join(tmpdir(), 'avc-ipo-test-'));
   const originalFetch = globalThis.fetch;
   const originalWindow = globalThis.window;
@@ -22,13 +22,10 @@ test('IPO frontend preserves empty results, unknown records and missing provider
     const record = { id: 'fixture', name: 'Isolated fixture' };
     assert.deepEqual(service.enrichIpoDetails(record), record);
     assert.equal(service.enrichIpoDetails({ ...record, documents: { drhpUrl: 'javascript:alert(1)' } }).documents.drhpUrl, undefined);
-    globalThis.fetch = async () => { calls++; return Response.json([]); };
-    assert.deepEqual(await service.fetchIpoList({ tab: 'open' }), []);
-    assert.equal(calls, 1);
-    calls = 0;
-    globalThis.fetch = async () => { calls++; return Response.json({ error: 'IPO not found' }, { status: 404 }); };
-    await assert.rejects(service.fetchIpoDetail('does-not-exist'), error => error.status === 404);
-    assert.equal(calls, 1);
+    globalThis.fetch = async () => { calls++; throw new Error('No unverified feed should be requested'); };
+    await assert.rejects(service.fetchIpoList({ tab: 'open' }), /Data unavailable/);
+    await assert.rejects(service.fetchIpoDetail('does-not-exist'), /Data unavailable/);
+    assert.equal(calls, 0);
     const controller = new AbortController();
     controller.abort();
     globalThis.fetch = async (_url, { signal }) => { assert.equal(signal.aborted, true); throw new DOMException('Aborted', 'AbortError'); };

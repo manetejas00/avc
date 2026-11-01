@@ -10,7 +10,7 @@ export default function RegulatoryDisclaimer({ variant = 'default' }: Disclaimer
       <div className="v1-disclaimer-compact">
         <AlertTriangle size={15} className="v1-disclaimer-compact__icon" />
         <span>
-          <strong>Regulatory Notice:</strong> Mutual Fund investments are subject to market risks. Read all scheme-related documents carefully before investing. Financial calculations & market data are powered by TradingView for educational reference. AMFI-registered Distributor (ARN-184920) & Motilal Oswal Sub-Broker Franchise (8+ Yrs).
+          <strong>Regulatory Notice:</strong> Mutual Fund investments are subject to market risks. Read all scheme-related documents carefully before investing. Calculators provide estimates using stated assumptions. TradingView supplies embedded widgets only. Check provider registration and terms before proceeding.
         </span>
       </div>
     );
@@ -23,7 +23,7 @@ export default function RegulatoryDisclaimer({ variant = 'default' }: Disclaimer
           <ShieldCheck size={16} />
           <span>REGULATORY NOTICE & EDUCATIONAL DISCLAIMER</span>
         </div>
-        <span className="v1-disclaimer-card__arn">AMFI ARN-184920 · MOTILAL OSWAL SUB-BROKER FRANCHISE</span>
+        <span className="v1-disclaimer-card__arn">CHECK PROVIDER REGISTRATION AND PRODUCT DOCUMENTS</span>
       </div>
 
       <div className="v1-disclaimer-card__grid">
@@ -33,7 +33,7 @@ export default function RegulatoryDisclaimer({ variant = 'default' }: Disclaimer
             <strong>Educational & Data Usage</strong>
           </div>
           <p>
-            Stock market data, price charts, financial indicators, and company metrics are supplied by TradingView for research purposes. Information presented here does not constitute stock tips or binding financial advice.
+            Embedded market widgets are supplied by TradingView. Other figures identify their source separately. Data may be delayed or unavailable; confirm prices with the exchange or provider before acting. Information presented here does not constitute stock tips or binding financial advice.
           </p>
         </div>
 
@@ -53,7 +53,7 @@ export default function RegulatoryDisclaimer({ variant = 'default' }: Disclaimer
             <strong>No Guaranteed Returns</strong>
           </div>
           <p>
-            AVC Dhanam Solutions Pvt. Ltd. does not offer fixed or guaranteed return schemes. Financing facilities are subject to lender approvals across our 210+ Bank & NBFC partner network based on borrower eligibility.
+            AVC Dhanam Solutions Pvt. Ltd. does not offer fixed or guaranteed return schemes. Loans are subject to lender approval and borrower eligibility. Insurance is subject to underwriting and policy conditions.
           </p>
         </div>
       </div>

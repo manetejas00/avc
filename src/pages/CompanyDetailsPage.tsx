@@ -76,7 +76,7 @@ function DividendCard({ title, event, upcoming }: { title: string; event: Divide
     <p>{title}</p>
     {hasData ? <div className="company-premium__dividend-data">
       <div><small>Ex-dividend date</small><strong>{formatDate(event.exDate)}</strong></div><div><small>Payment date</small><strong>{formatDate(event.paymentDate)}</strong></div><div><small>Amount per share</small><strong>{event.amount !== null ? `₹${event.amount.toLocaleString('en-IN')}` : 'Not announced'}</strong></div><div><small>Dividend yield</small><strong>{event.yield !== null ? `${event.yield.toFixed(2)}%` : 'Not announced'}</strong></div>
-    </div> : <span className="company-premium__empty">{upcoming ? 'No upcoming dividend has been announced for this company.' : 'No recent dividend data is available for this company.'}</span>}
+    </div> : <span className="company-premium__empty">{upcoming ? 'Upcoming dividend data unavailable. Check company exchange filings.' : 'Recent dividend data unavailable. Check company exchange filings.'}</span>}
     {hasData && event.frequency && <small className="company-premium__frequency">Frequency: {event.frequency}</small>}
   </article>;
 }
@@ -138,8 +138,9 @@ function StockLiveIntelligence({ ticker }: { ticker: string }) {
       getStockNews(ticker, 4, controller.signal)
     ]).then(([techRes, fundRes, newsRes]) => {
       if (controller.signal.aborted) return;
-      if (techRes.status === 'fulfilled') setTechnicals(techRes.value);
-      if (fundRes.status === 'fulfilled') setFundamentals(fundRes.value);
+      setTechnicals(null); setFundamentals(null); setNews([]);
+      if (techRes.status === 'fulfilled' && techRes.value.timestamp && Number.isFinite(Date.parse(techRes.value.timestamp))) setTechnicals(techRes.value);
+      void fundRes; // No source valuation date is provided; keep these fields unavailable.
       if (newsRes.status === 'fulfilled') setNews(newsRes.value);
       setLoading(false);
     });
@@ -151,19 +152,19 @@ function StockLiveIntelligence({ ticker }: { ticker: string }) {
   const getRsiStatus = (val: number | null) => {
     if (val === null) return { label: 'Awaiting Signal', color: 'text-gray-400' };
     if (val >= 70) return { label: 'Overbought Territory', color: 'text-amber-400' };
-    if (val <= 30) return { label: 'Oversold / Value Zone', color: 'text-emerald-400' };
+    if (val <= 30) return { label: 'RSI below 30', color: 'text-emerald-400' };
     return { label: 'Neutral Momentum', color: 'text-blue-400' };
   };
   const rsiStatus = getRsiStatus(rsi ?? null);
 
   return (
-    <section className="company-premium__panel space-y-6" aria-label="Live Market Intelligence & Technicals">
+    <section className="company-premium__panel space-y-6" aria-label="Company data" aria-busy={loading}>
       <div className="company-premium__panel-heading">
         <div>
-          <p className="text-xs uppercase tracking-wider text-gold-primary">Provider Telemetry &bull; Twelve Data, Finnhub &amp; Alpha Vantage</p>
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Live Multi-Provider Analytics</h2>
+          <p className="text-xs uppercase tracking-wider text-gold-primary">Additional market data</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Company data</h2><p className="market-source-note">{ticker} · NSE/BSE as selected in the widget. Source: {technicals?.provider || 'unavailable'}. Technical calculation time: {technicals?.timestamp ? new Date(technicals.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'unavailable'}. Underlying quote time and exact delay unavailable; confirm with exchange filings.</p>
         </div>
-        <span className="text-xs text-gray-400 font-mono">Real-Time Data Feed</span>
+        <span className="text-xs text-gray-400 font-mono">May be delayed · verify source</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -171,10 +172,10 @@ function StockLiveIntelligence({ ticker }: { ticker: string }) {
         <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
             <span className="flex items-center gap-1.5"><Activity size={14} className="text-gold-primary" /> RSI (14-Day)</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">{technicals?.provider || 'TwelveData'}</span>
+            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">{technicals?.provider || 'Source unavailable'}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">
-            {rsi !== null && rsi !== undefined ? rsi.toFixed(1) : '54.2'}
+            {rsi !== null && rsi !== undefined ? rsi.toFixed(1) : 'Data unavailable'}
           </div>
           <small className={`text-xs font-semibold ${rsiStatus.color}`}>
             {rsiStatus.label}
@@ -185,13 +186,13 @@ function StockLiveIntelligence({ ticker }: { ticker: string }) {
         <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
             <span className="flex items-center gap-1.5"><TrendingUp size={14} className="text-emerald-400" /> P/E Ratio</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">{fundamentals?.provider || 'Finnhub'}</span>
+            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">{fundamentals?.provider || 'Source unavailable'}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">
-            {fundamentals?.peRatio ? fundamentals.peRatio.toFixed(2) : '24.8x'}
+            {fundamentals?.peRatio ? fundamentals.peRatio.toFixed(2) : 'Data unavailable'}
           </div>
           <small className="text-xs text-gray-400">
-            Sector Avg: ~22.5x
+            Sector comparison unavailable
           </small>
         </div>
 
@@ -202,10 +203,10 @@ function StockLiveIntelligence({ ticker }: { ticker: string }) {
             <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">GICS</span>
           </div>
           <div className="text-base font-bold text-white truncate mb-1">
-            {fundamentals?.sector || 'Diversified / Conglomerate'}
+            {fundamentals?.sector || 'Data unavailable'}
           </div>
           <small className="text-xs text-gray-400 truncate">
-            {fundamentals?.industry || 'Indian Equities'}
+            {fundamentals?.industry || 'Data unavailable'}
           </small>
         </div>
 
@@ -213,13 +214,13 @@ function StockLiveIntelligence({ ticker }: { ticker: string }) {
         <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
             <span className="flex items-center gap-1.5"><Globe size={14} className="text-purple-400" /> 52-Week High/Low</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">AlphaVantage</span>
+            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">Source varies</span>
           </div>
           <div className="text-sm font-bold text-white mb-1">
-            {fundamentals?.fiftyTwoWeekHigh ? `High: ₹${fundamentals.fiftyTwoWeekHigh.toLocaleString('en-IN')}` : 'High: Tracked Live'}
+            {fundamentals?.fiftyTwoWeekHigh ? `High: ₹${fundamentals.fiftyTwoWeekHigh.toLocaleString('en-IN')}` : 'High: Data unavailable'}
           </div>
           <small className="text-xs text-gray-400">
-            {fundamentals?.fiftyTwoWeekLow ? `Low: ₹${fundamentals.fiftyTwoWeekLow.toLocaleString('en-IN')}` : 'Active Institutional Coverage'}
+            {fundamentals?.fiftyTwoWeekLow ? `Low: ₹${fundamentals.fiftyTwoWeekLow.toLocaleString('en-IN')}` : 'Low: Data unavailable'}
           </small>
         </div>
       </div>

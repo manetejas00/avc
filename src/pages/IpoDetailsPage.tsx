@@ -69,7 +69,7 @@ export default function IpoDetailsPage() {
         }
       } catch (err: any) {
         if (!controller.signal.aborted) {
-          setError('Unable to load IPO profile details. It may not exist or the service is temporarily unreachable.');
+          setError('Data unavailable. No official offer documents and verification record are available for this IPO.');
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -147,7 +147,7 @@ export default function IpoDetailsPage() {
         <main id="main-content" className="container-custom pt-28 pb-20 flex flex-col items-center justify-center min-h-[60vh]">
           <div className="rounded-3xl border border-red-500/30 bg-surface/80 p-10 text-center max-w-md shadow-2xl backdrop-blur-xl">
             <XCircle size={40} className="mx-auto text-red-400 mb-4" />
-            <h2 className="text-xl font-bold text-white">IPO Profile Not Found</h2>
+            <h2 className="text-xl font-bold text-white">IPO information unavailable</h2>
             <p className="mt-2 text-xs text-text-secondary">{error || 'The requested IPO does not exist or has been removed.'}</p>
             <Link
               to="/ipo"

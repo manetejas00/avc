@@ -12,8 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$apiKey = $_SERVER['HTTP_X_API_KEY'] ?? $_GET['api_key'] ?? getenv('INDIAN_API_KEY') ?: 'sk-live-LBoaUhnmhsSPCe3J6kof1SQGTGJgWqQoYq87VL3l';
-$endpoint = $_GET['endpoint'] ?? 'ipo';
+$apiKey = getenv('INDIAN_API_KEY') ?: '';
+$endpoint = $_GET['endpoint'] ?? 'news';
+if (!$apiKey || $endpoint === 'ipo') { http_response_code(503); echo json_encode(['error' => 'Data unavailable']); exit; }
 
 // Allowed endpoints for Indian API proxy
 $allowedEndpoints = ['ipo', 'stock', 'market', 'news'];

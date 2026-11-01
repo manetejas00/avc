@@ -14,8 +14,13 @@ type Quote = {
   change: number;
   changePercent: number;
   currency?: string;
+  provider?: string;
+  exchange?: string;
   lastUpdated?: string;
 };
+
+const quoteTime = (value?: string) => value && Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'Quote time unavailable';
+const venue = (symbol: string) => ({ '^NSEI': 'NSE index', '^BSESN': 'BSE index', '^GSPC': 'S&P DJI index', '^IXIC': 'NASDAQ index', 'GC=F': 'COMEX futures', 'CL=F': 'NYMEX futures', 'INR=X': 'FX indicative' } as Record<string,string>)[symbol] || 'Venue unavailable';
 
 type Point = { timestamp: string; value: number };
 
@@ -143,6 +148,8 @@ function Chart({ points, positive }: { points: Point[]; positive: boolean }) {
 
 export default function LiveMarketOverview() {
   const sectionRef = useRef<HTMLElement>(null);
+  const selectedSymbolRef = useRef('^NSEI');
+  const chartRequest = useRef<AbortController | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [points, setPoints] = useState<Point[]>([]);
   const [gainers, setGainers] = useState<StockQuote[]>([]);
@@ -153,6 +160,7 @@ export default function LiveMarketOverview() {
   const [selectedSymbol, setSelectedSymbol] = useState('^NSEI');
 
   const loadChart = async (symbol: string, signal?: AbortSignal) => {
+    if (symbol !== selectedSymbolRef.current) return;
     const parsePoints = (payload: { chart?: { result?: Array<{ timestamp?: number[]; indicators?: { quote?: Array<{ close?: Array<number | null> }> } }> } }) => {
       const result = payload.chart?.result?.[0];
       const closes = result?.indicators?.quote?.[0]?.close ?? [];
@@ -167,7 +175,7 @@ export default function LiveMarketOverview() {
       if (primary.ok && primary.headers.get('content-type')?.includes('application/json')) {
         const history = (await primary.json()) as Point[];
         if (Array.isArray(history) && history.length) {
-          setPoints(history);
+          if (symbol === selectedSymbolRef.current) setPoints(history);
           return;
         }
       }
@@ -184,7 +192,8 @@ export default function LiveMarketOverview() {
       { signal }
     );
     if (!fallback.ok) throw new Error('Price history unavailable');
-    setPoints(parsePoints(await fallback.json()));
+    const points = parsePoints(await fallback.json());
+    if (symbol === selectedSymbolRef.current && !signal?.aborted) setPoints(points);
   };
 
   const loadMarket = async (signal?: AbortSignal) => {
@@ -194,21 +203,23 @@ export default function LiveMarketOverview() {
       if (!dashboard.ok) throw new Error('Dashboard unavailable');
       const payload: Array<Quote & { timestamp?: string }> = await dashboard.json();
       if (!Array.isArray(payload) || !payload.length) throw new Error('No valid quotes available');
-      const liveQuotes = payload.map(quote => ({ ...quote, lastUpdated: quote.lastUpdated ?? quote.timestamp }));
+      const liveQuotes = payload.map(quote => ({ ...quote, lastUpdated: quote.lastUpdated ?? quote.timestamp })).filter(q => marketSymbols.includes(q.symbol) && Number.isFinite(q.price) && q.price > 0 && Number.isFinite(q.change) && Number.isFinite(q.changePercent) && q.lastUpdated && Number.isFinite(Date.parse(q.lastUpdated)));
+      if (!liveQuotes.length) throw new Error('No dated quotes');
       setQuotes(liveQuotes);
-      await loadChart(selectedSymbol, signal);
+      await loadChart(selectedSymbolRef.current, signal).catch(() => setPoints([]));
 
-      // Concurrently fetch Top Gainers and Losers
+      setGainers([]); setLosers([]);
+      // Concurrently fetch Watchlist gainers and Losers
       try {
         const [gainersRes, losersRes] = await Promise.allSettled([
           getTopGainers(signal),
           getTopLosers(signal),
         ]);
         if (gainersRes.status === 'fulfilled' && Array.isArray(gainersRes.value)) {
-          setGainers(gainersRes.value);
+          setGainers(gainersRes.value.filter(q => q.changePercent > 0 && q.timestamp && Number.isFinite(Date.parse(q.timestamp))));
         }
         if (losersRes.status === 'fulfilled' && Array.isArray(losersRes.value)) {
-          setLosers(losersRes.value);
+          setLosers(losersRes.value.filter(q => q.changePercent < 0 && q.timestamp && Number.isFinite(Date.parse(q.timestamp))));
         }
       } catch {
         // Gainers / losers are non-blocking secondary enhancements
@@ -251,14 +262,17 @@ export default function LiveMarketOverview() {
 
         const liveQuotes = successful
           .map(({ symbol, data }): Quote | null => {
-            return parseYahooQuote(symbol, data.chart?.result?.[0]);
+            const result = data.chart?.result?.[0];
+            const quote = parseYahooQuote(symbol, result);
+            return quote ? { ...quote, provider: 'Yahoo Finance', exchange: result?.meta?.fullExchangeName || result?.meta?.exchangeName || 'Venue unavailable' } : null;
           })
           .filter((quote): quote is Quote => quote !== null);
 
         if (!liveQuotes.length) throw new Error('No valid quotes available');
 
         // Extract 90-day closing points for the primary selected symbol or ^NSEI
-        const primaryData = successful.find(s => s.symbol === selectedSymbol) ?? successful.find(s => s.symbol === '^NSEI') ?? successful[0];
+        const primaryData = successful.find(s => s.symbol === selectedSymbolRef.current);
+        setPoints([]);
         if (primaryData) {
           const result = primaryData.data.chart?.result?.[0];
           const closes = result?.indicators?.quote?.[0]?.close ?? [];
@@ -274,7 +288,7 @@ export default function LiveMarketOverview() {
         setUpdatedAt(null);
         setStatus('ready');
       } catch (fallbackError) {
-        if ((fallbackError as Error).name !== 'AbortError') setStatus('unavailable');
+        if ((fallbackError as Error).name !== 'AbortError') { setStatus('unavailable'); setQuotes([]); setPoints([]); setGainers([]); setLosers([]); }
       }
     }
   };
@@ -285,13 +299,16 @@ export default function LiveMarketOverview() {
     const interval = window.setInterval(() => void loadMarket(), 15 * 60 * 1000);
     return () => {
       controller.abort();
+      chartRequest.current?.abort();
       window.clearInterval(interval);
     };
   }, []);
 
   const selectMarket = (symbol: string) => {
-    setSelectedSymbol(symbol);
-    void loadChart(symbol).catch(() => setStatus('unavailable'));
+    chartRequest.current?.abort();
+    const controller = new AbortController(); chartRequest.current = controller;
+    selectedSymbolRef.current = symbol; setSelectedSymbol(symbol); setPoints([]);
+    void loadChart(symbol, controller.signal).catch(() => { if (!controller.signal.aborted) setPoints([]); });
   };
 
   useGSAP(
@@ -307,18 +324,18 @@ export default function LiveMarketOverview() {
     { scope: sectionRef }
   );
 
-  const featured = quotes.find(quote => quote.symbol === selectedSymbol) ?? quotes[0];
+  const featured = quotes.find(quote => quote.symbol === selectedSymbol);
   const secondary = quotes.filter(quote => quote.symbol !== featured?.symbol);
 
   return (
     <section ref={sectionRef} id="market-overview" className="live-market" aria-labelledby="live-market-title">
       <div className="live-market__inner">
         <div className="live-market__heading">
-          <p className="live-market__eyebrow">05 — LIVE MARKET OVERVIEW</p>
+          <p className="live-market__eyebrow">05 — MARKET OVERVIEW</p>
           <h2 id="live-market-title" className="live-market__title">
             See the market<br />in <em>motion.</em>
           </h2>
-          <p className="live-market__copy">Latest available exchange quotes paired with a clean 90-day price view—built for a quick read, not a crowded terminal.</p>
+          <p className="live-market__copy">Latest available quotes and daily closing-price history. Prices may be delayed. Check the source and valuation time before using them.</p>
         </div>
         <div className="live-market__status">
           <span className={status === 'ready' ? 'is-live' : ''} />
@@ -326,7 +343,7 @@ export default function LiveMarketOverview() {
             ? `Quote as of ${featured?.lastUpdated ? new Date(featured.lastUpdated).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' IST' : updatedAt ? updatedAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'time unavailable'}`
             : status === 'loading'
               ? 'Connecting to market data'
-              : 'Live data temporarily unavailable'}
+              : 'Data unavailable'}
           <button onClick={() => void loadMarket()} aria-label="Refresh market data">
             <RefreshCw size={14} />
           </button>
@@ -342,7 +359,8 @@ export default function LiveMarketOverview() {
               </div>
               <small>90D PRICE TRACE</small>
             </div>
-            <div className="live-market__price">{featured ? formatMarketValue(featured) : '—'}</div>
+            <div className="live-market__price">{featured ? formatMarketValue(featured) : 'Data unavailable'}</div>
+            {featured && <p className="market-source-note">{featured.symbol} · {featured.exchange || ({'^NSEI':'NSE index','^BSESN':'BSE index','^GSPC':'S&P DJI index','^IXIC':'NASDAQ index','GC=F':'COMEX futures','CL=F':'NYMEX futures','INR=X':'FX indicative rate'} as Record<string,string>)[featured.symbol] || 'Venue unavailable'} · Source: {featured.provider || 'Source unavailable'} · {quoteTime(featured.lastUpdated)} · Delay: not specified by feed; may be delayed.</p>}
             {featured && (
               <div className={`live-market__change ${featured.change >= 0 ? 'is-up' : 'is-down'}`}>
                 {featured.change >= 0 ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
@@ -353,8 +371,8 @@ export default function LiveMarketOverview() {
             )}
             {points.length >= 2 && featured && (
               <div className="live-market__feature-range">
-                <span>90D Low: <em>{formatValueOnly(Math.min(...points.map(p => p.value)), featured.symbol)}</em></span>
-                <span>90D High: <em>{formatValueOnly(Math.max(...points.map(p => p.value)), featured.symbol)}</em></span>
+                <span>90D closing low: <em>{formatValueOnly(Math.min(...points.map(p => p.value)), featured.symbol)}</em></span>
+                <span>90D closing high: <em>{formatValueOnly(Math.max(...points.map(p => p.value)), featured.symbol)}</em></span>
               </div>
             )}
             <Chart points={points} positive={(featured?.change ?? 0) >= 0} />
@@ -403,7 +421,7 @@ export default function LiveMarketOverview() {
                 }}
               >
                 <ArrowUpRight size={13} />
-                Top Gainers
+                Watchlist gainers
               </button>
               <button
                 type="button"
@@ -427,7 +445,7 @@ export default function LiveMarketOverview() {
                 }}
               >
                 <ArrowDownRight size={13} />
-                Top Losers
+                Watchlist losers
               </button>
             </div>
 
@@ -443,6 +461,7 @@ export default function LiveMarketOverview() {
                   <div className="live-market__quote-info">
                     <small>{labels[quote.symbol] ?? quote.name}</small>
                     <strong>{formatMarketValue(quote)}</strong>
+                    <small className="market-source-note">{quote.exchange || venue(quote.symbol)} · {quote.provider || 'Source unavailable'} · {quoteTime(quote.lastUpdated)} · Delay unspecified</small>
                   </div>
                   <div className="live-market__quote-meta">
                     <span className={quote.change >= 0 ? 'is-up' : 'is-down'}>
@@ -465,7 +484,7 @@ export default function LiveMarketOverview() {
                     <small style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {stock.symbol} <ExternalLink size={10} style={{ opacity: 0.6 }} />
                     </small>
-                    <strong>₹{stock.price.toFixed(2)}</strong>
+                    <strong>₹{stock.price.toFixed(2)}</strong><small className="market-source-note">{stock.exchange || 'NSE'} · {stock.provider || 'Source unavailable'} · {quoteTime(stock.timestamp)} · Delay unspecified</small>
                   </div>
                   <div className="live-market__quote-meta">
                     <span className="is-up">
@@ -488,7 +507,7 @@ export default function LiveMarketOverview() {
                     <small style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {stock.symbol} <ExternalLink size={10} style={{ opacity: 0.6 }} />
                     </small>
-                    <strong>₹{stock.price.toFixed(2)}</strong>
+                    <strong>₹{stock.price.toFixed(2)}</strong><small className="market-source-note">{stock.exchange || 'NSE'} · {stock.provider || 'Source unavailable'} · {quoteTime(stock.timestamp)} · Delay unspecified</small>
                   </div>
                   <div className="live-market__quote-meta">
                     <span className="is-down">
@@ -499,12 +518,13 @@ export default function LiveMarketOverview() {
                 </Link>
               ))}
 
+              {status !== 'loading' && ((activeTab === 'gainers' && !gainers.length) || (activeTab === 'losers' && !losers.length)) && <p role="status">Data unavailable for this watchlist.</p>}
               {status === 'loading' &&
                 Array.from({ length: 6 }, (_, index) => <div className="live-market__quote live-market__skeleton" key={index} />)}
             </div>
           </div>
         </div>
-        <p className="live-market__note">Quotes are refreshed every 15 minutes and may be delayed. When markets are closed, the last available session is shown. Data is informational and not investment advice.</p>
+        <p className="live-market__note">Source and quote time appear beside each instrument. Exact delays are not specified by these feeds. Refresh interval: 15 minutes. Watchlist movers are not exchange-wide rankings. When markets are closed, the last available session is shown. Data is informational and not investment advice.</p>
       </div>
     </section>
   );
