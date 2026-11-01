@@ -22,6 +22,10 @@ type Quote = {
 const quoteTime = (value?: string) => value && Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'Quote time unavailable';
 const venue = (symbol: string) => ({ '^NSEI': 'NSE index', '^BSESN': 'BSE index', '^GSPC': 'S&P DJI index', '^IXIC': 'NASDAQ index', 'GC=F': 'COMEX futures', 'CL=F': 'NYMEX futures', 'INR=X': 'FX indicative' } as Record<string,string>)[symbol] || 'Venue unavailable';
 
+function QuoteSource({ exchange, provider, timestamp }: { exchange: string; provider?: string; timestamp?: string }) {
+  return <small className="market-source-note"><span>{exchange} · {provider || 'Source unavailable'}</span><span>{quoteTime(timestamp)}</span><span>Delay not specified by source</span></small>;
+}
+
 type Point = { timestamp: string; value: number };
 
 const labels: Record<string, string> = {
@@ -461,7 +465,6 @@ export default function LiveMarketOverview() {
                   <div className="live-market__quote-info">
                     <small>{labels[quote.symbol] ?? quote.name}</small>
                     <strong>{formatMarketValue(quote)}</strong>
-                    <small className="market-source-note">{quote.exchange || venue(quote.symbol)} · {quote.provider || 'Source unavailable'} · {quoteTime(quote.lastUpdated)} · Delay unspecified</small>
                   </div>
                   <div className="live-market__quote-meta">
                     <span className={quote.change >= 0 ? 'is-up' : 'is-down'}>
@@ -469,6 +472,7 @@ export default function LiveMarketOverview() {
                     </span>
                     <small className="live-market__quote-points">{formatPointsChange(quote)}</small>
                   </div>
+                  <QuoteSource exchange={quote.exchange || venue(quote.symbol)} provider={quote.provider} timestamp={quote.lastUpdated} />
                 </button>
               ))}
 
@@ -484,7 +488,7 @@ export default function LiveMarketOverview() {
                     <small style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {stock.symbol} <ExternalLink size={10} style={{ opacity: 0.6 }} />
                     </small>
-                    <strong>₹{stock.price.toFixed(2)}</strong><small className="market-source-note">{stock.exchange || 'NSE'} · {stock.provider || 'Source unavailable'} · {quoteTime(stock.timestamp)} · Delay unspecified</small>
+                    <strong>₹{stock.price.toFixed(2)}</strong>
                   </div>
                   <div className="live-market__quote-meta">
                     <span className="is-up">
@@ -492,6 +496,7 @@ export default function LiveMarketOverview() {
                     </span>
                     <small className="live-market__quote-points">+{stock.change.toFixed(2)}</small>
                   </div>
+                  <QuoteSource exchange={stock.exchange || 'NSE'} provider={stock.provider} timestamp={stock.timestamp} />
                 </Link>
               ))}
 
@@ -507,7 +512,7 @@ export default function LiveMarketOverview() {
                     <small style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {stock.symbol} <ExternalLink size={10} style={{ opacity: 0.6 }} />
                     </small>
-                    <strong>₹{stock.price.toFixed(2)}</strong><small className="market-source-note">{stock.exchange || 'NSE'} · {stock.provider || 'Source unavailable'} · {quoteTime(stock.timestamp)} · Delay unspecified</small>
+                    <strong>₹{stock.price.toFixed(2)}</strong>
                   </div>
                   <div className="live-market__quote-meta">
                     <span className="is-down">
@@ -515,6 +520,7 @@ export default function LiveMarketOverview() {
                     </span>
                     <small className="live-market__quote-points">{stock.change.toFixed(2)}</small>
                   </div>
+                  <QuoteSource exchange={stock.exchange || 'NSE'} provider={stock.provider} timestamp={stock.timestamp} />
                 </Link>
               ))}
 
