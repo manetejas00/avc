@@ -5599,3 +5599,8 @@ html.light .v1-mobile-menu__links a:hover {
 .ebooks-coming-soon__message p { margin: 0 0 10px; font-size: 12px; letter-spacing: .2em; color: #d4af37; }
 .ebooks-coming-soon__message h2 { margin: 0 0 14px; font-size: clamp(32px, 5vw, 52px); line-height: 1.15; font-weight: 800; color: #fff !important; }
 .ebooks-coming-soon__message span { font-size: 15px; line-height: 1.6; color: #d4d4d8; }
+
+/* Keep the complete director portraits inside consistent studio-style frames. */
+.director-portrait-frame { height: clamp(380px, 35vw, 500px); padding: 64px 24px 24px; display: flex; justify-content: center; align-items: center; background: radial-gradient(ellipse at center, #303036 0%, #141418 75%); border-bottom: 1px solid rgba(212,175,55,.25); }
+.director-portrait-frame .director-portrait { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border: 1px solid rgba(212,175,55,.55); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.3); }
+@media (max-width: 480px) { .director-portrait-frame { height: 400px; padding: 68px 16px 20px; } }

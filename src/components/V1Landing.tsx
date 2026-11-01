@@ -615,13 +615,13 @@ export default function V1Landing() {
           {/* Founder 1: Chandresh Pandey */}
           <div className="group relative rounded-2xl bg-gradient-to-b from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-gold-primary/40 transition-all duration-300 overflow-hidden flex flex-col shadow-2xl">
             {/* Image Container with Top Badge Overlay */}
-            <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
+            <div className="director-portrait-frame relative w-full overflow-hidden">
               <img
                 src="/assets/founders/chandresh-pandey-portrait.jpg"
                 alt="Chandresh Pandey - Director & Co-Founder of AVC Dhanam Solutions"
                 width="896"
                 height="672"
-                className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500 ease-out"
+                className="director-portrait"
                 loading="lazy"
               />
               <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
@@ -693,13 +693,13 @@ export default function V1Landing() {
           {/* Founder 2: Ajay Pandey */}
           <div className="group relative rounded-2xl bg-gradient-to-b from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-gold-primary/40 transition-all duration-300 overflow-hidden flex flex-col shadow-2xl">
             {/* Image Container with Top Badge Overlay */}
-            <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
+            <div className="director-portrait-frame relative w-full overflow-hidden">
               <img
                 src="/assets/founders/ajay-pandey-portrait.jpg"
                 alt="Ajay Pandey - Director & Co-Founder of AVC Dhanam Solutions"
                 width="896"
                 height="672"
-                className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500 ease-out"
+                className="director-portrait"
                 loading="lazy"
               />
               <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
