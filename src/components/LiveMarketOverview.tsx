@@ -4,7 +4,9 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ArrowDownRight, ArrowUpRight, RefreshCw, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getTopGainers, getTopLosers, StockQuote } from '../services/financialApi';
+import { StockQuote } from '../services/financialApi';
+import { parseWatchlist, watchlistSymbols } from '../utils/watchlist';
+import { getJson } from '../services/apiClient';
 import { getApiUrl } from '../services/apiClient';
 
 type Quote = {
@@ -156,6 +158,8 @@ export default function LiveMarketOverview() {
   const chartRequest = useRef<AbortController | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [points, setPoints] = useState<Point[]>([]);
+  const [moversStatus, setMoversStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
+  const [moversCount, setMoversCount] = useState(0);
   const [gainers, setGainers] = useState<StockQuote[]>([]);
   const [losers, setLosers] = useState<StockQuote[]>([]);
   const [activeTab, setActiveTab] = useState<'indices' | 'gainers' | 'losers'>('indices');
@@ -211,23 +215,6 @@ export default function LiveMarketOverview() {
       if (!liveQuotes.length) throw new Error('No dated quotes');
       setQuotes(liveQuotes);
       await loadChart(selectedSymbolRef.current, signal).catch(() => setPoints([]));
-
-      setGainers([]); setLosers([]);
-      // Concurrently fetch Watchlist gainers and Losers
-      try {
-        const [gainersRes, losersRes] = await Promise.allSettled([
-          getTopGainers(signal),
-          getTopLosers(signal),
-        ]);
-        if (gainersRes.status === 'fulfilled' && Array.isArray(gainersRes.value)) {
-          setGainers(gainersRes.value.filter(q => q.changePercent > 0 && q.timestamp && Number.isFinite(Date.parse(q.timestamp))));
-        }
-        if (losersRes.status === 'fulfilled' && Array.isArray(losersRes.value)) {
-          setLosers(losersRes.value.filter(q => q.changePercent < 0 && q.timestamp && Number.isFinite(Date.parse(q.timestamp))));
-        }
-      } catch {
-        // Gainers / losers are non-blocking secondary enhancements
-      }
 
       const latestQuoteTime = liveQuotes.find(q => q.lastUpdated)?.lastUpdated;
       if (latestQuoteTime) {
@@ -292,15 +279,30 @@ export default function LiveMarketOverview() {
         setUpdatedAt(null);
         setStatus('ready');
       } catch (fallbackError) {
-        if ((fallbackError as Error).name !== 'AbortError') { setStatus('unavailable'); setQuotes([]); setPoints([]); setGainers([]); setLosers([]); }
+        if ((fallbackError as Error).name !== 'AbortError') { setStatus('unavailable'); setQuotes([]); setPoints([]); }
       }
+    }
+  };
+
+  const loadMovers = async (signal?: AbortSignal) => {
+    setMoversStatus('loading');
+    try {
+      const payload = await getJson<Parameters<typeof parseWatchlist>[0]>('/api/watchlist.php', { signal, timeoutMs: 12000 });
+      const result = parseWatchlist(payload);
+      if (!result.count) throw new Error('No dated watchlist quotes');
+      if (signal?.aborted) return;
+      setGainers(result.gainers); setLosers(result.losers); setMoversCount(result.count); setMoversStatus('ready');
+    } catch {
+      if (signal?.aborted) return;
+      setGainers([]); setLosers([]); setMoversCount(0); setMoversStatus('unavailable');
     }
   };
 
   useEffect(() => {
     const controller = new AbortController();
     void loadMarket(controller.signal);
-    const interval = window.setInterval(() => void loadMarket(), 15 * 60 * 1000);
+    void loadMovers(controller.signal);
+    const interval = window.setInterval(() => { void loadMarket(); void loadMovers(); }, 15 * 60 * 1000);
     return () => {
       controller.abort();
       chartRequest.current?.abort();
@@ -348,7 +350,7 @@ export default function LiveMarketOverview() {
             : status === 'loading'
               ? 'Connecting to market data'
               : 'Data unavailable'}
-          <button onClick={() => void loadMarket()} aria-label="Refresh market data">
+          <button onClick={() => { void loadMarket(); void loadMovers(); }} aria-label="Refresh market data">
             <RefreshCw size={14} />
           </button>
         </div>
@@ -524,12 +526,15 @@ export default function LiveMarketOverview() {
                 </Link>
               ))}
 
-              {status !== 'loading' && ((activeTab === 'gainers' && !gainers.length) || (activeTab === 'losers' && !losers.length)) && <p role="status">Data unavailable for this watchlist.</p>}
+              {activeTab !== 'indices' && moversStatus === 'loading' && <p role="status">Loading watchlist quotes…</p>}
+              {activeTab !== 'indices' && moversStatus === 'unavailable' && <p role="status">Watchlist feed unavailable. <button type="button" className="underline" onClick={() => void loadMovers()}>Try again</button></p>}
+              {moversStatus === 'ready' && ((activeTab === 'gainers' && !gainers.length) || (activeTab === 'losers' && !losers.length)) && <p role="status">No {activeTab === 'gainers' ? 'gainers' : 'declines'} among the {moversCount} available watchlist quotes.</p>}
               {status === 'loading' &&
                 Array.from({ length: 6 }, (_, index) => <div className="live-market__quote live-market__skeleton" key={index} />)}
             </div>
           </div>
         </div>
+        <details className="live-market__note"><summary>Watchlist coverage: {moversStatus === 'ready' ? `${moversCount} of ${watchlistSymbols.length} NSE stocks available` : moversStatus === 'loading' ? 'loading' : 'feed unavailable'}</summary><p>{watchlistSymbols.map(symbol => symbol.replace('.NS', '')).join(', ')}. Gainers and losers compare each stock with its previous session close. Each quote shows its own time; this is a fixed watchlist, not an exchange-wide ranking.</p></details>
         <p className="live-market__note">Source and quote time appear beside each instrument. Exact delays are not specified by these feeds. Refresh interval: 15 minutes. Watchlist movers are not exchange-wide rankings. When markets are closed, the last available session is shown. Data is informational and not investment advice.</p>
       </div>
     </section>

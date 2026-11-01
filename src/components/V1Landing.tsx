@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { ArrowUpRight, Award, BarChart3, Building2, Calculator, CheckCircle2, ChevronLeft, ChevronRight, ExternalLink, Layers3, LockKeyhole, MapPin, RefreshCw, ShieldCheck, Sparkles, Target, TrendingUp, X } from 'lucide-react';
+import NewsImage from './NewsImage';
 import TradingViewTicker from './TradingViewTicker';
 import ContactFormModal from './ContactFormModal';
 import LiveMarketOverview from './LiveMarketOverview';
@@ -201,12 +202,6 @@ export default function V1Landing() {
       setIsRefreshingNews(true);
       setNewsStatus('loading');
 
-      const DEFAULT_FALLBACK_IMAGES = [
-        '/assets/news/news-indian-equities.webp',
-        '/assets/news/news-rbi-policy.webp',
-        '/assets/news/news-global-economy.webp'
-      ];
-
       let rawArticles: any[] = [];
 
       // Tier 1: Unified backend live market news API (for local Express server)
@@ -227,7 +222,7 @@ export default function V1Landing() {
       // Tier 2: Unified PHP news endpoint on live server (Hostinger)
       if (!rawArticles.length) {
         try {
-          const response = await fetch(getApiUrl('/api/news.php'), { signal: AbortSignal.timeout(6000) });
+          const response = await fetch(getApiUrl('/api/news.php?v=publisher-images-3'), { signal: AbortSignal.timeout(18000) });
           if (response.ok) {
             const payload = await response.json();
             if (Array.isArray(payload?.data) && payload.data.length > 0) {
@@ -271,13 +266,11 @@ export default function V1Landing() {
         }
       }
 
-      const items: NewsItem[] = rawArticles.map((item: any, index: number): NewsItem => {
+      const items: NewsItem[] = rawArticles.map((item: any): NewsItem => {
         const title = String(item.title || item.headline || '').trim();
         const details = String(item.summary || item.description || item.content || '').replace(/<[^>]*>?/gm, '').trim();
         const rawImage = item.image_url || item.image || item.thumbnail;
-        const image = (typeof rawImage === 'string' && (rawImage.startsWith('http') || rawImage.startsWith('/')))
-          ? rawImage.trim()
-          : DEFAULT_FALLBACK_IMAGES[index % DEFAULT_FALLBACK_IMAGES.length];
+        const image = typeof rawImage === 'string' && /^https:\/\//.test(rawImage) && !rawImage.includes('/assets/news/news-') ? rawImage.trim() : '';
         const category = (Array.isArray(item.topics) && item.topics[0])
           ? item.topics[0]
           : (typeof item.category === 'string' ? item.category : 'Markets');
@@ -875,18 +868,7 @@ export default function V1Landing() {
             onMouseLeave={(event) => gsap.to(event.currentTarget, { y: 0, duration: .4, ease: 'power3.out' })}
           >
             <div className="v1-pricing__image relative overflow-hidden bg-black/5">
-              <img
-                src={item.image}
-                alt={item.title}
-                width="480"
-                height="270"
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  target.src = '/assets/news/news-indian-equities.webp';
-                }}
-              />
+              <NewsImage url={item.image} source={item.source} />
             </div>
             <div className="v1-pricing__body flex flex-col justify-between p-5">
               <div>
@@ -964,6 +946,6 @@ export default function V1Landing() {
     <V1Footer />
     <ContactFormModal isOpen={isConsultationOpen} onClose={() => setIsConsultationOpen(false)} />
     {selectedService && <div className="v1-service-modal" role="dialog" aria-modal="true" aria-labelledby="service-modal-title" onMouseDown={() => setSelectedService(null)}><div className="v1-service-modal__panel" onMouseDown={event => event.stopPropagation()}><button type="button" className="v1-service-modal__close" aria-label="Close service details" onClick={() => setSelectedService(null)}><X size={19} /></button><div className="v1-service-modal__icon">{(() => { const Icon = selectedService[1]; return <Icon size={26} />; })()}</div><p>AVC DHANAM SOLUTIONS · FINANCIAL SERVICE</p><h2 id="service-modal-title">{selectedService[0]}</h2><div className="v1-service-modal__line" /><p className="v1-service-modal__description">{selectedService[2]}</p><ServiceDetails service={selectedService[0]} /><button type="button" onClick={() => { setSelectedService(null); setIsConsultationOpen(true); }}>Discuss this service <ArrowUpRight size={17} /></button></div></div>}
-    {selectedNews && <div className="v1-modal" role="dialog" aria-modal="true" aria-labelledby="news-modal-title" onMouseDown={() => setSelectedNews(null)}><div className="v1-modal__panel" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="v1-modal__close" aria-label="Close article" onClick={() => setSelectedNews(null)}><X size={19} /></button><div className="v1-modal__image"><img src={selectedNews.image} alt={selectedNews.title} /></div><div className="v1-modal__content"><small>{selectedNews.category} · {selectedNews.source}</small><h2 id="news-modal-title">{selectedNews.title}</h2><p>{selectedNews.details}</p><div className="v1-modal__actions"><button type="button" onClick={() => setSelectedNews(null)}>Close</button>{selectedNews.link !== '#' && <a href={selectedNews.link} target="_blank" rel="noreferrer">Read original <ExternalLink size={15} /></a>}</div></div></div></div>}
+    {selectedNews && <div className="v1-modal" role="dialog" aria-modal="true" aria-labelledby="news-modal-title" onMouseDown={() => setSelectedNews(null)}><div className="v1-modal__panel" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="v1-modal__close" aria-label="Close article" onClick={() => setSelectedNews(null)}><X size={19} /></button><div className="v1-modal__image"><NewsImage url={selectedNews.image} source={selectedNews.source} /></div><div className="v1-modal__content"><small>{selectedNews.category} · {selectedNews.source}</small><h2 id="news-modal-title">{selectedNews.title}</h2><p>{selectedNews.details}</p><div className="v1-modal__actions"><button type="button" onClick={() => setSelectedNews(null)}>Close</button>{selectedNews.link !== '#' && <a href={selectedNews.link} target="_blank" rel="noreferrer">Read original <ExternalLink size={15} /></a>}</div></div></div></div>}
   </main>;
 }

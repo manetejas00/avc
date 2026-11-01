@@ -59,3 +59,11 @@ A verified IPO list would need individual official notices/offer documents and v
 - SEBI investor education on NAV: https://investor.sebi.gov.in/securities-mf-investments.html
 - SEBI investor education on PMS risks/eligibility: https://investor.sebi.gov.in/pms_final.html
 - AMFI mutual-fund risks: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=riskInMutualFunds
+
+## Follow-up: news images and watchlist feeds
+
+The PHP-hosted site now has an independent fixed watchlist endpoint for twelve NSE stocks, cached for three minutes. Gainers and losers load independently of the index feed. Each tab separates loading, failed-feed and no-matching-movement states. Coverage and constituent symbols are disclosed; this is not an exchange-wide ranking. The stock parser rejects unknown symbols, symbol mismatches, duplicates, non-INR instruments and missing quote timestamps.
+
+The news endpoint uses official BusinessLine and Livemint RSS media attachments for article-specific images. The rotating generic illustrations have been removed from the endpoint, cards and article pop-up. A failed or absent publisher image produces a labelled unavailable state. News responses with sufficient publisher images are cached for five minutes; text-only fallback responses are not persisted by that server cache. The frontend uses a new cache version to avoid older browser responses. Publisher redirects use HTTPS with a maximum of three redirects. Image resources remain on publisher hosts.
+
+Validation: twelve stock chart responses returned; gainers and losers were independently checked in the browser; six articles returned their own publisher image URLs; sampled image URLs returned HTTP 200 with image content types. Production build passed. Nine focused tests passed, including the new watchlist validation test.
