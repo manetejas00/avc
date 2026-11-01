@@ -38,3 +38,28 @@ test('Fund comparison uses common dates and refuses missing periods or invalid N
     assert.equal(f.planType('ABC Direct Plan Growth'),'Direct');assert.equal(f.optionType('ABC Dividend Reinvestment'),'IDCW');
   }finally{await clean();}
 });
+
+test('New fund shows short-period returns and reasons for missing long history without hiding older fund results',async()=>{
+ const {module:f,clean}=await compiled('fundComparison');
+ try {
+  const young={name:'Axis sample Growth Option',data:[{date:'29-10-2026',nav:'11'},{date:'29-09-2026',nav:'10'},{date:'29-07-2026',nav:'9'},{date:'29-04-2026',nav:'8'},{date:'17-12-2025',nav:'7'}]};
+  const old={name:'Older Direct Growth',data:[...young.data,{date:'29-10-2025',nav:'6'},{date:'27-10-2023',nav:'5'},{date:'29-10-2021',nav:'4'}]};
+  const short=f.compareFundPeriod([young],'1m');assert.ok(Math.abs(short.results[0].value-10)<1e-10);
+  const year=f.compareFundPeriod([young,old],'1y');assert.equal(year.results[0].value,null);assert.match(year.results[0].reason,/First available NAV: 17 Dec 2025/);assert.ok(year.results[1].value>0);
+  const long=f.compareFundPeriod([young,old],'3y');assert.equal(long.results[0].value,null);assert.ok(long.results[1].value>0);assert.equal(long.annualised,true);
+  const since=f.compareFundPeriod([young],'since');assert.ok(Math.abs(since.results[0].value-(11/7-1)*100)<1e-10);
+  const mixed=f.compareFundPeriod([young,{...young,name:'Regular IDCW'}],'1m');assert.ok(mixed.results[0].value>0);assert.match(mixed.results[1].reason,/IDCW payouts/);
+ }finally{await clean();}
+});
+
+test('Company metrics require matching exchange, currency and source time; missing values stay missing',async()=>{
+ const {module:c,clean}=await compiled('companyData');
+ try {
+  const payload={symbol:'BSE:SBIN',values:{exchange:'BSE',currency:'INR',update_time:1793444404,update_mode:'delayed_streaming_900',description:'State Bank of India',close:961,RSI:47.2,price_earnings_ttm:10.29,sector:'Finance',industry:'Regional Banks',price_52_week_low:933.85,price_52_week_high:1234.8}};
+  const result=c.parseCompanyProfile(payload,'BSE:SBIN');assert.equal(result.pe,10.29);assert.equal(result.sector,'Finance');assert.equal(result.delay,'Source delay: 15 minutes');assert.ok(result.timestamp);
+  assert.throws(()=>c.parseCompanyProfile(payload,'NSE:SBIN'));
+  assert.throws(()=>c.parseCompanyProfile({...payload,values:{...payload.values,update_time:null}},'BSE:SBIN'));
+  assert.equal(c.parseCompanyProfile({...payload,values:{...payload.values,price_earnings_ttm:null,RSI:101}},'BSE:SBIN').pe,null);
+  assert.equal(c.parseCompanyProfile({...payload,values:{...payload.values,RSI:101}},'BSE:SBIN').rsi,null);
+ }finally{await clean();}
+});

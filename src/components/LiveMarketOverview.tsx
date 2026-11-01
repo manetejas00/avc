@@ -480,7 +480,7 @@ export default function LiveMarketOverview() {
 
               {activeTab === 'gainers' && gainers.map(stock => (
                 <Link
-                  to={`/company/${stock.symbol}`}
+                  to={`/company/${stock.symbol}?exchange=NSE`}
                   key={stock.symbol}
                   className="live-market__quote"
                   style={{ textDecoration: 'none' }}
@@ -504,7 +504,7 @@ export default function LiveMarketOverview() {
 
               {activeTab === 'losers' && losers.map(stock => (
                 <Link
-                  to={`/company/${stock.symbol}`}
+                  to={`/company/${stock.symbol}?exchange=NSE`}
                   key={stock.symbol}
                   className="live-market__quote"
                   style={{ textDecoration: 'none' }}

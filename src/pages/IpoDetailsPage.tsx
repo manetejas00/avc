@@ -69,7 +69,7 @@ export default function IpoDetailsPage() {
         }
       } catch (err: any) {
         if (!controller.signal.aborted) {
-          setError('Data unavailable. No official offer documents and verification record are available for this IPO.');
+          setError('This issue is not included in the reviewed list. Check the official exchange notices for current terms.');
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -161,6 +161,8 @@ export default function IpoDetailsPage() {
       </div>
     );
   }
+
+  if (ipo.verifiedAt && ipo.sourceUrl) return <div className="min-h-screen bg-background font-sans text-text"><V1Nav /><main id="main-content" className="container-custom pt-28 pb-20"><Link to="/ipo" className="inline-flex items-center gap-2 text-gold-primary mb-6"><ArrowLeft size={16}/>Back to reviewed IPOs</Link><header className="rounded-3xl border border-white/10 bg-surface p-6 sm:p-10"><p className="text-gold-primary text-sm mb-3">{ipo.symbol} · {ipo.issueType} · {ipo.exchanges.join(' / ')}</p><h1 className="text-3xl sm:text-4xl text-white font-bold mb-4">{ipo.name}</h1><p className="text-gray-300 text-base leading-relaxed">{ipo.companyDescription}</p><p className="text-gray-300 text-sm leading-relaxed mt-4">{ipo.verificationNote}</p></header><section className="grid sm:grid-cols-3 gap-4 my-6" aria-label="Checked IPO terms">{[['Price band (NSE notice)', `₹${ipo.minPrice} – ₹${ipo.maxPrice}`],['Issue opens', formatDate(ipo.openDate)],['Issue closes',formatDate(ipo.closeDate)]].map(([label,value])=><article key={label} className="rounded-2xl border border-white/10 bg-surface p-6"><p className="text-sm text-gray-300">{label}</p><strong className="block text-xl text-white mt-3">{value}</strong></article>)}</section><section className="rounded-2xl border border-gold-primary/30 bg-surface p-6 mb-6"><h2 className="text-xl text-white mb-3">Official sources</h2><p className="text-sm text-gray-300 leading-relaxed">Checked {new Date(ipo.verifiedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST. Confirm current offer terms, lot size, application limits and any changes with the exchange and issuer. No subscription or listing-gain figures are published.</p><div className="flex flex-wrap gap-4 mt-4">{[['NSE issue notice',ipo.sourceUrl],['SEBI RHP filing',ipo.documents?.rhpUrl],['Abridged prospectus',ipo.documents?.prospectusUrl]].map(([label,url])=>url&&<a key={label} href={url} target="_blank" rel="noreferrer" className="text-gold-primary underline py-3">{label}</a>)}</div></section><RegulatoryDisclaimer /></main><V1Footer /></div>;
 
   // Derived Calculations
   const cutOffPrice = ipo.maxPrice || ipo.minPrice;

@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
-import { fetchIpoList, fetchIpoStats, IPO, IPOStats } from '../services/ipoService';
+import { fetchIpoList, fetchIpoStats, IPO, IPOStats, IPO_VERIFIED_AT } from '../services/ipoService';
 
 type TabType = 'upcoming' | 'open' | 'closed' | 'listed_7days' | 'all';
 
@@ -40,7 +40,7 @@ export default function IpoPage() {
   const [stats, setStats] = useState<IPOStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
+  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date(IPO_VERIFIED_AT));
 
   const pageRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -75,12 +75,12 @@ export default function IpoPage() {
       if (!signal?.aborted) {
         setIpos(listData);
         setStats(statsData);
-        setLastRefreshed(new Date());
+        setLastRefreshed(new Date(IPO_VERIFIED_AT));
       }
     } catch (err: any) {
       if (!signal?.aborted) {
         console.error('Failed to load IPOs:', err);
-        setError('Data unavailable. No dated IPO list verified against official exchange notices and offer documents is currently published. No subscription figures are shown.');
+        setError('The reviewed list could not be loaded. Please retry or check the official exchange notice.');
       }
     } finally {
       if (!signal?.aborted) {
@@ -97,17 +97,17 @@ export default function IpoPage() {
 
   // Update dynamic SEO Metadata
   useEffect(() => {
-    let title = 'Live IPO Tracker in India – Upcoming, Open & Listed IPOs | AVC Dhanam';
+    let title = 'Reviewed Indian IPO Notices | AVC Dhanam';
     if (activeTab === 'upcoming') title = 'Upcoming IPOs in India – Expected Dates, Price Bands & Prospectus | AVC Dhanam';
-    else if (activeTab === 'open') title = 'Current Open IPOs – Live Bidding & Subscription Status | AVC Dhanam';
+    else if (activeTab === 'open') title = 'Open IPOs in the Reviewed Selection | AVC Dhanam';
     else if (activeTab === 'closed') title = 'Recently Closed IPOs – Allotment & Listing Track | AVC Dhanam';
-    else if (activeTab === 'listed_7days') title = 'Recently Listed IPOs in India (Last 7 Days) – Listing Gains & CMP | AVC Dhanam';
+    else if (activeTab === 'listed_7days') title = 'Reviewed IPO Listing Records | AVC Dhanam';
 
     document.title = title;
 
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Track live Mainboard and SME IPOs in India. Real-time updates on upcoming IPOs, open subscriptions, recently closed issues, listing gains, and detailed DRHP documents.');
+      metaDescription.setAttribute('content', 'A manually reviewed selection of Indian IPO notices with official sources and verification times. Confirm current offer terms with the exchange.');
     }
   }, [activeTab]);
 
@@ -137,7 +137,7 @@ export default function IpoPage() {
   }, [ipos, loading]);
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return 'N/A';
+    if (!dateStr) return 'Not separately checked';
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
@@ -148,7 +148,7 @@ export default function IpoPage() {
   };
 
   const formatCurrency = (amount?: number) => {
-    if (amount === undefined || amount === null || isNaN(amount)) return 'N/A';
+    if (amount === undefined || amount === null || isNaN(amount)) return 'Check official offer terms';
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
   };
 
@@ -180,7 +180,7 @@ export default function IpoPage() {
             </h1>
             
             <p className="ipo-hero__subtitle mt-3 text-sm text-text-secondary sm:text-base leading-relaxed">
-              IPO information is shown only after checking official exchange notices and offer documents. No verified list is available at present. Allotment and listing gains are not guaranteed.
+              A small, manually checked list using official exchange notices and offer documents. This is not a complete or live market feed. Allotment and listing gains are not guaranteed.
             </p>
           </div>
 
@@ -197,7 +197,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.open : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-emerald-400 font-medium">Verification unavailable</span>
+              <span className="mt-1 text-[11px] text-emerald-400 font-medium">In reviewed list</span>
             </button>
 
             <button
@@ -211,7 +211,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.upcoming : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-amber-400 font-medium">Verification unavailable</span>
+              <span className="mt-1 text-[11px] text-amber-400 font-medium">In reviewed list</span>
             </button>
 
             <button
@@ -225,7 +225,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.closed : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-blue-400 font-medium">Verification unavailable</span>
+              <span className="mt-1 text-[11px] text-blue-400 font-medium">In reviewed list</span>
             </button>
 
             <button
@@ -345,8 +345,8 @@ export default function IpoPage() {
                 type="button"
                 onClick={() => loadData()}
                 disabled={loading}
-                title="Refresh Live Data"
-                aria-label="Refresh live IPO data"
+                title="Reload reviewed list"
+                aria-label="Reload reviewed IPO information"
                 className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-surface/90 px-3.5 py-2.5 text-xs font-medium text-text-secondary transition-colors hover:border-gold-primary hover:text-white active:scale-[0.98] disabled:opacity-50"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin text-gold-primary' : ''} />
@@ -358,9 +358,9 @@ export default function IpoPage() {
 
           <div className="mt-2 flex items-center justify-between text-[11px] text-text-muted px-1">
             <span>
-              Showing {ipos.length} {activeTab === 'listed_7days' ? 'IPOs listed in the last 7 calendar days' : 'IPOs'}
+              Showing {ipos.length} reviewed {activeTab === 'listed_7days' ? 'IPOs listed in the last 7 calendar days' : 'IPOs'}
             </span>
-            <span>{error ? 'Official verification: unavailable' : `Refreshed: ${lastRefreshed.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST`}</span>
+            <span>{error ? 'Official verification: unavailable' : `Checked: ${lastRefreshed.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST`}</span>
           </div>
         </section>
 
@@ -410,7 +410,7 @@ export default function IpoPage() {
             <h3 className="text-xl font-bold text-white">No IPOs Found</h3>
             <p className="mt-2 max-w-md text-xs text-text-secondary leading-relaxed">
               {activeTab === 'listed_7days'
-                ? 'No Indian IPOs were listed during the last 7 calendar days. Check back soon or view all historical IPOs.'
+                ? 'This reviewed selection has no listing records for that period. It does not represent all Indian IPOs.'
                 : 'No IPOs match your selected tab or filter criteria. Try resetting filters or searching for another company name.'}
             </p>
             <button
@@ -514,13 +514,13 @@ export default function IpoPage() {
                         <div>
                           <span className="text-[11px] text-text-muted">Lot Size</span>
                           <p className="mt-0.5 font-semibold text-text">
-                            {ipo.lotSize ? `${ipo.lotSize} Shares` : 'N/A'}
+                            {ipo.lotSize ? `${ipo.lotSize} shares` : 'Check official offer terms'}
                           </p>
                         </div>
                         <div>
-                          <span className="text-[11px] text-text-muted">Total Subscription</span>
+                          <span className="text-[11px] text-text-muted">Source check</span>
                           <p className="mt-0.5 font-semibold text-emerald-400">
-                            {ipo.subscription?.total ? `${ipo.subscription.total}x` : 'N/A'}
+                            {ipo.verifiedAt ? new Date(ipo.verifiedAt).toLocaleDateString('en-IN', {timeZone:'Asia/Kolkata'}) : 'Pending review'}
                           </p>
                         </div>
                       </div>
@@ -567,7 +567,7 @@ export default function IpoPage() {
                       to={`/ipo/${ipo.id}`}
                       className="flex w-full items-center justify-center gap-2 rounded-xl border border-gold-primary/30 bg-gold-primary/10 py-2.5 text-xs font-bold text-gold-secondary transition-all duration-200 hover:bg-gold-primary hover:text-black shadow-md"
                     >
-                      <span>View Full IPO Profile</span>
+                      <span>View checked details and sources</span>
                       <ArrowUpRight size={15} />
                     </Link>
                   </div>
@@ -595,11 +595,11 @@ export default function IpoPage() {
             <div className="mt-10 space-y-4">
               <FAQAccordionItem
                 question="What is the difference between a Mainboard IPO and an SME IPO?"
-                answer="Mainboard IPOs are issued by large, established companies raising higher capital (minimum post-issue paid-up capital of ₹10 Crores) listed on BSE and NSE main platforms. SME IPOs are issued by Small and Medium Enterprises with lower capital requirements listed on specialized SME platforms (BSE SME or NSE Emerge). SME IPOs typically have higher lot sizes and minimum investment amounts (around ₹1 Lakh to ₹1.4 Lakhs)."
+                answer="Mainboard and SME issues use different listing platforms, eligibility rules and application requirements. Read the current offer document and exchange notice for the applicable lot size, minimum application and risks; do not rely on a generic threshold."
               />
               <FAQAccordionItem
                 question="How is the 'Listed in Last 7 Days' section calculated?"
-                answer="Our platform dynamically calculates the listing window by verifying if an IPO's official listing_date falls between (today - 7 calendar days) and today. When an IPO passes seven days since listing, it automatically shifts to historical listed records without manual intervention."
+                answer="This website publishes only a manually reviewed selection. A missing listing record does not mean no IPO listed. Check official exchange notices for the full market list and current dates."
               />
               <FAQAccordionItem
                 question="What are QIB, NII/HNI, and Retail investor quotas in Indian IPOs?"

@@ -6,7 +6,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
-test('IPO frontend withholds unverified data and never invents missing provider values', async () => {
+test('IPO reviewed subset has official sources and never invents missing provider values', async () => {
   const directory = await mkdtemp(path.join(tmpdir(), 'avc-ipo-test-'));
   const originalFetch = globalThis.fetch;
   const originalWindow = globalThis.window;
@@ -23,8 +23,14 @@ test('IPO frontend withholds unverified data and never invents missing provider 
     assert.deepEqual(service.enrichIpoDetails(record), record);
     assert.equal(service.enrichIpoDetails({ ...record, documents: { drhpUrl: 'javascript:alert(1)' } }).documents.drhpUrl, undefined);
     globalThis.fetch = async () => { calls++; throw new Error('No unverified feed should be requested'); };
-    await assert.rejects(service.fetchIpoList({ tab: 'open' }), /Data unavailable/);
-    await assert.rejects(service.fetchIpoDetail('does-not-exist'), /Data unavailable/);
+    const list = await service.fetchIpoList({ tab: 'all' });
+    assert.equal(list.length, 1); assert.equal(list[0].symbol, 'BCSSL');
+    assert.match(list[0].sourceUrl, /^https:\/\/www.nseindia.com\//);
+    assert.match(list[0].documents.rhpUrl, /^https:\/\/www.sebi.gov.in\//);
+    assert.equal(list[0].subscription, undefined); assert.equal(list[0].lotSize, undefined);
+    assert.deepEqual(await service.fetchIpoList({ search: 'not-a-real-issuer' }), []);
+    assert.equal((await service.fetchIpoDetail('bcssl')).name, list[0].name);
+    await assert.rejects(service.fetchIpoDetail('does-not-exist'), /not in the manually reviewed list/);
     assert.equal(calls, 0);
     const controller = new AbortController();
     controller.abort();

@@ -5680,3 +5680,41 @@ html.light .live-market .live-market__quote > .market-source-note { color: #4755
 .news-article-image__empty { display: flex; min-height: 180px; height: 100%; padding: 24px; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #e4e4e7; text-align: center; }
 .news-article-image__empty > span { font-size: 15px; font-weight: 600; }
 .news-article-image__empty > small { font-size: 12px; line-height: 1.5; color: #d4d4d8; }
+
+/* Readable data typography without changing the existing site font or palette. */
+.v1-stats .count-up { font-variant-numeric: tabular-nums; }
+.v1-stats .count-up > span[aria-hidden] { margin: 0; color: inherit !important; font-size: inherit !important; line-height: inherit !important; font-weight: inherit; letter-spacing: inherit; text-transform: none !important; white-space: nowrap; }
+.company-data__heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+.company-data .company-data__heading .company-data__eyebrow { font: 600 12px/1.5 var(--font-sans); letter-spacing: .08em; }
+.company-data .company-data__heading .company-data__source { margin: 12px 0 0; color: #d4d4d8; font: 400 14px/1.7 var(--font-sans); letter-spacing: 0; text-transform: none; overflow-wrap: anywhere; }
+.company-data .company-data__heading > .company-data__status { padding: 6px 10px; border: 1px solid #52525b; border-radius: 20px; color: #e4e4e7; font: 500 12px/1.5 var(--font-sans); letter-spacing: 0; text-transform: none; white-space: nowrap; }
+.company-data__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.company-data__card { min-width: 0; padding: 20px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; }
+.company-data__card > div { display: flex; align-items: start; flex-wrap: wrap; justify-content: space-between; gap: 8px 12px; }
+.company-data__card > div > span { display: inline-flex; align-items: center; gap: 8px; color: #d4d4d8; font: 500 14px/1.5 var(--font-sans); }
+.company-data__card svg { color: #d4af37; flex-shrink: 0; }
+.company-data__card small { color: #cbd5e1; font: 400 12px/1.5 var(--font-sans); }
+.company-data__card > strong { display: block; margin: 16px 0 10px; color: #fff; font: 650 28px/1.35 var(--font-sans); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.company-data__card > strong.company-data__sector, .company-data__card > strong.company-data__range { font-size: 21px; }
+.company-data__card > p, .company-data__message, .company-data__footnote { margin: 10px 0 0; color: #cbd5e1; font: 400 13px/1.65 var(--font-sans); text-transform: none; letter-spacing: 0; }
+.company-data__message { padding: 16px 5px; }
+.company-data__footnote { padding: 12px 5px 0; }
+.company-data__footnote a { color: #f4d675; text-decoration: underline; }
+.company-data__footnote a svg { display: inline; }
+.fund-explorer, .fund-explorer button, .fund-explorer table { font-family: var(--font-sans); }
+.fund-explorer p, .fund-explorer label { font-size: 14px; line-height: 1.65; }
+.fund-explorer th { font-size: 13px; line-height: 1.6; }
+.fund-explorer td { font-size: 14px; line-height: 1.6; }
+@media (max-width: 640px) { .company-data__heading, .company-data__grid { grid-template-columns: minmax(0, 1fr); } .company-data .company-data__heading > .company-data__status { width: fit-content; } .company-data__card { padding: 18px; } }
+.fund-explorer .fund-history-coverage { padding: 8px 10px; border-radius: 8px; background: rgba(212,175,55,.08); color: #e4e4e7; }
+.fund-explorer table { table-layout: fixed; min-width: 100%; }
+.fund-explorer th { min-width: 145px; overflow-wrap: anywhere; }
+.fund-explorer th small { display: block; color: #d4d4d8; font-size: 12px; font-weight: 400; margin-top: 5px; }
+.fund-explorer .fund-return-value { font-weight: 600; font-variant-numeric: tabular-nums; color: #f4d675; }
+.fund-explorer .fund-return-reason { font-size: 13px; color: #d4d4d8; overflow-wrap: anywhere; }
+html.light .company-data__card { background: #f8fafc; border-color: #cbd5e1; }
+html.light .company-data__card > strong { color: #0f172a !important; }
+html.light .company-data__card small { color: #475569; }
+html.light .company-data__footnote a { color: #806000; }
+html.light .fund-explorer .fund-return-value { color: #806000; }
+html.light .fund-explorer .fund-return-reason, html.light .fund-explorer th small { color: #334155; }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
@@ -65,9 +65,9 @@ function toDividendEvent(values: unknown[]): DividendEvent {
 }
 
 function formatDate(value: number | null) {
-  if (!value) return 'Not announced';
+  if (!value) return 'Not supplied';
   const date = new Date(value > 1_000_000_000_000 ? value : value * 1000);
-  return Number.isNaN(date.valueOf()) ? 'Not announced' : new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+  return Number.isNaN(date.valueOf()) ? 'Not supplied' : new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
 }
 
 function DividendCard({ title, event, upcoming }: { title: string; event: DividendEvent | null; upcoming?: boolean }) {
@@ -75,8 +75,8 @@ function DividendCard({ title, event, upcoming }: { title: string; event: Divide
   return <article className="company-premium__dividend-card">
     <p>{title}</p>
     {hasData ? <div className="company-premium__dividend-data">
-      <div><small>Ex-dividend date</small><strong>{formatDate(event.exDate)}</strong></div><div><small>Payment date</small><strong>{formatDate(event.paymentDate)}</strong></div><div><small>Amount per share</small><strong>{event.amount !== null ? `₹${event.amount.toLocaleString('en-IN')}` : 'Not announced'}</strong></div><div><small>Dividend yield</small><strong>{event.yield !== null ? `${event.yield.toFixed(2)}%` : 'Not announced'}</strong></div>
-    </div> : <span className="company-premium__empty">{upcoming ? 'Upcoming dividend data unavailable. Check company exchange filings.' : 'Recent dividend data unavailable. Check company exchange filings.'}</span>}
+      <div><small>Ex-dividend date</small><strong>{formatDate(event.exDate)}</strong></div><div><small>Payment date</small><strong>{formatDate(event.paymentDate)}</strong></div><div><small>Amount per share</small><strong>{event.amount !== null ? `₹${event.amount.toLocaleString('en-IN')}` : 'Not supplied'}</strong></div><div><small>Dividend yield</small><strong>{event.yield !== null ? `${event.yield.toFixed(2)}%` : 'Not supplied'}</strong></div>
+    </div> : <span className="company-premium__empty">{upcoming ? 'No upcoming dividend record in this provider feed. Check exchange announcements.' : 'No recent dividend record in this provider feed. Check exchange announcements.'}</span>}
     {hasData && event.frequency && <small className="company-premium__frequency">Frequency: {event.frequency}</small>}
   </article>;
 }
@@ -85,179 +85,72 @@ function DividendCalendar({ symbol }: { symbol: string }) {
   const [upcoming, setUpcoming] = useState<DividendEvent | null>(null);
   const [recent, setRecent] = useState<DividendEvent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const [checkedAt, setCheckedAt] = useState('');
 
   useEffect(() => {
     const controller = new AbortController();
     const loadDividends = async () => {
+      setLoading(true); setFailed(false); setCheckedAt(''); setUpcoming(null); setRecent(null);
       try {
-        const response = await fetch('https://scanner.tradingview.com/india/scan', {
-          method: 'POST', signal: controller.signal, headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-          body: JSON.stringify({
-            symbols: { tickers: [symbol] },
-            columns: ['dividend_ex_date_upcoming', 'dividend_payment_date_upcoming', 'dividend_amount_upcoming', 'dividend_yield_upcoming', 'dividend_frequency_upcoming', 'dividend_ex_date_recent', 'dividend_payment_date_recent', 'dividend_amount_recent', 'dividend_yield_recent', 'dividend_frequency_recent']
-          })
-        });
-        if (!response.ok) throw new Error('Dividend data unavailable');
-        const result = await response.json() as { data?: Array<{ d?: unknown[] }> };
-        const values = result.data?.[0]?.d ?? [];
+        const [exchange, ticker] = symbol.split(':');
+        const payload = await getJson<{ values: Record<string, unknown>; checkedAt: string }>(`/api/company-data.php?symbol=${encodeURIComponent(ticker)}&exchange=${exchange}&mode=dividends`, { signal: controller.signal, timeoutMs: 12000 });
+        const keys = ['dividend_ex_date_upcoming', 'dividend_payment_date_upcoming', 'dividend_amount_upcoming', 'dividend_yield_upcoming', 'dividend_frequency_upcoming', 'dividend_ex_date_recent', 'dividend_payment_date_recent', 'dividend_amount_recent', 'dividend_yield_recent', 'dividend_frequency_recent'];
+        const values = keys.map(key => payload.values[key]);
+        setCheckedAt(payload.checkedAt);
         setUpcoming(toDividendEvent(values.slice(0, 5)));
         setRecent(toDividendEvent(values.slice(5, 10)));
       } catch (error) {
-        if (!controller.signal.aborted) console.warn('Could not load dividend dates.', error);
+        if (!controller.signal.aborted) { setFailed(true); console.warn('Could not load dividend dates.', error); }
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
     };
     loadDividends();
     return () => controller.abort();
-  }, [symbol]);
+  }, [symbol, retry]);
 
   return <section className="company-premium__panel company-premium__dividends" aria-label="Dividend calendar">
     <div className="company-premium__panel-heading"><div><p>Shareholder returns</p><h2>Dividend calendar</h2></div><span>Ex-date · payment · amount · yield</span></div>
-    {loading ? <p className="company-premium__loading">Loading dividend dates…</p> : <div className="company-premium__dividend-grid"><DividendCard title="Upcoming dividend" event={upcoming} upcoming /><DividendCard title="Most recent dividend" event={recent} /></div>}
+    {loading ? <p className="company-premium__loading">Loading dividend dates…</p> : failed ? <p className="company-data__message">The dividend feed could not be reached. <button type="button" className="underline" onClick={() => setRetry(value => value + 1)}>Retry</button> or check the company’s exchange announcements.</p> : <div className="company-premium__dividend-grid"><DividendCard title="Upcoming dividend" event={upcoming} upcoming /><DividendCard title="Most recent dividend" event={recent} /></div>}<p className="company-data__footnote">Source: TradingView dividend calendar.{checkedAt && <> Feed checked {new Date(checkedAt).toLocaleString('en-IN', {timeZone:'Asia/Kolkata'})} IST.</>} Dates are announcements in the provider feed, not a guarantee of payment.</p>
   </section>;
 }
 
-import { getStockTechnicals, getStockFundamentals, getStockNews, StockTechnicals, StockFundamentals, FinancialNewsItem } from '../services/financialApi';
-import { Activity, Clock, ExternalLink, Globe, Layers, Newspaper, TrendingUp } from 'lucide-react';
+import { getJson } from '../services/apiClient';
+import { CompanyProfile, parseCompanyProfile } from '../utils/companyData';
+import { Activity, ExternalLink, Globe, Layers, TrendingUp } from 'lucide-react';
 
-function StockLiveIntelligence({ ticker }: { ticker: string }) {
-  const [technicals, setTechnicals] = useState<StockTechnicals | null>(null);
-  const [fundamentals, setFundamentals] = useState<StockFundamentals | null>(null);
-  const [news, setNews] = useState<FinancialNewsItem[]>([]);
+function StockLiveIntelligence({ ticker, exchange }: { ticker: string; exchange: 'NSE' | 'BSE' }) {
+  const [profile, setProfile] = useState<CompanyProfile | null>(null);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    if (!ticker) return;
     const controller = new AbortController();
-    setLoading(true);
-
-    Promise.allSettled([
-      getStockTechnicals(ticker, controller.signal),
-      getStockFundamentals(ticker, controller.signal),
-      getStockNews(ticker, 4, controller.signal)
-    ]).then(([techRes, fundRes, newsRes]) => {
-      if (controller.signal.aborted) return;
-      setTechnicals(null); setFundamentals(null); setNews([]);
-      if (techRes.status === 'fulfilled' && techRes.value.timestamp && Number.isFinite(Date.parse(techRes.value.timestamp))) setTechnicals(techRes.value);
-      void fundRes; // No source valuation date is provided; keep these fields unavailable.
-      if (newsRes.status === 'fulfilled') setNews(newsRes.value);
-      setLoading(false);
-    });
-
+    setLoading(true); setError(''); setProfile(null);
+    void getJson(`/api/company-data.php?symbol=${encodeURIComponent(ticker)}&exchange=${exchange}`, { signal: controller.signal, timeoutMs: 12000 })
+      .then(payload => { if (!controller.signal.aborted) setProfile(parseCompanyProfile(payload, `${exchange}:${ticker}`)); })
+      .catch(() => { if (!controller.signal.aborted) setError('The company feed could not be refreshed. Try again, or use the provider widgets below.'); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [ticker]);
-
-  const rsi = technicals?.rsi;
-  const getRsiStatus = (val: number | null) => {
-    if (val === null) return { label: 'Awaiting Signal', color: 'text-gray-400' };
-    if (val >= 70) return { label: 'Overbought Territory', color: 'text-amber-400' };
-    if (val <= 30) return { label: 'RSI below 30', color: 'text-emerald-400' };
-    return { label: 'Neutral Momentum', color: 'text-blue-400' };
-  };
-  const rsiStatus = getRsiStatus(rsi ?? null);
-
-  return (
-    <section className="company-premium__panel space-y-6" aria-label="Company data" aria-busy={loading}>
-      <div className="company-premium__panel-heading">
-        <div>
-          <p className="text-xs uppercase tracking-wider text-gold-primary">Additional market data</p>
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Company data</h2><p className="market-source-note">{ticker} · NSE/BSE as selected in the widget. Source: {technicals?.provider || 'unavailable'}. Technical calculation time: {technicals?.timestamp ? new Date(technicals.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'unavailable'}. Underlying quote time and exact delay unavailable; confirm with exchange filings.</p>
-        </div>
-        <span className="text-xs text-gray-400 font-mono">May be delayed · verify source</span>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Technicals: RSI */}
-        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-            <span className="flex items-center gap-1.5"><Activity size={14} className="text-gold-primary" /> RSI (14-Day)</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">{technicals?.provider || 'Source unavailable'}</span>
-          </div>
-          <div className="text-2xl font-bold text-white mb-1">
-            {rsi !== null && rsi !== undefined ? rsi.toFixed(1) : 'Data unavailable'}
-          </div>
-          <small className={`text-xs font-semibold ${rsiStatus.color}`}>
-            {rsiStatus.label}
-          </small>
-        </div>
-
-        {/* Valuation: P/E */}
-        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-            <span className="flex items-center gap-1.5"><TrendingUp size={14} className="text-emerald-400" /> P/E Ratio</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">{fundamentals?.provider || 'Source unavailable'}</span>
-          </div>
-          <div className="text-2xl font-bold text-white mb-1">
-            {fundamentals?.peRatio ? fundamentals.peRatio.toFixed(2) : 'Data unavailable'}
-          </div>
-          <small className="text-xs text-gray-400">
-            Sector comparison unavailable
-          </small>
-        </div>
-
-        {/* Sector / Industry */}
-        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-            <span className="flex items-center gap-1.5"><Layers size={14} className="text-blue-400" /> Sector Classification</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">GICS</span>
-          </div>
-          <div className="text-base font-bold text-white truncate mb-1">
-            {fundamentals?.sector || 'Data unavailable'}
-          </div>
-          <small className="text-xs text-gray-400 truncate">
-            {fundamentals?.industry || 'Data unavailable'}
-          </small>
-        </div>
-
-        {/* 52-Week Range */}
-        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-            <span className="flex items-center gap-1.5"><Globe size={14} className="text-purple-400" /> 52-Week High/Low</span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/5">Source varies</span>
-          </div>
-          <div className="text-sm font-bold text-white mb-1">
-            {fundamentals?.fiftyTwoWeekHigh ? `High: ₹${fundamentals.fiftyTwoWeekHigh.toLocaleString('en-IN')}` : 'High: Data unavailable'}
-          </div>
-          <small className="text-xs text-gray-400">
-            {fundamentals?.fiftyTwoWeekLow ? `Low: ₹${fundamentals.fiftyTwoWeekLow.toLocaleString('en-IN')}` : 'Low: Data unavailable'}
-          </small>
-        </div>
-      </div>
-
-      {/* Related News from NewsAPI & Finnhub */}
-      {news.length > 0 && (
-        <div className="pt-4 border-t border-white/5">
-          <h3 className="text-sm font-semibold text-gray-200 mb-3 flex items-center gap-2">
-            <Newspaper size={16} className="text-gold-primary" />
-            <span>Related Market News &amp; Disclosures</span>
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {news.slice(0, 4).map((item, i) => (
-              <a
-                key={i}
-                href={item.url}
-                target={item.url !== '#' ? '_blank' : '_self'}
-                rel="noreferrer"
-                className="p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-gold-primary/30 transition-all flex flex-col justify-between gap-2 group"
-              >
-                <div className="flex items-center justify-between text-[11px] text-gray-400">
-                  <span className="font-semibold text-gold-primary">{item.source}</span>
-                  <span className="flex items-center gap-1"><Clock size={11} /> {new Date(item.publishedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
-                </div>
-                <h4 className="text-xs sm:text-sm font-medium text-white group-hover:text-gold-secondary transition-colors line-clamp-2">
-                  {item.title}
-                </h4>
-                <span className="text-[11px] text-gray-400 flex items-center gap-1 group-hover:text-white">
-                  Read article <ExternalLink size={11} />
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </section>
-  );
+  }, [ticker, exchange, attempt]);
+  const time = profile ? new Date(profile.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' IST' : '';
+  return <section className="company-premium__panel company-data" aria-label="Company data" aria-busy={loading}>
+    <div className="company-premium__panel-heading company-data__heading"><div>
+      <p className="company-data__eyebrow">Additional market data</p><h2>Company data</h2>
+      {profile && <p className="company-data__source">{profile.symbol} · {profile.name}<br />Source: {profile.source} · Quote as of {time}<br />{profile.delay}. Values may reflect the last trading session.</p>}
+    </div><span className="company-data__status">{loading ? 'Loading' : profile ? exchange : 'Connection issue'}</span></div>
+    {loading && <p className="company-data__message" role="status">Loading dated company metrics…</p>}
+    {error && <p className="company-data__message" role="status">{error} <button type="button" className="underline" onClick={() => setAttempt(value => value + 1)}>Retry</button></p>}
+    {profile && <div className="company-data__grid">
+      <article className="company-data__card"><div><span><Activity size={16} />RSI (14-day)</span><small>TradingView</small></div><strong>{profile.rsi === null ? 'Not reported' : profile.rsi.toFixed(1)}</strong><p>{profile.rsi === null ? 'The provider did not supply an RSI for this record.' : 'Source-calculated indicator. It is not a buy or sell recommendation.'}</p></article>
+      <article className="company-data__card"><div><span><TrendingUp size={16} />P/E ratio (TTM)</span><small>TradingView</small></div><strong>{profile.pe === null ? 'Not reported' : `${profile.pe.toFixed(2)}×`}</strong><p>{profile.pe === null ? 'The provider did not supply a P/E for this record.' : 'Price relative to trailing 12-month earnings. This is not a sector comparison.'}</p></article>
+      <article className="company-data__card"><div><span><Layers size={16} />Sector</span><small>Provider classification</small></div><strong className="company-data__sector">{profile.sector || 'Not classified'}</strong><p>{profile.industry || 'The provider has not classified this industry.'}</p></article>
+      <article className="company-data__card"><div><span><Globe size={16} />52-week range</span><small>TradingView</small></div><strong className="company-data__range">{profile.low !== null && profile.high !== null ? `₹${profile.low.toLocaleString('en-IN')} – ₹${profile.high.toLocaleString('en-IN')}` : 'Not reported'}</strong><p>Low to high over the provider’s 52-week window. Currency: INR.</p></article>
+    </div>}
+    <p className="company-data__footnote">Check the exchange and quote time before using these figures. <a href={`https://www.tradingview.com/symbols/${exchange}-${encodeURIComponent(ticker)}/`} target="_blank" rel="noreferrer">Open the provider’s symbol page <ExternalLink size={12} /></a></p>
+  </section>;
 }
 
 export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticker?: string; exchange?: 'NSE' | 'BSE' }) {
@@ -286,7 +179,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
         <header className="company-premium__hero"><p className="company-premium__eyebrow">06 — EQUITY RESEARCH & ANALYSIS · {safeExchange}</p><h1 className="company-premium__title">{cleanTicker || 'RELIANCE'} <em>In Focus.</em></h1><p className="company-premium__copy">Price activity, market statistics, charts, and financials for {cleanTicker || 'RELIANCE'} on {safeExchange}.</p></header>
         
         {/* Real-time Multi-Provider Intelligence Panel */}
-        <StockLiveIntelligence ticker={cleanTicker || 'RELIANCE'} />
+        <StockLiveIntelligence ticker={cleanTicker} exchange={safeExchange} />
 
         <section className="company-premium__panel company-premium__summary" aria-label="Company market summary"><div className="company-premium__panel-kicker">LIVE MARKET SUMMARY <ArrowUpRight size={14} /></div>
           <TradingViewWidget name="symbol-info" symbol={symbol} height={180} />
@@ -307,5 +200,7 @@ export function CompanyDetailsContent({ ticker = '', exchange = 'BSE' }: { ticke
 
 export default function CompanyDetailsPage() {
   const { ticker = '' } = useParams();
-  return <CompanyDetailsContent ticker={ticker} />;
+  const [params] = useSearchParams();
+  const exchange = params.get('exchange') === 'NSE' ? 'NSE' : 'BSE';
+  return <CompanyDetailsContent ticker={ticker} exchange={exchange} />;
 }

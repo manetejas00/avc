@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { ArrowUpRight, Award, BarChart3, Building2, Calculator, CheckCircle2, ChevronLeft, ChevronRight, ExternalLink, Layers3, LockKeyhole, MapPin, RefreshCw, ShieldCheck, Sparkles, Target, TrendingUp, X } from 'lucide-react';
+import CountUp from './CountUp';
 import NewsImage from './NewsImage';
 import TradingViewTicker from './TradingViewTicker';
 import ContactFormModal from './ContactFormModal';
@@ -390,12 +391,12 @@ export default function V1Landing() {
           <a href="tel:+917030247878" className="v1-text-link">Call +91 7030247878</a><a href="https://wa.me/917030247878" className="v1-text-link" target="_blank" rel="noreferrer">WhatsApp</a><a href="#system" className="v1-text-link">Explore Financial Solutions <ChevronRight size={16} /></a>
         </div>
       </div>
-      <aside className="v1-stats">
-        <div><strong>Investments</strong><span>understand the risks</span></div>
-        <div><strong>Loans</strong><span>check eligibility</span></div>
-        <div><strong>Insurance</strong><span>compare cover</span></div>
-        <div><strong>Tax</strong><span>prepare documents</span></div>
-        <div><strong>Virar West</strong><span>meet the team</span></div>
+      <aside className="v1-stats" aria-label="Business figures confirmed by AVC on 1 November 2026">
+        <div><CountUp value={8} suffix="+ Years" /><span>financial experience</span></div>
+        <div><CountUp value={500} suffix="+" /><span>clients</span></div>
+        <div><CountUp value={15} prefix="₹" suffix="+ Cr" /><span>assets under management</span></div>
+        <div><CountUp value={210} suffix="+" /><span>bank / NBFC relationships</span></div>
+        <div><CountUp value={10} suffix="+" /><span>Chartered Accountant network</span></div>
       </aside>
       <div className="v1-hero__bottom">
         <div className="v1-scroll">ILLUSTRATIVE BACKGROUNDS · SCROLL TO DISCOVER <span /></div>
