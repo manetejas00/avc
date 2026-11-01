@@ -105,3 +105,7 @@ The owner explicitly approved ten fictional examples with Indian names and illus
 ## Follow-up: restore owner-selected original testimonial drafts
 
 At the owner's request, the ten new planning examples have been replaced with only the four original testimonial entries and image paths found in commit 15aa53d (also present in 3fa3bb9 and e90af05): Rajesh Sharma, Ananya Patel, Vikram Mehta and Priya Nair. The original names, role text and quote text are preserved exactly. These predate the latest changes. In view of the owner's statement that genuine reviews are not available, the section and every card clearly label them illustrative testimonial drafts, not actual/verified client reviews. Profile images are identified as illustrative and identities remain unverified. No ratings or independent verification are added. Automatic rotation and accessible controls are preserved.
+
+## Follow-up: original testimonial template
+
+Restored the original horizontal strip of 400px rounded cards, gold decorative stars, italic quotes and 48px circular profile images, using the four unchanged original entries. The strip loops across two matching groups; duplicated content is hidden from assistive technology. Mouse dragging, native touch/keyboard scrolling, hover/focus pause and a manual pause button are included. Reduced motion removes automatic scrolling and the duplicated group. Cards shrink to fit mobile viewports and preserve full quote text. Existing illustrative disclosures remain visible above the strip and within each card. Production build passed.

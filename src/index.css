@@ -5745,3 +5745,23 @@ html.light .illustrative-story-label, html.light .client-review-name { color: #7
 html.light .client-review-position { color: #202020; }
 
 .testimonial-draft-photo { object-fit: cover; border-radius: 50%; border: 1px solid #a58a42; }
+
+/* Original horizontal testimonial-card template, with a seamless four-card loop. */
+.original-testimonial-viewport { width: 100%; overflow-x: auto; scrollbar-width: none; cursor: grab; padding: 16px 0 32px; touch-action: pan-x pan-y; }
+.original-testimonial-viewport::-webkit-scrollbar { display: none; }
+.original-testimonial-viewport:active { cursor: grabbing; }
+.original-testimonial-viewport:focus-visible { outline: 2px solid #dfbd45; outline-offset: -4px; }
+.original-testimonial-track { display: flex; width: max-content; padding-left: 16px; }
+.original-testimonial-group { display: flex; align-items: stretch; gap: 32px; padding-right: 32px; }
+.original-testimonial-card { width: min(400px, calc(100vw - 48px)); flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+.original-testimonial-label { font-size: 12px; line-height: 1.6; color: #e2c772; }
+.original-testimonial-quote { font-size: 18px; line-height: 1.7; font-style: italic; color: #d1d1d1; }
+.original-testimonial-person { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 8px; }
+.original-testimonial-person img { width: 48px; height: 48px; flex: 0 0 48px; object-fit: cover; border-radius: 50%; border: 1px solid #a58a42; }
+.original-testimonial-person h3 { font-size: 16px; line-height: 1.5; font-weight: 600; color: #f5f5f5; }
+.original-testimonial-person p { font-size: 14px; line-height: 1.6; color: #bdbdbd; }
+.original-testimonial-person .original-testimonial-identity { font-size: 11px; margin-top: 4px; }
+html.light .original-testimonial-quote, html.light .original-testimonial-person p { color: #475569; }
+html.light .original-testimonial-person h3 { color: #202020; }
+html.light .original-testimonial-label { color: #795e0a; }
+@media (prefers-reduced-motion: reduce) { .original-testimonial-clone { display: none; } }

@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Pause, Play, Star } from 'lucide-react';
 import { testimonialDrafts } from '../data/testimonials';
 
 export default function Testimonials() {
-  const reviews = testimonialDrafts;
-  const [index, setIndex] = useState(0);
+  const viewport = useRef<HTMLDivElement>(null);
+  const group = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; scroll: number } | null>(null);
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -15,38 +17,47 @@ export default function Testimonials() {
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
   }, []);
-  const rotating = reviews.length > 1 && !paused && !hovered && !focused && !reducedMotion;
   useEffect(() => {
-    if (!rotating) return;
-    const timer = window.setInterval(() => setIndex(current => (current + 1) % reviews.length), 6000);
-    return () => window.clearInterval(timer);
-  }, [rotating, reviews.length]);
-  const review = reviews[index % Math.max(1, reviews.length)];
-  const move = (step: number) => setIndex(current => (current + step + reviews.length) % reviews.length);
+    if (paused || hovered || focused || dragging || reducedMotion) return;
+    let frame = 0, last = 0;
+    const tick = (now: number) => {
+      const element = viewport.current, width = group.current?.offsetWidth;
+      if (element && width && last) {
+        const next = element.scrollLeft + Math.min(now - last, 64) * 0.04;
+        element.scrollLeft = next >= width ? next % width : next;
+      }
+      last = now;
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [paused, hovered, focused, dragging, reducedMotion]);
 
   return <section id="testimonials" className="py-24 bg-surface-elevated overflow-hidden scroll-mt-24" aria-labelledby="testimonials-heading">
-    <div className="container-custom">
-      <div className="text-center mb-8">
-        <h2 id="testimonials-heading" className="text-4xl md:text-[52px] font-semibold mb-4">Testimonials</h2>
-        <p className="text-text-muted text-lg max-w-2xl mx-auto">Illustrative testimonial drafts—not actual client reviews. Names, roles and images are not verified client identities.</p>
+    <div className="container-custom"><div className="test-title text-center mb-16">
+      <h2 id="testimonials-heading" className="text-4xl md:text-[52px] font-semibold mb-4">Testimonials</h2>
+      <p className="text-text-muted text-lg max-w-2xl mx-auto">Illustrative testimonial drafts—not actual client reviews. Names, roles and images are not verified client identities.</p>
+    </div></div>
+    <div className="original-testimonial-viewport mask-horizontal" ref={viewport} tabIndex={0} role="region" aria-label="Illustrative testimonial drafts. Scroll horizontally to read all four."
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+      onPointerDown={event => { if (event.pointerType !== 'mouse' || event.button !== 0) return; drag.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft }; event.currentTarget.setPointerCapture(event.pointerId); setDragging(true); event.preventDefault(); }}
+      onPointerMove={event => { if (drag.current) event.currentTarget.scrollLeft = drag.current.scroll - (event.clientX - drag.current.x); }}
+      onPointerUp={() => { drag.current = null; setDragging(false); }} onPointerCancel={() => { drag.current = null; setDragging(false); }}>
+      <div className="original-testimonial-track">
+        {[0, 1].map(copy => <div ref={copy === 0 ? group : undefined} className={`original-testimonial-group ${copy ? 'original-testimonial-clone' : ''}`} key={copy} aria-hidden={copy ? true : undefined}>
+          {testimonialDrafts.map(review => <article key={review.id} className="original-testimonial-card bg-surface rounded-card p-8 border border-white/5 hover:border-gold-primary/50 transition-colors">
+            <div className="flex gap-1 text-gold-primary" aria-hidden="true">{[1,2,3,4,5].map(star => <Star key={star} size={16} fill="currentColor"/>)}</div>
+            <p className="original-testimonial-label">Illustrative draft—not a verified client review</p>
+            <p className="original-testimonial-quote">“{review.quote}”</p>
+            <div className="original-testimonial-person">
+              <img src={review.image} alt="Illustrative profile image; identity unverified" width="48" height="48" loading="lazy" draggable={false}/>
+              <div><h3>{review.name}</h3><p>{review.role}</p><p className="original-testimonial-identity">Illustrative profile · not a verified client</p></div>
+            </div>
+          </article>)}
+        </div>)}
       </div>
-      {review ? <div className="client-review-carousel max-w-2xl mx-auto" role="region" aria-roledescription="carousel" aria-label="Illustrative testimonial drafts"
-        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-        onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
-        <div className="client-review-card bg-surface rounded-card p-8 border border-white/5" role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${reviews.length}`} aria-live={rotating ? 'off' : 'polite'} aria-atomic="true">
-          <div className="illustrative-story-content">
-            <p className="illustrative-story-label">Illustrative testimonial draft—not a verified client review</p>
-            <p className="client-review-quote">“{review.quote}”</p>
-            <div className="illustrative-story-person"><img src={review.image} className="illustrative-avatar testimonial-draft-photo" alt="Illustrative profile image; identity unverified" width="64" height="64" loading="lazy"/><div><p className="client-review-name">{review.name}</p><p className="illustrative-person-label">{review.role}</p><p className="illustrative-person-label">Illustrative profile · not a verified client</p></div></div>
-          </div>
-        </div>
-        {reviews.length > 1 && <div className="client-review-controls">
-          <button type="button" onClick={() => move(-1)} aria-label="Previous example"><ChevronLeft size={20}/></button>
-          <span className="client-review-position">{index + 1} / {reviews.length}</span>
-          <button type="button" onClick={() => move(1)} aria-label="Next example"><ChevronRight size={20}/></button>
-          {!reducedMotion && <button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Start automatic examples' : 'Pause automatic examples'}>{paused ? <Play size={18}/> : <Pause size={18}/>}</button>}
-        </div>}
-      </div> : <div className="max-w-2xl mx-auto bg-surface rounded-card p-8 border border-white/5 text-text-muted text-center">Reviews will be shared only with the reviewer’s permission. To understand our services, <a className="text-gold-primary underline" href="tel:+917030247878">speak with the team</a>.</div>}
     </div>
+    {!reducedMotion && <div className="client-review-controls"><button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Start automatic testimonials' : 'Pause automatic testimonials'}>{paused ? <Play size={18}/> : <Pause size={18}/>}</button></div>}
   </section>;
 }
