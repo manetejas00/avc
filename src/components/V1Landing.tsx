@@ -1,3 +1,4 @@
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -616,11 +617,11 @@ export default function V1Landing() {
             {/* Image Container with Top Badge Overlay */}
             <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
               <img
-                src="/assets/founders/chandresh-pandey.jpg"
+                src="/images/directors/chandresh-pandey.jpeg"
                 alt="Chandresh Pandey - Director & Co-Founder of AVC Dhanam Solutions"
                 width="896"
                 height="672"
-                className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500 ease-out"
+                className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500 ease-out"
                 loading="lazy"
               />
               <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
@@ -694,11 +695,11 @@ export default function V1Landing() {
             {/* Image Container with Top Badge Overlay */}
             <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
               <img
-                src="/assets/founders/ajay-pandey.jpg"
+                src="/images/directors/ajay-pandey.jpeg"
                 alt="Ajay Pandey - Director & Co-Founder of AVC Dhanam Solutions"
                 width="896"
                 height="672"
-                className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500 ease-out"
+                className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500 ease-out"
                 loading="lazy"
               />
               <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
