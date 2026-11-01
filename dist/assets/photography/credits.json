@@ -1,0 +1,65 @@
+{
+  "checkedOn": "2026-11-01",
+  "license": "Pexels License",
+  "licenseUrl": "https://www.pexels.com/license/",
+  "usage": "Illustrative service photography only. No stock subject is identified as a director, employee, actual client, testimonial author or endorser. No stock office is described as AVC premises.",
+  "processing": "Only orientation, resizing and image-format compression. No generative tools, face/body edits, skin smoothing, compositing or colour grading.",
+  "photos": [
+    {
+      "key": "investments",
+      "id": "4308013",
+      "slug": "family-planning",
+      "alt": "A couple reviewing their household finances at home",
+      "photographer": "Ketut Subiyanto",
+      "source": "https://www.pexels.com/photo/happy-couple-looking-at-paperwork-4308013/",
+      "position": "50% 40%",
+      "width": 2400,
+      "height": 1600,
+      "base": "/assets/photography/family-planning-4308013",
+      "downloadUrl": "https://images.pexels.com/photos/4308013/pexels-photo-4308013.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "downloadSha256": "32df300b0e3cea928d641dec52fe82fa625029a71bc85e21d4a664a6cc63a217"
+    },
+    {
+      "key": "loans",
+      "id": "30520641",
+      "slug": "small-business-shop",
+      "alt": "A shopkeeper working at his neighbourhood shop in Karkala",
+      "photographer": "Abhijit Dey",
+      "source": "https://www.pexels.com/photo/vibrant-indian-street-shop-in-karkala-30520641/",
+      "position": "50% 0%",
+      "width": 2400,
+      "height": 3000,
+      "base": "/assets/photography/small-business-shop-30520641",
+      "downloadUrl": "https://images.pexels.com/photos/30520641/pexels-photo-30520641.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "downloadSha256": "c92aa9649046ebf2bc60a997de19d6e7db14e14d52c4fbdf0f78da259f0981fc"
+    },
+    {
+      "key": "insurance",
+      "id": "14798018",
+      "slug": "family-together",
+      "alt": "A family spending time together in their living room",
+      "photographer": "World Sikh Organization of Canada (credited Pexels contributor; individual photographer not named)",
+      "source": "https://www.pexels.com/photo/a-family-watching-together-in-the-living-room-14798018/",
+      "position": "50% 44%",
+      "width": 2400,
+      "height": 1601,
+      "base": "/assets/photography/family-together-14798018",
+      "downloadUrl": "https://images.pexels.com/photos/14798018/pexels-photo-14798018.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "downloadSha256": "3b38be962fee64f4987079ad5b0bcb786d4fd4800c0492935c52300ac216f5a5"
+    },
+    {
+      "key": "tax",
+      "id": "7691663",
+      "slug": "accountant-reviewing-documents",
+      "alt": "An accountant reviewing papers beside her office desk",
+      "photographer": "Yan Krukau",
+      "source": "https://www.pexels.com/photo/a-woman-looking-the-papers-7691663/",
+      "position": "50% 30%",
+      "width": 2400,
+      "height": 1600,
+      "base": "/assets/photography/accountant-reviewing-documents-7691663",
+      "downloadUrl": "https://images.pexels.com/photos/7691663/pexels-photo-7691663.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "downloadSha256": "c88ae9c21f9ec17cb13efbe5d60397094f9370364467ef64ea1ca1b32eb1a52c"
+    }
+  ]
+}
