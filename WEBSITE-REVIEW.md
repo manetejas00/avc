@@ -91,3 +91,9 @@ The five-minute server cache holds only complete list responses. If every upstre
 Local integration returned 87 records: three open, one upcoming, five closed and 78 listed, without feed warnings. BCSSL's official issue detail supplied a 182-share lot; VPFL supplied 1,200. Eleven focused tests passed, including feed failure, filters, detail lookup and last-seven-day filtering; PHP syntax and production build passed.
 
 A review carousel is prepared for up to ten client-approved reviews with six-second looping, previous/next/pause controls, hover/focus pause and reduced-motion support. No testimonials, names or photographs have been invented or published. The review dataset remains empty until genuine client feedback and publication permission are provided.
+
+## Follow-up: deployment asset recovery
+
+The reported red error referenced IpoDetailsPage-BWQn5F3E.js from a previous browser bundle. The default build had removed that file. Production builds now traverse the JavaScript/CSS dependency graphs reachable from the last five deployed entry pages and restore those hashed assets. Older retained archives are not recursively retained forever. Deep application routes revalidate their HTML, and missing assets return 404 instead of the application HTML. Vite preload errors trigger at most one cache-bypassing refresh per minute per tab; offline and blocked-storage cases show a readable recovery screen with manual refresh and home actions. Raw error stacks are no longer rendered publicly.
+
+Production build and focused deployment-recovery/IPO tests passed. Recovery tests check preserving route/query/hash, preventing repeat refreshes, avoiding offline reloads and tolerating unavailable browser storage. The exact reported old chunk and its recent dependency graph are included in the production assets. See Vite's documented load-error handling: https://vite.dev/guide/build.html#load-error-handling .

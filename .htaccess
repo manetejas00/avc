@@ -4,7 +4,7 @@ Options -Indexes
   SetEnvIf Host "^test1\." private_page
   Header set X-Robots-Tag "noindex, nofollow" env=private_page
   # Revalidate the page so browsers discover new versioned bundles.
-  SetEnvIf Request_URI "^/$|\.html$" html_page
+  SetEnvIf Request_URI "^/(?!assets/|images/|api/|dist/assets/|dist/images/|dist/api/)[^.]*$|\.html$" html_page
   Header always set Cache-Control "no-cache, max-age=0, must-revalidate" env=html_page
   <FilesMatch "\.html$">
     Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
