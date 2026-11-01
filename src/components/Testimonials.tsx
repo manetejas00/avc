@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
-import { illustrativeStories } from '../data/testimonials';
-import IllustratedAvatar from './IllustratedAvatar';
+import { testimonialDrafts } from '../data/testimonials';
 
 export default function Testimonials() {
-  const reviews = illustrativeStories.slice(0, 10);
+  const reviews = testimonialDrafts;
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -28,17 +27,17 @@ export default function Testimonials() {
   return <section id="testimonials" className="py-24 bg-surface-elevated overflow-hidden scroll-mt-24" aria-labelledby="testimonials-heading">
     <div className="container-custom">
       <div className="text-center mb-8">
-        <h2 id="testimonials-heading" className="text-4xl md:text-[52px] font-semibold mb-4">Everyday financial journeys</h2>
-        <p className="text-text-muted text-lg max-w-2xl mx-auto">Illustrative examples—not actual client reviews. All names, characters and situations are fictional.</p>
+        <h2 id="testimonials-heading" className="text-4xl md:text-[52px] font-semibold mb-4">Testimonials</h2>
+        <p className="text-text-muted text-lg max-w-2xl mx-auto">Illustrative testimonial drafts—not actual client reviews. Names, roles and images are not verified client identities.</p>
       </div>
-      {review ? <div className="client-review-carousel max-w-2xl mx-auto" role="region" aria-roledescription="carousel" aria-label="Fictional financial planning examples"
+      {review ? <div className="client-review-carousel max-w-2xl mx-auto" role="region" aria-roledescription="carousel" aria-label="Illustrative testimonial drafts"
         onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
         <div className="client-review-card bg-surface rounded-card p-8 border border-white/5" role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${reviews.length}`} aria-live={rotating ? 'off' : 'polite'} aria-atomic="true">
           <div className="illustrative-story-content">
-            <p className="illustrative-story-label">Fictional example · {review.topic}</p>
-            <p className="client-review-quote">{review.story}</p>
-            <div className="illustrative-story-person"><IllustratedAvatar variant={review.avatar}/><div><p className="client-review-name">{review.name}</p><p className="illustrative-person-label">Fictional character · illustrated avatar</p></div></div>
+            <p className="illustrative-story-label">Illustrative testimonial draft—not a verified client review</p>
+            <p className="client-review-quote">“{review.quote}”</p>
+            <div className="illustrative-story-person"><img src={review.image} className="illustrative-avatar testimonial-draft-photo" alt="Illustrative profile image; identity unverified" width="64" height="64" loading="lazy"/><div><p className="client-review-name">{review.name}</p><p className="illustrative-person-label">{review.role}</p><p className="illustrative-person-label">Illustrative profile · not a verified client</p></div></div>
           </div>
         </div>
         {reviews.length > 1 && <div className="client-review-controls">

@@ -5743,3 +5743,5 @@ html.light .illustrative-story-label, html.light .client-review-name { color: #7
 @media (max-width: 480px) { .client-review-card { min-height: 460px; padding: 24px; } .illustrative-avatar { width: 56px; height: 56px; flex-basis: 56px; } }
 .client-review-position { color: #e5e5e5; }
 html.light .client-review-position { color: #202020; }
+
+.testimonial-draft-photo { object-fit: cover; border-radius: 50%; border: 1px solid #a58a42; }
