@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { V1Footer, V1Nav } from '../components/V1SiteChrome';
 import RegulatoryDisclaimer from '../components/RegulatoryDisclaimer';
-import { fetchIpoList, fetchIpoStats, IPO, IPOStats, IPO_VERIFIED_AT } from '../services/ipoService';
+import { fetchIpoFeed, filterIpos, ipoStats, IPO, IPOStats } from '../services/ipoService';
 
 type TabType = 'upcoming' | 'open' | 'closed' | 'listed_7days' | 'all';
 
@@ -39,8 +39,9 @@ export default function IpoPage() {
   const [ipos, setIpos] = useState<IPO[]>([]);
   const [stats, setStats] = useState<IPOStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [feedNotice, setFeedNotice] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date(IPO_VERIFIED_AT));
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
   const pageRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -62,25 +63,17 @@ export default function IpoPage() {
     setLoading(true);
     setError(null);
     try {
-      const [listData, statsData] = await Promise.all([
-        fetchIpoList({
-          tab: activeTab,
-          segment: segmentFilter,
-          exchange: exchangeFilter,
-          search: searchQuery
-        }, signal),
-        fetchIpoStats(signal)
-      ]);
-
+      const feed = await fetchIpoFeed(signal);
       if (!signal?.aborted) {
-        setIpos(listData);
-        setStats(statsData);
-        setLastRefreshed(new Date(IPO_VERIFIED_AT));
+        setIpos(filterIpos(feed.data, {tab: activeTab, segment: segmentFilter, exchange: exchangeFilter, search: searchQuery}));
+        setStats(ipoStats(feed.data));
+        setLastRefreshed(new Date(feed.checkedAt));
+        setFeedNotice(`${feed.stale ? 'Showing a saved response while NSE is unreachable. ' : ''}${feed.coverage} ${feed.warnings.join('. ')}`);
       }
     } catch (err: any) {
       if (!signal?.aborted) {
         console.error('Failed to load IPOs:', err);
-        setError('The reviewed list could not be loaded. Please retry or check the official exchange notice.');
+        setError('The NSE IPO feed could not be loaded. Please retry or check the official exchange notice.');
       }
     } finally {
       if (!signal?.aborted) {
@@ -97,17 +90,17 @@ export default function IpoPage() {
 
   // Update dynamic SEO Metadata
   useEffect(() => {
-    let title = 'Reviewed Indian IPO Notices | AVC Dhanam';
+    let title = 'Indian IPO Notices | AVC Dhanam';
     if (activeTab === 'upcoming') title = 'Upcoming IPOs in India – Expected Dates, Price Bands & Prospectus | AVC Dhanam';
-    else if (activeTab === 'open') title = 'Open IPOs in the Reviewed Selection | AVC Dhanam';
+    else if (activeTab === 'open') title = 'Open IPOs from the NSE Feed | AVC Dhanam';
     else if (activeTab === 'closed') title = 'Recently Closed IPOs – Allotment & Listing Track | AVC Dhanam';
-    else if (activeTab === 'listed_7days') title = 'Reviewed IPO Listing Records | AVC Dhanam';
+    else if (activeTab === 'listed_7days') title = 'Recent IPO Listing Records | AVC Dhanam';
 
     document.title = title;
 
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'A manually reviewed selection of Indian IPO notices with official sources and verification times. Confirm current offer terms with the exchange.');
+      metaDescription.setAttribute('content', 'Indian IPO notices from NSE public issue feeds, with source times and official links. Confirm current offer terms with the exchange.');
     }
   }, [activeTab]);
 
@@ -137,7 +130,7 @@ export default function IpoPage() {
   }, [ipos, loading]);
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return 'Not separately checked';
+    if (!dateStr) return 'Not supplied by source';
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
@@ -180,7 +173,7 @@ export default function IpoPage() {
             </h1>
             
             <p className="ipo-hero__subtitle mt-3 text-sm text-text-secondary sm:text-base leading-relaxed">
-              A small, manually checked list using official exchange notices and offer documents. This is not a complete or live market feed. Allotment and listing gains are not guaranteed.
+              Current, upcoming and recent IPO notices from NSE public issue feeds, refreshed every five minutes. Coverage may exclude BSE-only issues. Allotment and listing gains are not guaranteed.
             </p>
           </div>
 
@@ -197,7 +190,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.open : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-emerald-400 font-medium">In reviewed list</span>
+              <span className="mt-1 text-[11px] text-emerald-400 font-medium">In source feed</span>
             </button>
 
             <button
@@ -211,7 +204,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.upcoming : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-amber-400 font-medium">In reviewed list</span>
+              <span className="mt-1 text-[11px] text-amber-400 font-medium">In source feed</span>
             </button>
 
             <button
@@ -225,7 +218,7 @@ export default function IpoPage() {
               <div className="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {stats ? stats.closed : '--'}
               </div>
-              <span className="mt-1 text-[11px] text-blue-400 font-medium">In reviewed list</span>
+              <span className="mt-1 text-[11px] text-blue-400 font-medium">In source feed</span>
             </button>
 
             <button
@@ -345,8 +338,8 @@ export default function IpoPage() {
                 type="button"
                 onClick={() => loadData()}
                 disabled={loading}
-                title="Reload reviewed list"
-                aria-label="Reload reviewed IPO information"
+                title="Refresh NSE feed"
+                aria-label="Refresh NSE IPO information"
                 className="flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-surface/90 px-3.5 py-2.5 text-xs font-medium text-text-secondary transition-colors hover:border-gold-primary hover:text-white active:scale-[0.98] disabled:opacity-50"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin text-gold-primary' : ''} />
@@ -358,11 +351,13 @@ export default function IpoPage() {
 
           <div className="mt-2 flex items-center justify-between text-[11px] text-text-muted px-1">
             <span>
-              Showing {ipos.length} reviewed {activeTab === 'listed_7days' ? 'IPOs listed in the last 7 calendar days' : 'IPOs'}
+              Showing {ipos.length} {activeTab === 'listed_7days' ? 'IPOs listed in the last 7 calendar days' : 'IPOs'}
             </span>
-            <span>{error ? 'Official verification: unavailable' : `Checked: ${lastRefreshed.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST`}</span>
+            <span>{error ? 'Source connection: unavailable' : lastRefreshed ? `Source fetched: ${lastRefreshed.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST` : 'Loading source…'}</span>
           </div>
         </section>
+
+        <p className="text-sm text-text-secondary leading-relaxed mb-6" role="status">{feedNotice}</p>
 
         {/* Error State Banner */}
         {error && (
@@ -410,7 +405,7 @@ export default function IpoPage() {
             <h3 className="text-xl font-bold text-white">No IPOs Found</h3>
             <p className="mt-2 max-w-md text-xs text-text-secondary leading-relaxed">
               {activeTab === 'listed_7days'
-                ? 'This reviewed selection has no listing records for that period. It does not represent all Indian IPOs.'
+                ? 'No listing records for this period were returned by the source. This does not represent all Indian IPOs.'
                 : 'No IPOs match your selected tab or filter criteria. Try resetting filters or searching for another company name.'}
             </p>
             <button
@@ -500,15 +495,13 @@ export default function IpoPage() {
                         <div>
                           <span className="text-[11px] text-text-muted">Price Band</span>
                           <p className="mt-0.5 font-bold text-white">
-                            {ipo.minPrice === ipo.maxPrice
-                              ? `₹${ipo.minPrice}`
-                              : `₹${ipo.minPrice} - ₹${ipo.maxPrice}`}
+                            {ipo.minPrice > 0 ? (ipo.minPrice === ipo.maxPrice ? `₹${ipo.minPrice}` : `₹${ipo.minPrice} – ₹${ipo.maxPrice}`) : 'Not supplied by source'}
                           </p>
                         </div>
                         <div>
-                          <span className="text-[11px] text-text-muted">Min Investment</span>
+                          <span className="text-[11px] text-text-muted">One lot at upper band</span>
                           <p className="mt-0.5 font-bold text-gold-secondary">
-                            {formatCurrency(ipo.minInvestment)}
+                            {ipo.lotSize && ipo.maxPrice > 0 ? formatCurrency(ipo.lotSize * ipo.maxPrice) : 'Check official offer terms'}
                           </p>
                         </div>
                         <div>
@@ -518,9 +511,9 @@ export default function IpoPage() {
                           </p>
                         </div>
                         <div>
-                          <span className="text-[11px] text-text-muted">Source check</span>
+                          <span className="text-[11px] text-text-muted">Source fetched</span>
                           <p className="mt-0.5 font-semibold text-emerald-400">
-                            {ipo.verifiedAt ? new Date(ipo.verifiedAt).toLocaleDateString('en-IN', {timeZone:'Asia/Kolkata'}) : 'Pending review'}
+                            {ipo.verifiedAt ? new Date(ipo.verifiedAt).toLocaleDateString('en-IN', {timeZone:'Asia/Kolkata'}) : 'Not supplied'}
                           </p>
                         </div>
                       </div>
@@ -567,7 +560,7 @@ export default function IpoPage() {
                       to={`/ipo/${ipo.id}`}
                       className="flex w-full items-center justify-center gap-2 rounded-xl border border-gold-primary/30 bg-gold-primary/10 py-2.5 text-xs font-bold text-gold-secondary transition-all duration-200 hover:bg-gold-primary hover:text-black shadow-md"
                     >
-                      <span>View checked details and sources</span>
+                      <span>View issue details and sources</span>
                       <ArrowUpRight size={15} />
                     </Link>
                   </div>
@@ -599,7 +592,7 @@ export default function IpoPage() {
               />
               <FAQAccordionItem
                 question="How is the 'Listed in Last 7 Days' section calculated?"
-                answer="This website publishes only a manually reviewed selection. A missing listing record does not mean no IPO listed. Check official exchange notices for the full market list and current dates."
+                answer="This page uses NSE public issue feeds, including recent past issues. A missing record does not mean no IPO listed; BSE-only coverage may be incomplete. Check the official exchange notices."
               />
               <FAQAccordionItem
                 question="What are QIB, NII/HNI, and Retail investor quotas in Indian IPOs?"

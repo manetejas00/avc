@@ -5718,3 +5718,13 @@ html.light .company-data__card small { color: #475569; }
 html.light .company-data__footnote a { color: #806000; }
 html.light .fund-explorer .fund-return-value { color: #806000; }
 html.light .fund-explorer .fund-return-reason, html.light .fund-explorer th small { color: #334155; }
+
+/* Client-approved review carousel; manual controls remain available when motion is reduced. */
+.client-review-card { min-height: 240px; display: flex; align-items: center; }
+.client-review-quote { font-family: var(--font-sans); font-size: clamp(18px, 2vw, 22px); line-height: 1.7; color: var(--color-text-primary, #f5f5f5); overflow-wrap: anywhere; }
+.client-review-name { margin-top: 24px; color: var(--color-gold-primary, #dfbd45); font-size: 16px; font-weight: 600; }
+.client-review-controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px; }
+.client-review-controls button { min-width: 44px; min-height: 44px; border: 1px solid currentColor; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-primary, #f5f5f5); }
+.client-review-controls button:focus-visible { outline: 2px solid #dfbd45; outline-offset: 4px; }
+.client-review-position { min-width: 55px; text-align: center; font-variant-numeric: tabular-nums; }
+[data-theme="light"] .client-review-quote, [data-theme="light"] .client-review-controls button { color: #202020; }
