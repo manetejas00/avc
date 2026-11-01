@@ -14,6 +14,8 @@ Options -Indexes
   RewriteEngine On
   RewriteRule ^api/submit-form$ dist/api/submit-form.php [L]
   RewriteBase /
+  # Public service guides share a prefix with private backend source.
+  RewriteRule ^services/(investments|loans|insurance|tax)/?$ dist/index.html [L]
   # Repository-root installs must never expose source, secrets, databases or archives.
   RewriteRule (^|/)\. - [F,L]
   RewriteRule ^(src|services|tests|node_modules|v2)/ - [F,L,NC]
