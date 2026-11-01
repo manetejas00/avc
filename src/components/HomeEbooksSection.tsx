@@ -1,3 +1,4 @@
+import EbooksComingSoon from './EbooksComingSoon';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, BookOpen, Sparkles } from 'lucide-react';
@@ -26,7 +27,7 @@ export default function HomeEbooksSection() {
   };
 
   return (
-    <section id="ebooks" className="v1-ebooks-section py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+    <EbooksComingSoon><section id="ebooks" className="v1-ebooks-section py-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div className="space-y-3">
@@ -94,6 +95,6 @@ export default function HomeEbooksSection() {
         onBuyNow={handleBuyNow}
         book={previewBook}
       />
-    </section>
+    </section></EbooksComingSoon>
   );
 }

@@ -1,3 +1,4 @@
+import EbooksComingSoon from '../components/EbooksComingSoon';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BookOpen, CheckCircle, Filter, HelpCircle, Layers, Search, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
@@ -60,52 +61,22 @@ export default function EbooksPage() {
 
   // SEO Metadata Update
   useEffect(() => {
-    document.title = 'Stock Market E-Books & Investing Guides | AVC Dhanam Solutions';
+    document.title = 'E-Books Coming Soon | AVC Dhanam Solutions';
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute(
         'content',
-        'Download premium stock market e-books in India. Master fundamental analysis, technical analysis, long-term investing, portfolio management, and option trading strategies.'
+        'Our financial education e-book library is coming soon.'
       );
     }
   }, []);
 
-  // JSON-LD Schema
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    'name': 'AVC Dhanam Stock Market E-Books',
-    'description': 'Premium financial education e-books for stock market investors in India.',
-    'numberOfItems': books.length,
-    'itemListElement': books.map((b, idx) => ({
-      '@type': 'ListItem',
-      'position': idx + 1,
-      'item': {
-        '@type': 'Book',
-        'name': b.title,
-        'author': { '@type': 'Person', 'name': b.author },
-        'offers': {
-          '@type': 'Offer',
-          'price': b.sellingPrice,
-          'priceCurrency': 'INR',
-          'availability': 'https://schema.org/InStock'
-        }
-      }
-    }))
-  };
-
   return (
     <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans selection:bg-[#D4AF37] selection:text-black">
-      {/* Inject JSON-LD Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
-
       <V1Nav />
 
       {/* Main Container */}
-      <main id="main-content" className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <EbooksComingSoon><main id="main-content" className="flex-1 pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-6 text-xs text-neutral-400 flex items-center gap-2">
           <a href="/" className="hover:text-[#D4AF37] transition-colors">Home</a>
@@ -279,7 +250,7 @@ export default function EbooksPage() {
         <div className="mt-12">
           <RegulatoryDisclaimer />
         </div>
-      </main>
+      </main></EbooksComingSoon>
 
       <V1Footer />
 
