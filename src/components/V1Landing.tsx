@@ -617,7 +617,7 @@ export default function V1Landing() {
             {/* Image Container with Top Badge Overlay */}
             <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
               <img
-                src="/images/directors/chandresh-pandey.jpeg"
+                src="/assets/founders/chandresh-pandey-portrait.jpg"
                 alt="Chandresh Pandey - Director & Co-Founder of AVC Dhanam Solutions"
                 width="896"
                 height="672"
@@ -695,7 +695,7 @@ export default function V1Landing() {
             {/* Image Container with Top Badge Overlay */}
             <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0e0e12]">
               <img
-                src="/images/directors/ajay-pandey.jpeg"
+                src="/assets/founders/ajay-pandey-portrait.jpg"
                 alt="Ajay Pandey - Director & Co-Founder of AVC Dhanam Solutions"
                 width="896"
                 height="672"

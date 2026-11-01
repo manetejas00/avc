@@ -1,3 +1,4 @@
+import { parseYahooQuote } from '../utils/yahooQuote';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -191,7 +192,9 @@ export default function LiveMarketOverview() {
     try {
       const dashboard = await fetch(getApiUrl('/api/market/dashboard'), { signal });
       if (!dashboard.ok) throw new Error('Dashboard unavailable');
-      const liveQuotes: Quote[] = await dashboard.json();
+      const payload: Array<Quote & { timestamp?: string }> = await dashboard.json();
+      if (!Array.isArray(payload) || !payload.length) throw new Error('No valid quotes available');
+      const liveQuotes = payload.map(quote => ({ ...quote, lastUpdated: quote.lastUpdated ?? quote.timestamp }));
       setQuotes(liveQuotes);
       await loadChart(selectedSymbol, signal);
 
@@ -217,10 +220,10 @@ export default function LiveMarketOverview() {
         if (!isNaN(parsed.getTime()) && parsed.getFullYear() >= 2024 && parsed.getFullYear() <= 2030) {
           setUpdatedAt(parsed);
         } else {
-          setUpdatedAt(new Date());
+          setUpdatedAt(null);
         }
       } else {
-        setUpdatedAt(new Date());
+        setUpdatedAt(null);
       }
       setStatus('ready');
     } catch (error) {
@@ -248,21 +251,7 @@ export default function LiveMarketOverview() {
 
         const liveQuotes = successful
           .map(({ symbol, data }): Quote | null => {
-            const result = data.chart?.result?.[0];
-            const meta = result?.meta ?? {};
-            const price = Number(meta.regularMarketPrice ?? meta.previousClose);
-            const previous = Number(meta.chartPreviousClose ?? meta.previousClose);
-            if (!Number.isFinite(price) || !Number.isFinite(previous)) return null;
-            const change = price - previous;
-            return {
-              symbol,
-              name: String(meta.shortName ?? labels[symbol] ?? symbol),
-              price,
-              change,
-              changePercent: previous ? (change / previous) * 100 : 0,
-              currency: String(meta.currency ?? 'INR'),
-              lastUpdated: new Date().toISOString(),
-            };
+            return parseYahooQuote(symbol, data.chart?.result?.[0]);
           })
           .filter((quote): quote is Quote => quote !== null);
 
@@ -282,7 +271,7 @@ export default function LiveMarketOverview() {
         }
 
         setQuotes(liveQuotes);
-        setUpdatedAt(new Date());
+        setUpdatedAt(null);
         setStatus('ready');
       } catch (fallbackError) {
         if ((fallbackError as Error).name !== 'AbortError') setStatus('unavailable');
@@ -329,12 +318,12 @@ export default function LiveMarketOverview() {
           <h2 id="live-market-title" className="live-market__title">
             See the market<br />in <em>motion.</em>
           </h2>
-          <p className="live-market__copy">Live exchange quotes paired with a clean 90-day price view—built for a quick read, not a crowded terminal.</p>
+          <p className="live-market__copy">Latest available exchange quotes paired with a clean 90-day price view—built for a quick read, not a crowded terminal.</p>
         </div>
         <div className="live-market__status">
           <span className={status === 'ready' ? 'is-live' : ''} />
           {status === 'ready'
-            ? `Live · updated ${updatedAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            ? `Quote as of ${featured?.lastUpdated ? new Date(featured.lastUpdated).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' IST' : updatedAt ? updatedAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST' : 'time unavailable'}`
             : status === 'loading'
               ? 'Connecting to market data'
               : 'Live data temporarily unavailable'}
@@ -359,7 +348,7 @@ export default function LiveMarketOverview() {
                 {featured.change >= 0 ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
                 <strong>{formatPointsChange(featured)}</strong>
                 <span>({featured.changePercent >= 0 ? '+' : ''}{featured.changePercent.toFixed(2)}%)</span>
-                <span className="live-market__change-period">today</span>
+                <span className="live-market__change-period">vs previous close</span>
               </div>
             )}
             {points.length >= 2 && featured && (
@@ -515,7 +504,7 @@ export default function LiveMarketOverview() {
             </div>
           </div>
         </div>
-        <p className="live-market__note">Quotes are refreshed every 15 minutes. Data is informational and not investment advice.</p>
+        <p className="live-market__note">Quotes are refreshed every 15 minutes and may be delayed. When markets are closed, the last available session is shown. Data is informational and not investment advice.</p>
       </div>
     </section>
   );
