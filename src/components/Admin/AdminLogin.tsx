@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
 import { Lock, Loader2 } from 'lucide-react';
+import { acceptInvite, handleAuthCallback, updateUser, logout } from '@netlify/identity';
 import { getApiUrl } from '../../services/apiClient';
 
 const AdminLogin = () => {
@@ -8,7 +8,17 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [inviteToken, setInviteToken] = useState('');
+  const [resetPassword, setResetPassword] = useState(false);
+  const callbackStarted = useRef(false);
+  useEffect(() => {
+    if (callbackStarted.current) return;
+    callbackStarted.current = true;
+    void handleAuthCallback().then(result => {
+      if (result?.type === 'invite') setInviteToken(result.token);
+      if (result?.type === 'recovery') setResetPassword(true);
+    }).catch(() => setError('This account link could not be verified. Request a new link.'));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +26,17 @@ const AdminLogin = () => {
     setError('');
 
     try {
+      if (inviteToken || resetPassword) {
+        if (password.length < 8) throw new Error('Use a password with at least 8 characters.');
+        const user = inviteToken ? await acceptInvite(inviteToken, password) : await updateUser({ password });
+        if (!user.roles?.includes('admin')) {
+          await logout();
+          setInviteToken(''); setResetPassword(false); setPassword('');
+          throw new Error('Your account is ready. Ask the site owner to assign the admin role before signing in.');
+        }
+        window.location.href = '/admin/dashboard';
+        return;
+      }
       const res = await fetch(getApiUrl('/api/admin/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,7 +49,7 @@ const AdminLogin = () => {
         throw new Error(data.error || 'Login failed');
       }
 
-      navigate('/admin/dashboard');
+      window.location.href = '/admin/dashboard';
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -43,13 +64,13 @@ const AdminLogin = () => {
           <div className="w-12 h-12 bg-gold-primary/10 rounded-full flex items-center justify-center mb-4">
             <Lock className="text-gold-primary w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-text">Admin Login</h1>
+          <h1 className="text-2xl font-bold text-text">{inviteToken || resetPassword ? 'Set your admin password' : 'Admin Login'}</h1>
           <p className="text-text-muted mt-2 text-center text-sm">Sign in to manage consultations and website settings</p>
         </div>
 
         {error && <p role="alert" className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300 break-words">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          {!inviteToken && !resetPassword && <div>
             <label htmlFor="admin-email" className="block text-sm font-medium text-text mb-1">Email</label>
             <input
               id="admin-email" autoComplete="username" type="email"
@@ -59,7 +80,7 @@ const AdminLogin = () => {
               placeholder="admin@gmail.com"
               className="w-full px-4 py-2.5 bg-background border border-white/5 rounded-lg text-text focus:outline-none focus:border-gold-primary focus:ring-1 focus:ring-primary transition-all"
             />
-          </div>
+          </div>}
           <div>
             <label htmlFor="admin-password" className="block text-sm font-medium text-text mb-1">Password</label>
             <input
@@ -77,7 +98,7 @@ const AdminLogin = () => {
             disabled={loading}
             className="w-full bg-gold-primary hover:bg-gold-secondary text-bg-primary shadow-[0_0_15px_rgba(212,175,55,0.3)] text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 mt-4"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : inviteToken || resetPassword ? 'Save Password' : 'Sign In'}
           </button>
         </form>
       </div>

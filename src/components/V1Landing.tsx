@@ -205,66 +205,21 @@ export default function V1Landing() {
 
       let rawArticles: any[] = [];
 
-      // Tier 1: Unified backend live market news API (for local Express server)
+      // Unified news endpoint served by Netlify Functions or the Express backend
       try {
         const response = await fetch(getApiUrl('/api/news/live'), { signal: AbortSignal.timeout(6000) });
         if (response.ok) {
           const payload = await response.json();
-          if (Array.isArray(payload?.data) && payload.data.length > 0) {
+          if (Array.isArray(payload) && payload.length > 0) {
+            rawArticles = payload;
+          } else if (Array.isArray(payload?.data) && payload.data.length > 0) {
             rawArticles = payload.data;
           } else if (Array.isArray(payload?.news) && payload.news.length > 0) {
             rawArticles = payload.news;
           }
         }
       } catch (e) {
-        // Fall through to live PHP endpoints
-      }
-
-      // Tier 2: Unified PHP news endpoint on live server (Hostinger)
-      if (!rawArticles.length) {
-        try {
-          const response = await fetch(getApiUrl('/api/news.php?v=publisher-images-3'), { signal: AbortSignal.timeout(18000) });
-          if (response.ok) {
-            const payload = await response.json();
-            if (Array.isArray(payload?.data) && payload.data.length > 0) {
-              rawArticles = payload.data;
-            } else if (Array.isArray(payload) && payload.length > 0) {
-              rawArticles = payload;
-            }
-          }
-        } catch (e) {
-          // Fall through
-        }
-      }
-
-      // Tier 3: Direct IndianAPI PHP proxy on live server
-      if (!rawArticles.length) {
-        try {
-          const response = await fetch(getApiUrl('/api/indianapi.php?endpoint=news'), { signal: AbortSignal.timeout(6000) });
-          if (response.ok) {
-            const data = await response.json();
-            if (Array.isArray(data) && data.length > 0) {
-              rawArticles = data;
-            }
-          }
-        } catch (e) {
-          // Fall through
-        }
-      }
-
-      // Tier 4: Direct Marketaux PHP proxy on live server
-      if (!rawArticles.length) {
-        try {
-          const response = await fetch(getApiUrl('/api/marketaux.php?search=Indian+stock+market&limit=6'), { signal: AbortSignal.timeout(6000) });
-          if (response.ok) {
-            const data = await response.json();
-            if (Array.isArray(data?.data) && data.data.length > 0) {
-              rawArticles = data.data;
-            }
-          }
-        } catch (e) {
-          // Fall through
-        }
+        // Keep the unavailable state when the news service cannot be reached
       }
 
       const items: NewsItem[] = rawArticles.map((item: any): NewsItem => {

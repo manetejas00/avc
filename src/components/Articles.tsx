@@ -40,14 +40,15 @@ const Articles = () => {
         if (!response.ok) throw new Error('Unable to load news');
         const payload = await response.json() as { data?: Array<Record<string, unknown>> };
         setArticles((payload.data ?? []).map((item) => {
-          const description = String(item.description ?? item.snippet ?? '').replace(/<[^>]*>?/gm, '').trim();
-          const publishedAt = typeof item.published_at === 'string' ? new Date(item.published_at) : null;
+          const description = String(item.summary ?? item.description ?? item.snippet ?? '').replace(/<[^>]*>?/gm, '').trim();
+          const date = item.publishedAt ?? item.published_at;
+          const publishedAt = typeof date === 'string' ? new Date(date) : null;
           return {
             category: typeof item.source === 'string' ? item.source : 'Financial news',
             title: String(item.title ?? 'Market update'),
             subtitle: description.length > 120 ? `${description.slice(0, 120)}…` : description,
             link: typeof item.url === 'string' ? item.url : '#',
-            image: typeof item.image_url === 'string' ? item.image_url : '',
+            image: typeof item.image === 'string' ? item.image : typeof item.image_url === 'string' ? item.image_url : '',
             date: publishedAt && !Number.isNaN(publishedAt.valueOf()) ? publishedAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Latest news',
             details: description
           };

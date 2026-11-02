@@ -13,3 +13,6 @@ database.sqlite
 audit-results/
 dist.zip
 .skill-references/
+
+# Local Netlify folder
+.netlify

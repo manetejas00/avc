@@ -36,19 +36,7 @@ export const fallbackCompanies: Company[] = [
 
 export async function fetchCompanyDirectory(signal?: AbortSignal): Promise<Company[]> {
   try {
-    const response = await fetch('https://scanner.tradingview.com/india/scan', {
-      method: 'POST',
-      signal,
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify({
-        filter: [{ left: 'type', operation: 'equal', right: 'stock' }, { left: 'exchange', operation: 'in_range', right: ['BSE'] }],
-        options: { lang: 'en' },
-        symbols: { query: { types: [] }, tickers: [] },
-        columns: ['name', 'description', 'exchange'],
-        sort: { sortBy: 'name', sortOrder: 'asc' },
-        range: [0, 10000]
-      })
-    });
+    const response = await fetch('/api/companies', { signal, headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error('Company directory unavailable');
     const result = (await response.json()) as { data?: Array<{ s?: string; d?: unknown[] }> };
     const listed = (result.data ?? [])

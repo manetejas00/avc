@@ -40,6 +40,10 @@ class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
+if (/^#(?:invite_token|recovery_token|confirmation_token|access_token)=/.test(window.location.hash)) {
+  window.history.replaceState(null, '', '/admin' + window.location.hash);
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
