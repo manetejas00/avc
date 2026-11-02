@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { getJson } from '../services/apiClient';
 import { BookOpen, CheckCircle, Download, FileText, Lock, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react';
 import { EBOOKS_DATA, EBook } from '../services/ebookService';
 
 export default function EbookAdminVaultPage() {
-  const [searchParams] = useSearchParams();
-  const secretKey = searchParams.get('key');
   const [selectedBook, setSelectedBook] = useState<EBook>(EBOOKS_DATA[0]);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    // Secret access validation key
-    if (secretKey === 'avc_secret_2026' || secretKey === 'admin' || secretKey === '7030247878') {
-      setIsAuthorized(true);
-    }
-  }, [secretKey]);
+    void getJson<{ authenticated: boolean }>('/api/admin/check-auth').then(result => setIsAuthorized(result.authenticated)).catch(() => setIsAuthorized(false));
+  }, []);
 
   if (!isAuthorized) {
     return (
@@ -26,10 +21,10 @@ export default function EbookAdminVaultPage() {
           </div>
           <h1 className="text-xl font-bold text-white">Restricted Admin Access</h1>
           <p className="text-xs text-neutral-400 leading-relaxed">
-            This endpoint is restricted for administrative inspection only. Please append your secret key parameter to access the full e-book repository.
+            This endpoint is restricted for administrative inspection only. Sign in with your administrator account to use the vault tools.
           </p>
           <div className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-[11px] text-[#D4AF37]">
-            /ebook-admin-vault?key=avc_secret_2026
+            /admin
           </div>
         </div>
       </div>
@@ -197,10 +192,10 @@ export default function EbookAdminVaultPage() {
 
           <div className="space-y-2 font-mono text-[11px]">
             <div className="p-3 rounded-lg bg-[#151515] border border-white/5 text-emerald-400">
-              GET /api/admin/ebook-download?id={selectedBook.slug}&key=avc_secret_2026
+              GET /api/admin/ebooks
             </div>
             <div className="p-3 rounded-lg bg-[#151515] border border-white/5 text-amber-400">
-              GET /api/admin/ebooks-vault?key=avc_secret_2026
+              GET /api/admin/check-auth
             </div>
           </div>
         </div>

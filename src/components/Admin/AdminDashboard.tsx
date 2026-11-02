@@ -26,6 +26,7 @@ const AdminDashboard = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [apiLogs, setApiLogs] = useState<ApiLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [activeTab, setActiveTab] = useState<'submissions' | 'api'>('submissions');
   const navigate = useNavigate();
@@ -37,14 +38,17 @@ const AdminDashboard = () => {
   const fetchSubmissions = async () => {
     try {
       const res = await fetch(getApiUrl('/api/admin/submissions'));
-      if (res.status === 401) {
+      if (res.status === 401 || res.status === 403) {
         navigate('/admin');
         return;
       }
+      if (!res.ok) throw new Error('Consultations could not be loaded. Please retry.');
       const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid consultations response.');
+      setError('');
       setSubmissions(data);
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : 'Request failed. Please retry.');
     } finally {
       setLoading(false);
     }
@@ -54,14 +58,17 @@ const AdminDashboard = () => {
     setLoadingLogs(true);
     try {
       const res = await fetch(getApiUrl('/api/admin/sync-logs'));
-      if (res.status === 401) {
+      if (res.status === 401 || res.status === 403) {
         navigate('/admin');
         return;
       }
+      if (!res.ok) throw new Error('API logs could not be loaded. Please retry.');
       const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid API logs response.');
+      setError('');
       setApiLogs(data);
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : 'Request failed. Please retry.');
     } finally {
       setLoadingLogs(false);
     }
@@ -80,14 +87,15 @@ const AdminDashboard = () => {
 
   const updateStatus = async (id: number, status: string) => {
     try {
-      await fetch(getApiUrl(`/api/admin/submissions/${id}/status`), {
+      const response = await fetch(getApiUrl(`/api/admin/submissions/${id}/status`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       });
+      if (!response.ok) throw new Error('The status could not be saved. Please retry.');
       fetchSubmissions();
     } catch (err) {
-      console.error(err);
+      setError(err instanceof Error ? err.message : 'Request failed. Please retry.');
     }
   };
 
@@ -101,6 +109,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {error && <p role="alert" className="p-4 text-red-300">{error}</p>}
       {/* Header */}
       <header className="bg-surface border-b border-white/5 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
