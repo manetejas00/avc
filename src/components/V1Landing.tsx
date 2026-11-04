@@ -563,7 +563,7 @@ export default function V1Landing() {
                 </span>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-xs font-medium flex items-center gap-1.5 shadow-lg">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Talk about investments
+                  Talk about loans
                 </span>
               </div>
             </div>
@@ -574,7 +574,7 @@ export default function V1Landing() {
                 {/* Identification Header */}
                 <div className="mb-5 pb-4 border-b border-white/10">
                   <span className="text-gold-primary text-xs font-bold tracking-wider uppercase block mb-1">
-                    Investment enquiries
+                    Business and loan enquiries
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                     Chandresh Pandey
@@ -582,22 +582,22 @@ export default function V1Landing() {
                 </div>
 
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
-                  Discuss your investment goals, time horizon and questions with Chandresh. Ask which services are available and who provides them before making a decision.
+                  Discuss your borrowing or business funding needs with Chandresh. Prepare your income and business records so the team can explain the next steps.
                 </p>
 
                 {/* Key Credentials */}
                 <div className="space-y-2.5 mb-6">
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Ask for the provider’s current registration and role.</span>
+                    <span>Ask which lender will review your application.</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Understand product risks, fees and exit conditions.</span>
+                    <span>Compare interest, fees and repayment obligations.</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Read the relevant scheme or offer documents.</span>
+                    <span>Approval depends on the lender’s assessment.</span>
                   </div>
                 </div>
               </div>
@@ -642,7 +642,7 @@ export default function V1Landing() {
                 </span>
                 <span className="px-3 py-1 rounded-full bg-blue-500/20 backdrop-blur-md border border-blue-500/40 text-blue-400 text-xs font-medium flex items-center gap-1.5 shadow-lg">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                  Talk about loans
+                  Talk about investments
                 </span>
               </div>
             </div>
@@ -653,7 +653,7 @@ export default function V1Landing() {
                 {/* Identification Header */}
                 <div className="mb-5 pb-4 border-b border-white/10">
                   <span className="text-gold-primary text-xs font-bold tracking-wider uppercase block mb-1">
-                    Business and loan enquiries
+                    Investment enquiries
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                     Ajay Pandey
@@ -661,22 +661,22 @@ export default function V1Landing() {
                 </div>
 
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
-                  Discuss your borrowing or business funding needs with Ajay. Prepare your income and business records so the team can explain the next steps.
+                  Discuss your investment goals, time horizon and questions with Ajay. Ask which services are available and who provides them before making a decision.
                 </p>
 
                 {/* Key Credentials */}
                 <div className="space-y-2.5 mb-6">
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Ask which lender will review your application.</span>
+                    <span>Ask for the provider’s current registration and role.</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Compare interest, fees and repayment obligations.</span>
+                    <span>Understand product risks, fees and exit conditions.</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Approval depends on the lender’s assessment.</span>
+                    <span>Read the relevant scheme or offer documents.</span>
                   </div>
                 </div>
               </div>
@@ -692,7 +692,7 @@ export default function V1Landing() {
                   onClick={() => setIsConsultationOpen(true)}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-primary/10 hover:bg-gold-primary text-gold-primary hover:text-black border border-gold-primary/30 transition-all text-xs sm:text-sm font-semibold min-h-[44px]"
                 >
-                  <span>Consult Ajay</span>
+                  <span>Consult Ajay Pandey</span>
                   <ArrowUpRight size={15} />
                 </button>
               </div>

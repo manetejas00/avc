@@ -14,6 +14,7 @@ Options -Indexes
   RewriteEngine On
   RewriteRule (^|/)\. - [F,L]
   # Keep the shared API URLs working on Hostinger's PHP hosting.
+  RewriteRule ^api/companies/?$ api/companies.php [L]
   RewriteRule ^api/market/watchlist/?$ api/watchlist.php [L]
   RewriteRule ^api/ipo/?$ api/ipos.php [L]
   RewriteRule ^api/news/(live|india|global|latest)/?$ api/news.php [L]

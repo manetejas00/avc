@@ -15,6 +15,8 @@ Options -Indexes
   RewriteBase /
   # Repository-root installs must never expose source, secrets, databases or archives.
   RewriteRule (^|/)\. - [F,L]
+  # Serve the public preview route without exposing its source directory.
+  RewriteRule ^v2/?$ dist/index.html [L]
   RewriteRule ^(src|services|tests|node_modules|scripts|db|netlify|v2)/ - [F,L,NC]
   RewriteRule \.(sqlite|sqlite-shm|sqlite-wal|db|zip|ts|tsx|mts|cjs|map|md|json|lock)$ - [F,L,NC]
   RewriteRule ^(server\.js|vite\.config\.[^/]+|.*\.config\.[^/]+)$ - [F,L,NC]
