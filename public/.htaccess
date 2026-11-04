@@ -13,6 +13,10 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule (^|/)\. - [F,L]
+  # Keep the shared API URLs working on Hostinger's PHP hosting.
+  RewriteRule ^api/market/watchlist/?$ api/watchlist.php [L]
+  RewriteRule ^api/ipo/?$ api/ipos.php [L]
+  RewriteRule ^api/news/(live|india|global|latest)/?$ api/news.php [L]
   RewriteRule ^api/.*\.php$ - [L]
   RewriteRule ^api/ - [R=404,L]
   RewriteCond %{REQUEST_FILENAME} !-f
