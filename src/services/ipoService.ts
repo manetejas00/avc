@@ -90,7 +90,7 @@ export function enrichIpoDetails(ipo: IPO): IPO {
 
 export interface IPOFeed { source: string; checkedAt: string; stale: boolean; warnings: string[]; coverage: string; data: IPO[] }
 export async function fetchIpoFeed(signal?: AbortSignal): Promise<IPOFeed> {
-  const feed = await getJson<IPOFeed>('/api/ipos.php', { signal, timeoutMs: 25000 });
+  const feed = await getJson<IPOFeed>('/api/ipo', { signal, timeoutMs: 25000 });
   if (!Array.isArray(feed.data) || !Number.isFinite(Date.parse(feed.checkedAt)) || feed.source !== 'NSE') throw new Error('Invalid IPO feed');
   return feed;
 }

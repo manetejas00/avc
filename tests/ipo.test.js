@@ -29,7 +29,7 @@ test('IPO feed preserves source values, filters correctly and reports source fai
       {id:'listed',symbol:'LISTED',name:'Listed fixture',status:'listed',listingDate:today,issueType:'Mainboard',exchanges:['NSE']},
       {id:'old',symbol:'OLD',name:'Old fixture',status:'listed',listingDate:'2020-01-01',issueType:'Mainboard',exchanges:['NSE']}
     ];
-    globalThis.fetch = async url => { calls++; assert.equal(url,'/api/ipos.php'); return {ok:true, headers:new Headers({'content-type':'application/json'}),json:async()=>({source:'NSE',checkedAt:new Date().toISOString(),data:records,warnings:[],stale:false,coverage:'fixture'})}; };
+    globalThis.fetch = async url => { calls++; assert.equal(url,'/api/ipo'); return {ok:true, headers:new Headers({'content-type':'application/json'}),json:async()=>({source:'NSE',checkedAt:new Date().toISOString(),data:records,warnings:[],stale:false,coverage:'fixture'})}; };
     const list=await service.fetchIpoList({tab:'all'});
     assert.equal(list.length,4);assert.equal(list[0].lotSize,182);assert.equal(list[1].subscription,undefined);
     assert.equal((await service.fetchIpoList({tab:'upcoming',exchange:'bse',segment:'sme'}))[0].symbol,'NEXT');
