@@ -95,7 +95,7 @@ export async function handlePublicApi(request, {fetcher = fetch, env = (_name) =
       return json(await upstream('https://scanner.tradingview.com/india/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({filter:[{left:'type',operation:'equal',right:'stock'},{left:'exchange',operation:'in_range',right:['BSE']}],options:{lang:'en'},symbols:{query:{types:[]},tickers:[]},columns:['name','description','exchange'],sort:{sortBy:'name',sortOrder:'asc'},range:[0,10000]}) }, fetcher),200,3600);
     }
     if (path === '/api/company-data.php') return json(await companyData(url.searchParams.get('symbol'), url.searchParams.get('exchange') || 'BSE',url.searchParams.get('mode') || 'profile',fetcher));
-    if (path === '/api/watchlist.php') {
+    if (path === '/api/market/watchlist' || path === '/api/watchlist.php') {
       const settled = await Promise.allSettled(watchlist.map(async symbol => ({symbol,result:(await chart(symbol,'5d','1d',fetcher)).result})));
       const data = settled.flatMap(r=>r.status==='fulfilled'?[r.value]:[]);
       if(!data.length) throw new HttpError(502,'Watchlist provider unavailable.');

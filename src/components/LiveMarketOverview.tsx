@@ -287,7 +287,7 @@ export default function LiveMarketOverview() {
   const loadMovers = async (signal?: AbortSignal) => {
     setMoversStatus('loading');
     try {
-      const payload = await getJson<Parameters<typeof parseWatchlist>[0]>('/api/watchlist.php', { signal, timeoutMs: 12000 });
+      const payload = await getJson<Parameters<typeof parseWatchlist>[0]>('/api/market/watchlist', { signal, timeoutMs: 12000 });
       const result = parseWatchlist(payload);
       if (!result.count) throw new Error('No dated watchlist quotes');
       if (signal?.aborted) return;

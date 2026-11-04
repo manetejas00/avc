@@ -1,7 +1,15 @@
 import express from 'express';
+import { handlePublicApi } from '../publicFinancialApi.js';
 
 export const createMarketRouter = (db, financialService) => {
   const router = express.Router();
+
+  // Share the production watchlist response with the local development server.
+  router.get('/watchlist', async (_req, res) => {
+    const response = await handlePublicApi(new Request('http://localhost/api/market/watchlist'));
+    response.headers.forEach((value, key) => res.setHeader(key, value));
+    res.status(response.status).send(await response.text());
+  });
 
   // 1. Unified Market Overview (Indices, Forex, Commodities)
   router.get('/overview', async (_req, res) => {

@@ -34,6 +34,28 @@ test('watchlist returns partial successful results when other symbols fail', asy
   assert.equal(response.status,200);const body=await response.json();assert.equal(body.data.length,1);assert.equal(body.data[0].symbol,'TCS.NS');
 });
 
+test('extensionless market watchlist returns the raw chart contract used by the live page', async () => {
+  const fetcher = async url => String(url).includes('TCS.NS')
+    ? respond({chart:{result:[result]}})
+    : new Response('', {status:429});
+  const response = await handlePublicApi(req('/api/market/watchlist'), {fetcher});
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.source, 'Yahoo Finance');
+  assert.ok(body.watchlist.includes('TCS.NS'));
+  assert.deepEqual(body.data, [{symbol:'TCS.NS', result}]);
+  assert.equal(response.headers.get('cache-control'), 'public, max-age=180');
+});
+
+test('a total watchlist outage returns an uncached error rather than an empty success', async () => {
+  const response = await handlePublicApi(req('/api/market/watchlist'), {
+    fetcher: async () => new Response('', {status:429}),
+  });
+  assert.equal(response.status, 502);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal((await response.json()).error, 'Watchlist provider unavailable.');
+});
+
 test('scoped fund details and legacy fund responses keep their separate contracts', async () => {
   const data={meta:{scheme_code:119598,scheme_name:'Test Fund'},data:[{date:'02-11-2026',nav:'110'},{date:'02-11-2025',nav:'100'}]};
   const fetcher=async url=>String(url).includes('amfi')?new Response('',{status:503}):respond(data);
