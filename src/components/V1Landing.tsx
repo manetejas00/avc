@@ -739,50 +739,6 @@ export default function V1Landing() {
           </div>
         </div>
 
-        {/* Civic Partnership with Avinya Care Foundation Showcase */}
-        <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-purple-950/20 via-white/[0.02] to-transparent border border-purple-500/20 flex flex-col lg:flex-row items-center gap-6 sm:gap-8">
-          <div className="w-full lg:w-1/2 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold tracking-wider uppercase">
-              <Award size={14} />
-              <span>Learn the basics</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-serif text-white font-bold tracking-tight">
-              Build confidence with simple financial habits
-            </h3>
-            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-              Start with a household budget, an emergency fund and a clear understanding of borrowing costs. The learning answers below explain SIPs, NAV and loan documents in plain language.
-            </p>
-            <div className="grid grid-cols-3 gap-3 pt-2">
-              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
-                <span className="block text-base sm:text-lg font-bold text-purple-300">Budget</span>
-                <span className="text-[10px] sm:text-xs text-gray-400">track spending</span>
-              </div>
-              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
-                <span className="block text-base sm:text-lg font-bold text-purple-300">Save</span>
-                <span className="text-[10px] sm:text-xs text-gray-400">plan ahead</span>
-              </div>
-              <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
-                <span className="block text-base sm:text-lg font-bold text-purple-300">Learn</span>
-                <span className="text-[10px] sm:text-xs text-gray-400">ask questions</span>
-              </div>
-            </div>
-          </div>
-          <div className="w-full lg:w-1/2 relative overflow-hidden rounded-xl border border-white/10 group shadow-2xl">
-            <img
-              src="/assets/community/avinya-community-drive.jpg"
-              alt="Illustrative financial learning scene; not a verified AVC event photograph"
-              width="1376"
-              height="768"
-              loading="lazy"
-              className="w-full h-auto aspect-video object-cover filter brightness-95 contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-              <div className="text-xs text-gray-200">
-                <span className="font-semibold text-purple-300">Illustrative image:</span> not a photograph of an AVC event
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
