@@ -105,19 +105,14 @@ const Testimonials = () => {
                 "{testimonial.content}"
               </p>
               <div className="flex items-center gap-4 mt-auto pointer-events-none">
-                <img 
-                  src={testimonial.image} 
-                  alt={testimonial.name} 
-                  width="48"
-                  height="48"
-                  loading="lazy"
-                  className="w-12 h-12 rounded-full object-cover border border-[#D4AF37]/30 ring-2 ring-[#D4AF37]/10"
-                  onError={(e) => {
-                    e.currentTarget.src = `${import.meta.env.VITE_UI_AVATARS_API_URL || 'https://ui-avatars.com/api/'}?name=${encodeURIComponent(testimonial.name)}&background=0d0d0d&color=D4AF37&bold=true`;
-                  }}
-                />
+                <div 
+                  className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D4AF37]/25 to-[#1a1a1a] border border-[#D4AF37]/50 flex items-center justify-center text-[#D4AF37] font-bold text-sm tracking-wider shadow-inner ring-2 ring-[#D4AF37]/15 shrink-0"
+                  aria-hidden="true"
+                >
+                  {testimonial.name.split(' ').map((n: string) => n[0]).join('')}
+                </div>
                 <div>
-                  <h4 className="font-semibold">{testimonial.name}</h4>
+                  <h4 className="font-semibold text-white">{testimonial.name}</h4>
                   <p className="text-sm text-text-muted">{testimonial.role}</p>
                 </div>
               </div>

@@ -48,22 +48,22 @@ type ShowcaseSlide = {
 const showcaseSlides: readonly ShowcaseSlide[] = [
   {
     image: '/assets/v1/financial-dashboard-hd-1280.webp',
-    tag: 'Investments · illustrative image',
-    title: 'Illustrative Portfolio Terminal',
-    alt: 'Illustrative investment workspace',
+    tag: 'Investments',
+    title: 'Portfolio Analytics Terminal',
+    alt: 'Investment and market analytics workspace',
     badgeLabel: 'Consultancy Architecture',
     badgeStatus: 'Learn',
     stat1Label: 'Understand the investment',
     stat1Width: '92%',
     stat2Label: 'Consider costs and risk',
     stat2Width: '85%',
-    badgeFooter: 'Illustration only · no performance figures'
+    badgeFooter: 'Compare terms · understand risk'
   },
   {
     image: '/assets/v1/service-banking-syndication-1280.webp',
-    tag: 'Loans · illustrative image',
+    tag: 'Loans',
     title: 'Commercial Lending Network Desk',
-    alt: 'Illustrative banking workspace',
+    alt: 'Corporate lending and syndication workspace',
     badgeLabel: 'Syndicate Liquidity',
     badgeStatus: 'Explore',
     stat1Label: 'Partner Bank & NBFC Pipeline',
@@ -74,11 +74,11 @@ const showcaseSlides: readonly ShowcaseSlide[] = [
   },
   {
     image: '/assets/v1/service-wealth-advisory-1280.webp',
-    tag: 'Planning · illustrative image',
+    tag: 'Planning',
     title: 'Executive Advisory Boardroom',
-    alt: 'Illustrative meeting room',
+    alt: 'Executive advisory boardroom',
     badgeLabel: 'Private Advisory',
-    badgeStatus: 'Illustrative',
+    badgeStatus: 'Advisory',
     stat1Label: 'Goal-Based Wealth Preservation',
     stat1Width: '98%',
     stat2Label: 'Understand costs and risk',
@@ -87,9 +87,9 @@ const showcaseSlides: readonly ShowcaseSlide[] = [
   },
   {
     image: '/assets/v1/service-corporate-treasury-1280.webp',
-    tag: 'Tax support · illustrative image',
+    tag: 'Tax support',
     title: 'CA Audit & Capital Operations',
-    alt: 'Illustrative accounting workspace',
+    alt: 'Corporate accounting workspace',
     badgeLabel: 'Corporate Treasury',
     badgeStatus: 'Discuss',
     stat1Label: 'Tax Strategy & Compliance',
@@ -109,23 +109,23 @@ type HeroSlide = {
 const heroSlides: readonly HeroSlide[] = [
   {
     image: '/assets/hero/hero-boardroom-skyline-1280.webp',
-    alt: 'Illustrative boardroom, not an AVC office photograph',
+    alt: 'Executive Wealth Advisory Suite',
     title: 'Executive Wealth Advisory Suite'
   },
   {
     image: '/assets/hero/hero-bkc-towers-1280.webp',
-    alt: 'Illustrative financial district towers',
+    alt: 'BKC Financial Center, Mumbai',
     title: 'BKC Financial Center'
   },
   {
     image: '/assets/hero/hero-advisory-lounge-1280.webp',
-    alt: 'Illustrative lounge, not an AVC office photograph',
+    alt: 'Private Client Advisory Suite',
     title: 'Private Client Suite'
   },
   {
     image: '/assets/hero/hero-premium-1280.webp',
-    alt: 'Illustrative building, not an AVC office photograph',
-    title: 'Illustrative Financial Tower'
+    alt: 'Financial Headquarters Tower',
+    title: 'Financial Tower'
   }
 ] as const;
 
@@ -353,7 +353,7 @@ export default function V1Landing() {
         <div><CountUp value={10} suffix="+" /><span>Chartered Accountant network</span></div>
       </aside>
       <div className="v1-hero__bottom">
-        <div className="v1-scroll">ILLUSTRATIVE BACKGROUNDS · SCROLL TO DISCOVER <span /></div>
+        <div className="v1-scroll">SCROLL TO DISCOVER <span /></div>
         <div className="v1-hero__dots" role="tablist" aria-label="Hero background slides">
           {heroSlides.map((slide, index) => {
             const isActive = index === activeHeroSlide;
