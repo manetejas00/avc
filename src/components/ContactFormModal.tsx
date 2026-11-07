@@ -18,9 +18,9 @@ const ContactFormModal: React.FC<ContactFormModalProps> = ({ isOpen, onClose }) 
     <div className="bg-[#121214] border border-[#D4AF37]/30 w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-2xl shadow-2xl relative text-white" onClick={event=>event.stopPropagation()}>
       <button type="button" onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Close contact options"><X size={22}/></button>
       <div className="p-5 sm:p-7 md:p-8">
-        <p className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wider mb-2">AVC Dhanam Solutions</p>
-        <h2 id="contact-modal-title" className="text-xl sm:text-2xl font-bold text-white mb-3 pr-10">Talk to the team</h2>
-        <p className="text-neutral-300 text-sm leading-relaxed mb-6">Call or WhatsApp us about the service you need. You can ask about availability, documents, risks and charges before deciding.</p>
+        <p className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wider mb-2">AVC Dhanam Solutions • Leadership Advisory</p>
+        <h2 id="contact-modal-title" className="text-xl sm:text-2xl font-bold text-white mb-3 pr-10">Talk to Chandresh Pandey & the Team</h2>
+        <p className="text-neutral-300 text-sm leading-relaxed mb-6">Connect directly with Director Chandresh Pandey and our senior advisory team. Call or WhatsApp to discuss loans, investments, insurance, or business financing. Ask about availability, documents, risks and charges before deciding.</p>
         <a href="tel:+917030247878" className="w-full min-h-[48px] bg-[#D4AF37] text-black font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 mb-3"><Phone size={19}/>Call +91 7030247878</a>
         <a href="https://wa.me/917030247878" target="_blank" rel="noreferrer" className="w-full min-h-[48px] border border-[#D4AF37]/50 text-[#D4AF37] font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2"><MessageCircle size={19}/>Open WhatsApp</a>
         <p className="text-neutral-400 text-xs leading-relaxed mt-5">Office: 210, Global Plaza, Global City, Virar West. Call to confirm a suitable time to visit.</p>

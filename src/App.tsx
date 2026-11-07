@@ -14,14 +14,14 @@ function ScrollToTop() {
   const { pathname, search, hash } = useLocation();
   useLayoutEffect(() => {
     const titles: Record<string, string> = {
-      '/': 'AVC Dhanam Solutions Pvt. Ltd. | Financial Consultant in Virar West & Mumbai',
+      '/': 'AVC Dhanam Solutions Pvt. Ltd. | Chandresh Pandey | Financial Consultant in Virar West & Mumbai',
       '/screener': 'Equity Screener | AVC Dhanam Solutions',
       '/admin': 'Admin Login | AVC Dhanam Solutions',
       '/admin/dashboard': 'Admin Dashboard | AVC Dhanam Solutions',
       '/v2': 'Ork | Banking'
     };
-    document.title = titles[pathname] || 'AVC Dhanam Solutions';
-    document.querySelector('meta[name="description"]')?.setAttribute('content', 'Explore financial consultancy, investment education, market research, loans and insurance with AVC Dhanam Solutions in Virar West and Mumbai.');
+    document.title = titles[pathname] || 'AVC Dhanam Solutions | Chandresh Pandey';
+    document.querySelector('meta[name="description"]')?.setAttribute('content', 'Explore financial consultancy, wealth management, loans, and business financing with Director Chandresh Pandey and the AVC Dhanam Solutions team in Virar West and Mumbai.');
     const canonical = `https://avcdhanam.com${pathname === '/ipos' ? '/ipo' : pathname}`;
     document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonical);
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonical);

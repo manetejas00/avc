@@ -11,7 +11,7 @@ const testimonials = [
   {
     name: 'Rajesh Sharma',
     role: 'Managing Director, TechVentures Mumbai',
-    content: "AVC Dhanam's SIP and portfolio management guidance helped us structure our wealth tax-efficiently. The transparency and real-time market data give us full control.",
+    content: "Director Chandresh Pandey and the AVC Dhanam team helped us structure our wealth and liquidity tax-efficiently. The transparency and personal advisory give us complete peace of mind.",
     image: '/assets/testimonials/client-rajesh.webp'
   },
   {
@@ -23,7 +23,7 @@ const testimonials = [
   {
     name: 'Vikram Mehta',
     role: 'Co-Founder, Capital Growth',
-    content: "The level of expertise and SEBI compliance rigor AVC provides gives us total confidence for our corporate liquidity investments.",
+    content: "Working with Chandresh Pandey on our corporate liquidity and capital requirements gave us total confidence. The financial depth and diligence at AVC Dhanam are outstanding.",
     image: '/assets/testimonials/client-vikram.webp'
   },
   {

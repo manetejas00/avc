@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     "question": "How do I get started?",
-    "answer": "Call +91 7030247878 or WhatsApp the same number. Tell us the service you need. Before proceeding, confirm the provider’s current registration, charges and written terms. The office is at 210, Global Plaza, Global City, Virar West."
+    "answer": "Call +91 7030247878 or WhatsApp the same number to connect with Director Chandresh Pandey and the advisory desk. Tell us the service you need. Before proceeding, confirm the provider’s current registration, charges and written terms. The office is at 210, Global Plaza, Global City, Virar West."
   },
   {
     "question": "Which documents might a lender ask for?",
@@ -53,11 +53,11 @@ const faqs = [
   },
   {
     "question": "Who leads AVC Dhanam Solutions?",
-    "answer": "Chandresh Pandey and Ajay Pandey are the directors shown on this website. Ask the team for current professional registrations, service roles and provider details before proceeding."
+    "answer": "AVC Dhanam Solutions is founded and led by Director Chandresh Pandey alongside Director Ajay Pandey. Chandresh Pandey leads commercial loan syndication, business funding, and overall financial consultancy from our Virar West headquarters."
   },
   {
     "question": "How can I arrange a conversation?",
-    "answer": "Call or WhatsApp +91 7030247878 to discuss a suitable time. The website does not collect callback requests or confirm appointments."
+    "answer": "Call or WhatsApp +91 7030247878 to schedule a direct conversation with Chandresh Pandey or our senior advisory team. The website does not collect callback requests or confirm appointments."
   }
 ];
 

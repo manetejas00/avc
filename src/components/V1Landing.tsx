@@ -337,11 +337,11 @@ export default function V1Landing() {
         <div className="v1-hero__overlay" aria-hidden="true" />
       </div>
       <div className="v1-hero__body">
-        <div className="v1-kicker"><i /> Financial Consultancy • Virar West, Mumbai</div>
+        <div className="v1-kicker"><i /> Led by Director Chandresh Pandey • Financial Consultancy • Virar West, Mumbai</div>
         <h1>Your Complete Financial Journey,<br /><em>Under One Roof.</em></h1>
-        <p>Understand your investment, loan, insurance and tax options. Talk to our team in Virar West about your goals and next steps.</p>
+        <p>Led by Director Chandresh Pandey, AVC Dhanam Solutions provides strategic guidance for investments, business loans, insurance, and tax advisory. Talk to our team in Virar West about your goals and next steps.</p>
         <div className="v1-hero__actions">
-          <ActionButton onClick={() => setIsConsultationOpen(true)}>Talk to the Team</ActionButton>
+          <ActionButton onClick={() => setIsConsultationOpen(true)}>Consult Chandresh Pandey</ActionButton>
           <a href="tel:+917030247878" className="v1-text-link">Call +91 7030247878</a><a href="https://wa.me/917030247878" className="v1-text-link" target="_blank" rel="noreferrer">WhatsApp</a><a href="#system" className="v1-text-link">Explore Financial Solutions <ChevronRight size={16} /></a>
         </div>
       </div>
@@ -387,7 +387,7 @@ export default function V1Landing() {
       <div className="v1-features__intro">
         <span className="v1-index">01 — COMPLETE FINANCIAL SERVICES</span>
         <h2>A Complete Financial Journey,<br /><em>Under One Roof.</em></h2>
-        <p>Choose a service to understand the options, risks and next step. Ask the team to confirm availability, provider details and fees.</p>
+        <p>Strategic financial guidance directed by Chandresh Pandey. Choose a service to understand the options, risks and next step. Ask the team to confirm availability, provider details and fees.</p>
         <div className="v1-tool-list">
           {tools.map(([label, Icon, description], index) => (
             <button 
@@ -530,11 +530,11 @@ export default function V1Landing() {
             <span>02 — ABOUT AVC DHANAM SOLUTIONS</span>
           </div>
           <h2 id="about-section-title" className="text-white font-serif tracking-tight leading-tight mb-4">
-            Meet the team. <br className="hidden sm:block" />
+            Meet Chandresh Pandey & the Team. <br className="hidden sm:block" />
             <em className="italic text-gold-primary">Start with a conversation.</em>
           </h2>
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-            Meet <strong>Chandresh Pandey</strong> and <strong>Ajay Pandey</strong>, the directors of <strong>AVC Dhanam Solutions</strong>. Visit us at 210, Global Plaza, Global City, Virar West. Ask for current provider registrations and written service terms before proceeding.
+            Meet <strong>Chandresh Pandey</strong> (Director & Founder) and <strong>Ajay Pandey</strong> (Director), leading <strong>AVC Dhanam Solutions</strong>. Visit us at 210, Global Plaza, Global City, Virar West. Ask for current provider registrations and written service terms before proceeding.
           </p>
         </div>
 
@@ -558,7 +558,7 @@ export default function V1Landing() {
               {/* Top Badges */}
               <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
                 <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-gold-primary/40 text-gold-primary text-xs font-semibold tracking-wide shadow-lg">
-                  Director
+                  Director & Founder
                 </span>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-xs font-medium flex items-center gap-1.5 shadow-lg">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -581,7 +581,7 @@ export default function V1Landing() {
                 </div>
 
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
-                  Discuss your borrowing or business funding needs with Chandresh. Prepare your income and business records so the team can explain the next steps.
+                  Discuss your borrowing, loan syndication, or business funding needs directly with Director Chandresh Pandey. Prepare your income and business records so the team can explain the next steps.
                 </p>
 
                 {/* Key Credentials */}
@@ -612,7 +612,7 @@ export default function V1Landing() {
                   onClick={() => setIsConsultationOpen(true)}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-primary/10 hover:bg-gold-primary text-gold-primary hover:text-black border border-gold-primary/30 transition-all text-xs sm:text-sm font-semibold min-h-[44px]"
                 >
-                  <span>Consult Chandresh</span>
+                  <span>Consult Chandresh Pandey</span>
                   <ArrowUpRight size={15} />
                 </button>
               </div>
@@ -846,7 +846,7 @@ export default function V1Landing() {
           {activeCalculator === 'lumpsum' && <><label>Investment amount <strong>₹{lumpsumAmount.toLocaleString('en-IN')}</strong><input aria-label="Lumpsum amount" type="range" min="10000" max="10000000" step="10000" value={lumpsumAmount} style={rangeStyle(lumpsumAmount,10000,10000000)} onChange={(event) => setLumpsumAmount(Number(event.target.value))} /></label><label>Assumed return <strong>{lumpsumRate}% p.a.</strong><input aria-label="Lumpsum return rate" type="range" min="1" max="30" value={lumpsumRate} style={rangeStyle(lumpsumRate,1,30)} onChange={(event) => setLumpsumRate(Number(event.target.value))} /></label><label>Investment period <strong>{lumpsumYears} years</strong><input aria-label="Lumpsum period" type="range" min="1" max="40" value={lumpsumYears} style={rangeStyle(lumpsumYears,1,40)} onChange={(event) => setLumpsumYears(Number(event.target.value))} /></label></>}
           {activeCalculator === 'retirement' && <><label>Current monthly expense <strong>₹{monthlyExpense.toLocaleString('en-IN')}</strong><input aria-label="Current monthly expense" type="range" min="10000" max="500000" step="5000" value={monthlyExpense} style={rangeStyle(monthlyExpense,10000,500000)} onChange={(event) => setMonthlyExpense(Number(event.target.value))} /></label><label>Expected inflation <strong>{inflationRate}% p.a.</strong><input aria-label="Expected inflation" type="range" min="2" max="12" step=".5" value={inflationRate} style={rangeStyle(inflationRate,2,12)} onChange={(event) => setInflationRate(Number(event.target.value))} /></label><label>Years to retirement <strong>{retirementYears} years</strong><input aria-label="Years to retirement" type="range" min="1" max="40" value={retirementYears} style={rangeStyle(retirementYears,1,40)} onChange={(event) => setRetirementYears(Number(event.target.value))} /></label></>}
         </div>
-        <div className="v1-calculator__result">{activeCalculator === 'sip' && <><small>Estimated maturity value</small><strong className="v1-calculator__value">₹{Math.round(maturityValue).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{ width: `${Math.min(100,(investedValue/maturityValue)*100)}%` }} /><span /></div><div className="v1-calculator__legend"><span><i /> Total Invested ₹{investedValue.toLocaleString('en-IN')}</span><span><i /> Est. Growth ₹{Math.round(maturityValue-investedValue).toLocaleString('en-IN')}</span></div></>}{activeCalculator === 'loan' && <><small>Estimated monthly EMI</small><strong className="v1-calculator__value">₹{Math.round(monthlyEmi).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{width:`${Math.min(100,(loanAmount/(monthlyEmi*loanMonths))*100)}%`}} /><span /></div><div className="v1-calculator__legend"><span><i /> Principal ₹{loanAmount.toLocaleString('en-IN')}</span><span><i /> Total Interest ₹{Math.round(monthlyEmi*loanMonths-loanAmount).toLocaleString('en-IN')}</span></div></>}{activeCalculator === 'lumpsum' && <><small>Estimated future value</small><strong className="v1-calculator__value">₹{Math.round(lumpsumValue).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{width:`${Math.min(100,(lumpsumAmount/lumpsumValue)*100)}%`}} /><span /></div><div className="v1-calculator__legend"><span><i /> Total Invested ₹{lumpsumAmount.toLocaleString('en-IN')}</span><span><i /> Est. Growth ₹{Math.round(lumpsumValue-lumpsumAmount).toLocaleString('en-IN')}</span></div></>}{activeCalculator === 'retirement' && <><small>Indicative retirement corpus</small><strong className="v1-calculator__value">₹{Math.round(retirementCorpus).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{width:'66%'}} /><span /></div><div className="v1-calculator__legend"><span><i /> Future Monthly Expense ₹{Math.round(futureMonthlyExpense).toLocaleString('en-IN')}</span><span><i /> 25× annual expense rule of thumb</span></div></>}<p className="v1-calculator__assumptions">{calculatorAssumptions[activeCalculator]}</p><button type="button" onClick={() => setIsConsultationOpen(true)} className="v1-calculator__cta">Discuss Your Requirement <ArrowUpRight size={17} /></button></div>
+        <div className="v1-calculator__result">{activeCalculator === 'sip' && <><small>Estimated maturity value</small><strong className="v1-calculator__value">₹{Math.round(maturityValue).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{ width: `${Math.min(100,(investedValue/maturityValue)*100)}%` }} /><span /></div><div className="v1-calculator__legend"><span><i /> Total Invested ₹{investedValue.toLocaleString('en-IN')}</span><span><i /> Est. Growth ₹{Math.round(maturityValue-investedValue).toLocaleString('en-IN')}</span></div></>}{activeCalculator === 'loan' && <><small>Estimated monthly EMI</small><strong className="v1-calculator__value">₹{Math.round(monthlyEmi).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{width:`${Math.min(100,(loanAmount/(monthlyEmi*loanMonths))*100)}%`}} /><span /></div><div className="v1-calculator__legend"><span><i /> Principal ₹{loanAmount.toLocaleString('en-IN')}</span><span><i /> Total Interest ₹{Math.round(monthlyEmi*loanMonths-loanAmount).toLocaleString('en-IN')}</span></div></>}{activeCalculator === 'lumpsum' && <><small>Estimated future value</small><strong className="v1-calculator__value">₹{Math.round(lumpsumValue).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{width:`${Math.min(100,(lumpsumAmount/lumpsumValue)*100)}%`}} /><span /></div><div className="v1-calculator__legend"><span><i /> Total Invested ₹{lumpsumAmount.toLocaleString('en-IN')}</span><span><i /> Est. Growth ₹{Math.round(lumpsumValue-lumpsumAmount).toLocaleString('en-IN')}</span></div></>}{activeCalculator === 'retirement' && <><small>Indicative retirement corpus</small><strong className="v1-calculator__value">₹{Math.round(retirementCorpus).toLocaleString('en-IN')}</strong><div className="v1-calculator__bar"><i style={{width:'66%'}} /><span /></div><div className="v1-calculator__legend"><span><i /> Future Monthly Expense ₹{Math.round(futureMonthlyExpense).toLocaleString('en-IN')}</span><span><i /> 25× annual expense rule of thumb</span></div></>}<p className="v1-calculator__assumptions">{calculatorAssumptions[activeCalculator]}</p><button type="button" onClick={() => setIsConsultationOpen(true)} className="v1-calculator__cta">Discuss with Chandresh Pandey <ArrowUpRight size={17} /></button></div>
       </div></div>
     </section>
     <LiveMarketOverview />

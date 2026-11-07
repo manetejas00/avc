@@ -123,7 +123,7 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
               onClick={() => { closeMobile(); setIsContactOpen(true); }} 
               className="v1-mobile-menu__btn"
             >
-              Talk to a Consultant <ArrowUpRight size={16} />
+              Talk to Chandresh Pandey & Team <ArrowUpRight size={16} />
             </button>
           </div>
         </div>
@@ -163,14 +163,14 @@ export function V1Footer() {
         <p>A Complete Financial Journey Under One Roof</p>
         <h2>Ready to build your<br /><em>financial future?</em></h2>
       </div>
-      <a href="tel:+917030247878" aria-label="Call +91 7030247878 to speak with a financial consultant">Talk to a Financial Consultant <ArrowUpRight size={17} /></a>
+      <a href="tel:+917030247878" aria-label="Call +91 7030247878 to speak with Director Chandresh Pandey">Consult Chandresh Pandey <ArrowUpRight size={17} /></a>
     </div>
     <div className="v1-footer__grid">
       <div className="v1-footer__brand">
         <a href="/" className="v1-logo" aria-label="AVC Dhanam Solutions Home">
           <img src="/logo_gold_transparent.svg" alt="AVC Dhanam Solutions Pvt. Ltd." width="160" height="48" loading="lazy" />
         </a>
-        <p>AVC Dhanam Solutions is based in Virar West. Contact the team about investments, loans, insurance, tax support and business funding. Confirm the provider, scope and charges before proceeding.</p>
+        <p>AVC Dhanam Solutions is directed by Chandresh Pandey, based in Virar West. Contact Chandresh Pandey and the team about investments, loans, insurance, tax support and business funding. Confirm the provider, scope and charges before proceeding.</p>
         <ul>
           <li><MapPin size={15} className="shrink-0" /><span className="break-words">210, Global Plaza, Global City, Virar West</span></li>
           <li><Phone size={15} className="shrink-0" /><a href="tel:+917030247878">+91 7030247878</a></li>
@@ -222,7 +222,7 @@ export function V1Footer() {
     </div>
     <RegulatoryDisclaimer variant="compact" />
     <div className="v1-footer__bottom">
-      <span>© {year} AVC Dhanam Solutions Pvt. Ltd. All rights reserved. Directors: Chandresh Pandey & Ajay Pandey.</span>
+      <span>© {year} AVC Dhanam Solutions Pvt. Ltd. All rights reserved. Leadership: Chandresh Pandey (Director) & Ajay Pandey (Director).</span>
       <div>
         <a href="#privacy" onClick={openLegal('privacy')}>Privacy Policy</a>
         <a href="#terms" onClick={openLegal('terms')}>Terms of Service</a>
