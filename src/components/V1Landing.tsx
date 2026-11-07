@@ -312,7 +312,7 @@ export default function V1Landing() {
       onMouseEnter={() => setIsHeroPaused(true)}
       onMouseLeave={() => setIsHeroPaused(false)}
     >
-      <div className="v1-hero__slider" aria-label="Illustrative financial backgrounds; not AVC office photographs">
+      <div className="v1-hero__slider" aria-label="AVC Dhanam Financial Advisory Services">
         {heroSlides.map((slide, index) => {
           const isActive = index === activeHeroSlide;
           return (
