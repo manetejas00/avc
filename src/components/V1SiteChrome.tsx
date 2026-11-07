@@ -1,6 +1,6 @@
 import type React from 'react';
 import { forwardRef, useEffect, useState } from 'react';
-import { ArrowUpRight, Award, BookOpen, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
+import { ArrowUpRight, Award, ExternalLink, Mail, MapPin, Menu, Phone, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
 import ContactFormModal from './ContactFormModal';
 import RegulatoryDisclaimer from './RegulatoryDisclaimer';
 import { useDialogFocus } from '../hooks/useDialogFocus';
@@ -56,7 +56,6 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
         <a href={toHomeSection('markets')} className={currentPath === '/' ? 'v1-nav__link--active' : ''}>Markets</a>
         <a href={toHomeSection('system')}>Services</a>
         <a href="/ipo" className={currentPath.startsWith('/ipo') ? 'v1-nav__link--active' : ''}>IPOs</a>
-        <a href="/ebooks" className={currentPath.startsWith('/ebooks') ? 'v1-nav__link--active' : ''}>E-Books</a>
         <a href={toHomeSection('approach')}>About Us</a>
         <a href={toHomeSection('calculators')}>Calculators</a>
         <a href={toHomeSection('news')}>Insights</a>
@@ -73,13 +72,6 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
             className="px-2.5 py-1 rounded-lg bg-[#D4AF37]/15 hover:bg-[#D4AF37] hover:text-black border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold transition-all flex items-center gap-1 shadow-sm min-h-[36px] active:scale-[0.98]"
           >
             <TrendingUp size={12} /> IPOs
-          </a>
-          <a
-            href="/ebooks"
-            onClick={closeMobile}
-            className="px-2.5 py-1 rounded-lg bg-[#D4AF37]/15 hover:bg-[#D4AF37] hover:text-black border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold transition-all flex items-center gap-1 shadow-sm min-h-[36px] active:scale-[0.98]"
-          >
-            <BookOpen size={12} /> E-Books
           </a>
         </div>
 
@@ -115,9 +107,6 @@ export const V1Nav = forwardRef<HTMLElement, NavProps>(function V1Nav({ home = f
             <a href={toHomeSection('system')} onClick={closeMobile}>Financial Services</a>
             <a href="/ipo" onClick={closeMobile} className={`flex items-center justify-between text-[#D4AF37] ${currentPath.startsWith('/ipo') ? 'bg-[#D4AF37]/15 border-[#D4AF37]/40' : ''}`}>
               IPOs <TrendingUp size={15} />
-            </a>
-            <a href="/ebooks" onClick={closeMobile} className={`flex items-center justify-between text-[#D4AF37] ${currentPath.startsWith('/ebooks') ? 'bg-[#D4AF37]/15 border-[#D4AF37]/40' : ''}`}>
-              Stock Market E-Books <BookOpen size={15} />
             </a>
             <a href={toHomeSection('approach')} onClick={closeMobile}>About AVC Dhanam</a>
             <a href={toHomeSection('calculators')} onClick={closeMobile}>Wealth Calculators</a>
@@ -196,7 +185,6 @@ export function V1Footer() {
         <a href="/#markets">Live Markets</a>
         <a href="/#calculators">Calculators</a>
         <a href="/#testimonials">Testimonials</a>
-        <a href="/ebooks">Stock Market E-Books</a>
         <a href="/#faq">FAQ & Guidance</a>
         <a href="/screener">Market Screener</a>
       </div>
@@ -258,4 +246,3 @@ export function V1Footer() {
     )}
   </footer>;
 }
-

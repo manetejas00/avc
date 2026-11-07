@@ -3,7 +3,6 @@ import { getUser, login, logout } from '@netlify/identity';
 import { drizzle } from 'drizzle-orm/netlify-db';
 import { desc, eq } from 'drizzle-orm';
 import { submissions, syncLogs } from '../../db/schema.js';
-import ebookContent from '../../services/ebookContent.js';
 import { validateSubmission } from '../../services/submissionValidation.js';
 
 export default async (request: Request) => {
@@ -44,7 +43,6 @@ export default async (request: Request) => {
     if (!user) return reply({ error: 'Unauthorized.' }, 401);
     if (!user.roles?.includes('admin')) return reply({ error: 'Administrator access is required.' }, 403);
     if (path === '/api/admin/check-auth' && request.method === 'GET') return reply({ authenticated: true });
-    if (path === '/api/admin/ebooks' && request.method === 'GET') return reply(ebookContent);
     const db = drizzle();
     if (path === '/api/admin/submissions' && request.method === 'GET') {
       const rows = await db.select().from(submissions).orderBy(desc(submissions.createdAt)).limit(500);

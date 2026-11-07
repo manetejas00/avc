@@ -4,8 +4,8 @@ import handler from '../netlify/functions/administration.mts';
 
 const request = (path: string, method = 'GET', body?: unknown, origin?: string) => new Request('https://site.example'+path, {method,headers:{'Content-Type':'application/json',...(origin?{Origin:origin}:{})},...(body!==undefined?{body:JSON.stringify(body)}:{})});
 
-test('anonymous callers cannot read consultation records, logs, or ebooks',async()=>{
-  for(const path of ['/api/admin/submissions','/api/admin/sync-logs','/api/admin/ebooks','/api/admin/check-auth']){
+test('anonymous callers cannot read consultation records or logs',async()=>{
+  for(const path of ['/api/admin/submissions','/api/admin/sync-logs','/api/admin/check-auth']){
     const response=await handler(request(path));
     assert.equal(response.status,401);
     assert.equal(response.headers.get('cache-control'),'no-store');

@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'node:crypto';
-import ebookContent from './services/ebookContent.js';
 import { fileURLToPath } from 'url';
 import { FinancialService } from './services/financialService.js';
 import { createMarketRouter } from './services/routes/marketRouter.js';
@@ -123,7 +122,7 @@ app.use((req, res, next) => {
   if (host === 'test1.avinyacarefoundation.org' || host === 'www.avcdhanam.com') {
     return res.redirect(301, `https://avcdhanam.com${req.originalUrl}`);
   }
-  if (/^\/(admin(?:\/|$)|ebook-admin-vault(?:\/|$)|v2(?:\/|$))/.test(req.path) || /^test1\./i.test(req.hostname)) {
+  if (/^\/(admin(?:\/|$)|v2(?:\/|$))/.test(req.path) || /^test1\./i.test(req.hostname)) {
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   }
   next();
@@ -247,7 +246,6 @@ app.post('/api/admin/logout', (req, res) => {
 app.get('/api/admin/check-auth', authenticateAdmin, (req, res) => {
   res.json({ authenticated: true });
 });
-app.get('/api/admin/ebooks', authenticateAdmin, (req, res) => res.json(ebookContent));
 
 app.get('/api/admin/submissions', authenticateAdmin, (req, res) => {
   try {
@@ -295,7 +293,7 @@ app.use(express.static(distPath));
 app.use((req, res) => {
   if (!['GET', 'HEAD'].includes(req.method)) return res.status(405).json({ error: 'Method not allowed.' });
   if (req.path.startsWith('/assets/')) return res.status(404).send('Asset not found.');
-  const knownRoute = /^(?:\/(?:v2|screener|ipo|ipos|ebooks|admin|ebook-admin-vault)?|\/admin\/dashboard|\/(?:company|ipo|ebooks)\/[^/]+)\/?$/.test(req.path);
+  const knownRoute = /^(?:\/(?:v2|screener|ipo|ipos|admin)?|\/admin\/dashboard|\/(?:company|ipo)\/[^/]+)\/?$/.test(req.path);
   if (fs.existsSync(path.join(distPath, 'index.html'))) {
     res.status(knownRoute ? 200 : 404).sendFile(path.join(distPath, 'index.html'));
   } else {

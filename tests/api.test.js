@@ -42,7 +42,6 @@ test('isolated API regression: persistence, authorization, validation and privat
   try {
     await start('Isolated-test-pass-123!');
     assert.equal((await request(base + '/api/admin/submissions')).status, 401);
-    assert.equal((await request(base + '/api/admin/ebooks?key=admin')).status, 401);
     assert.equal((await post('/api/submit-form', {})).status, 400);
     assert.equal((await post('/api/submit-form', { name: {}, email: 'x', phone: 'abc' })).status, 400);
     assert.equal((await post('/api/submit-form', { name: '   ', email: 'a@b.test', phone: '9876543210' })).status, 400);
@@ -65,9 +64,6 @@ test('isolated API regression: persistence, authorization, validation and privat
     assert.equal((await post(`/api/admin/submissions/${id}/status`, { status: 'arbitrary' }, cookie)).status, 400);
     assert.equal((await post('/api/admin/submissions/999999/status', { status: 'completed' }, cookie)).status, 404);
     assert.equal((await post(`/api/admin/submissions/${id}/status`, { status: 'completed' }, cookie)).status, 200);
-    const books = await request(base + '/api/admin/ebooks', { headers: { Cookie: cookie } });
-    assert.equal(books.headers.get('cache-control'), 'no-store');
-    assert.equal((await books.json()).length, 6);
     assert.equal((await request(base + '/api/market/search?q=invalid&q=second')).status, 400);
     assert.equal((await request(base + '/api/market/mutual-funds/search?q=invalid&q=second')).status, 400);
     assert.equal((await request(base + '/api/market/quotes?symbols=invalid&symbols=second')).status, 400);

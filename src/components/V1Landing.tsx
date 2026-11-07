@@ -9,7 +9,6 @@ import NewsImage from './NewsImage';
 import TradingViewTicker from './TradingViewTicker';
 import ContactFormModal from './ContactFormModal';
 import LiveMarketOverview from './LiveMarketOverview';
-import HomeEbooksSection from './HomeEbooksSection';
 import ScreenerGateway from './ScreenerGateway';
 import Testimonials from './Testimonials';
 import FAQ from './FAQ';
@@ -851,7 +850,6 @@ export default function V1Landing() {
       </div></div>
     </section>
     <LiveMarketOverview />
-    <HomeEbooksSection />
     <ScreenerGateway />
     <Testimonials />
     <FAQ />
