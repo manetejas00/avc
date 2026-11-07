@@ -13,6 +13,19 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # 1. Permanent 301 Redirect: test1.avinyacarefoundation.org -> https://avcdhanam.com (preserves path & query parameters)
+  RewriteCond %{HTTP_HOST} ^test1\.avinyacarefoundation\.org$ [NC]
+  RewriteRule ^(.*)$ https://avcdhanam.com/$1 [R=301,L,QSA]
+
+  # 2. Canonical HTTPS & non-www enforcement for avcdhanam.com
+  RewriteCond %{HTTP_HOST} ^www\.avcdhanam\.com$ [NC]
+  RewriteRule ^(.*)$ https://avcdhanam.com/$1 [R=301,L,QSA]
+
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP_HOST} ^(www\.)?avcdhanam\.com$ [NC]
+  RewriteRule ^(.*)$ https://avcdhanam.com/$1 [R=301,L,QSA]
+
   # Repository-root installs must never expose source, secrets, databases or archives.
   RewriteRule (^|/)\. - [F,L]
   # Serve the public preview route without exposing its source directory.
@@ -38,4 +51,3 @@ Options -Indexes
   Order allow,deny
   Deny from all
 </FilesMatch>
-

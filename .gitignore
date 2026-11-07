@@ -16,3 +16,4 @@ dist.zip
 
 # Local Netlify folder
 .netlify
+backups/

@@ -12,6 +12,20 @@ Options -Indexes
 </IfModule>
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteBase /
+
+  # 1. Permanent 301 Redirect: test1.avinyacarefoundation.org -> https://avcdhanam.com (preserves path & query parameters)
+  RewriteCond %{HTTP_HOST} ^test1\.avinyacarefoundation\.org$ [NC]
+  RewriteRule ^(.*)$ https://avcdhanam.com/$1 [R=301,L,QSA]
+
+  # 2. Canonical HTTPS & non-www enforcement for avcdhanam.com
+  RewriteCond %{HTTP_HOST} ^www\.avcdhanam\.com$ [NC]
+  RewriteRule ^(.*)$ https://avcdhanam.com/$1 [R=301,L,QSA]
+
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP_HOST} ^(www\.)?avcdhanam\.com$ [NC]
+  RewriteRule ^(.*)$ https://avcdhanam.com/$1 [R=301,L,QSA]
+
   RewriteRule (^|/)\. - [F,L]
   # Keep the shared API URLs working on Hostinger's PHP hosting.
   RewriteRule ^api/companies/?$ api/companies.php [L]
@@ -31,4 +45,3 @@ Options -Indexes
   Order allow,deny
   Deny from all
 </FilesMatch>
-

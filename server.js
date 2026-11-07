@@ -116,8 +116,16 @@ const initDB = () => {
 initDB();
 
 const app = express();
+
+// Permanent 301 Redirect for legacy domain and non-canonical hosts
 app.use((req, res, next) => {
-  if (/^\/(admin(?:\/|$)|ebook-admin-vault(?:\/|$)|v2(?:\/|$))/.test(req.path) || /^test1\./i.test(req.hostname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];
+  if (host === 'test1.avinyacarefoundation.org' || host === 'www.avcdhanam.com') {
+    return res.redirect(301, `https://avcdhanam.com${req.originalUrl}`);
+  }
+  if (/^\/(admin(?:\/|$)|ebook-admin-vault(?:\/|$)|v2(?:\/|$))/.test(req.path) || /^test1\./i.test(req.hostname)) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  }
   next();
 });
 

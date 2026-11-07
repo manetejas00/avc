@@ -57,7 +57,7 @@ npm run build
 ### 2. Upload Files to Hostinger
 Run the following command to securely copy the files. (If your SSH key is set up locally on this machine, it won't ask for a password).
 ```bash
-scp -P 65002 -r dist/* u382139760@82.112.239.95:/home/u382139760/domains/test1.avinyacarefoundation.org/public_html/
+scp -P 65002 -r dist/* u382139760@82.112.239.95:/home/u382139760/domains/avcdhanam.com/public_html/
 ```
 
 ---
